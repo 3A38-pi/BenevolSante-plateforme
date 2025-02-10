@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DonsFormController!{% endblock %}
+
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Liste des Dons</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="don-list-page">
+  <div class="container">
+    <h1>Liste des Dons</h1>
+    
+    <!-- Zone de recherche et de filtrage -->
+    <div class="filter-container">
+      <input type="text" id="searchInput" placeholder="Recherche un don...">
+      <select id="filterSelect">
+        <option value="all">Tous</option>
+        <option value="materiel">Don Matériel</option>
+        <option value="argent">Don d'Argent</option>
+        <option value="sang">Don de Sang</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+    
+    <!-- Liste des dons scrollable -->
+    <div class="donation-list-container">
+      <div class="donation-list">
+        <!-- Exemple d'éléments de don avec attributs de filtrage -->
+        <div class="donation-item" data-id="1" data-type="materiel">
+          <img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}"     alt="Don 1">
+          <!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+          <div class="item-info">Don Matériel</div>
+        </div>
+        <div class="donation-item" data-id="1" data-type="materiel">
+        <img src="{{asset('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZm6D_xWN59mVLywChEsnT47LcslBlwQ277w&s')}}"     alt="Don 1">
+        <!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+        <div class="item-info">Don Matériel</div>
+      </div>
+      <div class="donation-item" data-id="1" data-type="materiel">
+      <img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}"     alt="Don 1">
+      <!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+      <div class="item-info">Don Matériel</div>
+    </div>
+    <div class="donation-item" data-id="1" data-type="materiel">
+    <img src="{{asset('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9nUMa1HpC7fjDPPPbmwft9C9YTVcbRlufOw&s')}}"     alt="Don 1">
+    <!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+    <div class="item-info">Don Matériel</div>
+  </div>
+  <div class="donation-item" data-id="1" data-type="materiel">
+  <img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}"     alt="Don 1">
+  <!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+  <div class="item-info">Don Matériel</div>
+</div>
+<div class="donation-item" data-id="1" data-type="materiel">
+<img src="{{asset('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStHj5yZUo9Qkq6RWwy6pWvItzyHJdHRNvz4A&s')}}"     alt="Don 1">
+<!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+<div class="item-info">Don Matériel</div>
+</div>
+<div class="donation-item" data-id="1" data-type="materiel">
+<img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}"     alt="Don 1">
+<!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+<div class="item-info">Don Matériel</div>
+</div>
+<div class="donation-item" data-id="1" data-type="materiel">
+<img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}"     alt="Don 1">
+<!-- Ou utiliser un placeholder : <img src="https://via.placeholder.com/200" alt="Don 1"> -->
+<div class="item-info">Don Matériel</div>
+</div>
+        <div class="donation-item" data-id="2" data-type="argent">
+          <img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}"  alt="Don 2">
+          <div class="item-info">Don d'Argent</div>
+        </div>
+        <div class="donation-item" data-id="3" data-type="sang">
+          <img src="{{asset('https://paraplume.com/wp-content/uploads/2024/02/chaise-21.jpg')}}" alt="Don 3">
+          <div class="item-info">Don de Sang</div>
+        </div>
+        <!-- Ajoutez d'autres éléments de don si nécessaire -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pour afficher les détails du don -->
+  <div id="donationModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2>Détails du Don</h2>
+      <p id="donationDetails">Informations sur le don sélectionné.</p>
+    </div>
+  </div>
+
+  <script>
+    // Gestion de l'ouverture du modal
+    const donationItems = document.querySelectorAll('.donation-item');
+    const modal = document.getElementById('donationModal');
+    const modalClose = document.querySelector('.modal-close');
+    const donationDetails = document.getElementById('donationDetails');
+
+    donationItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const donationId = this.getAttribute('data-id');
+        donationDetails.textContent = "Détails du don n°" + donationId + ". Description, conditions, contact, etc.";
+        modal.style.display = 'block';
+      });
+    });
+
+    modalClose.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Gestion de la recherche et du filtrage
+    const searchInput = document.getElementById('searchInput');
+    const filterSelect = document.getElementById('filterSelect');
+
+    function filterDonations() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedType = filterSelect.value;
+      
+      donationItems.forEach(item => {
+        const itemText = item.querySelector('.item-info').textContent.toLowerCase();
+        const itemType = item.getAttribute('data-type');
+        
+        // Vérifie si l'élément correspond à la recherche et au filtre
+        const matchesSearch = itemText.includes(searchTerm);
+        const matchesFilter = (selectedType === 'all' || itemType === selectedType);
+        
+        item.style.display = (matchesSearch && matchesFilter) ? 'block' : 'none';
+      });
+    }
+
+    searchInput.addEventListener('input', filterDonations);
+    filterSelect.addEventListener('change', filterDonations);
+  </script>
+</body>
+</html>
+
+
+{% endblock %}

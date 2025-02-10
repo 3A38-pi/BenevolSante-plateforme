@@ -57,7 +57,15 @@
             
                 <a href="{{path('home')}}" class="nav-item nav-link active">Home</a>
                 <a href="" class="nav-item nav-link">About</a>
-                <a href="{{path('services')}}" class="nav-item nav-link">Service</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                    <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                        <a href="{{path('dons_list')}}" class="dropdown-item">Liste des Dons </a>
+                        <a href="{{path('dons_form')}}" class="dropdown-item">Poster un Dons </a>
+ 
+                    </div>
+                </div>
+
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
