@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GestionRectutementController!{% endblock %}
+
+{% block body %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Recrutement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Ajouter un Recrutement</h2>
+        <form>
+            <div class="mb-3">
+                <label for="poste" class="form-label">Poste</label>
+                <input type="text" class="form-control" id="poste" placeholder="Ex: Médecin, Infirmier...">
+            </div>
+            <div class="mb-3">
+                <label for="objectif" class="form-label">Objectif du Recrutement</label>
+                <textarea class="form-control" id="objectif" rows="3" placeholder="Décrivez l'objectif..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" rows="3" placeholder="Description détaillée du poste..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+{% endblock %}
