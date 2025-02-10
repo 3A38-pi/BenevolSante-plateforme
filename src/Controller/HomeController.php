@@ -55,8 +55,22 @@ final class HomeController extends AbstractController
     {
         return $this->render('contact/contact.html.twig', [
             'controller_name' => 'HomeController',
-        ]);
+        ]);}
+
+        #[Route('/dashboard', name: 'dashboard')]
+        public function index7(): Response
+        {
+            return $this->render('dashboard/index.html.twig', [
+                'controller_name' => 'HomeController',
+            ]);
     }
+    #[Route('/dashboard2', name: 'dashboard2')]
+    public function index8(): Response
+    {
+        return $this->render('dashboard2/index.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+}
 
 
 
