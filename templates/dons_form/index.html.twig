@@ -3,55 +3,52 @@
 {% block title %}Hello DonsFormController!{% endblock %}
 
 {% block body %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Formulaire de Don</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body class="form-page">
+<body>
   <div class="container">
-    <h1>Formulaire de Don</h1>
-    <form action="/submit-donation" method="post" enctype="multipart/form-data">
-      <!-- Nom du donateur -->
-      <div class="form-group">
-        <label for="donorName">Nom du Donateur</label>
-        <input type="text" id="donorName" name="donorName" placeholder="Votre nom" required>
-      </div>
-      <!-- Email -->
-      <div class="form-group">
-        <label for="donorEmail">Email</label>
-        <input type="email" id="donorEmail" name="donorEmail" placeholder="Votre email" required>
-      </div>
-      <!-- Type de don -->
-      <div class="form-group">
-        <label for="donType">Type de Don</label>
-        <select id="donType" name="donType" required>
-          <option value="">-- Sélectionnez --</option>
-          <option value="materiel">Matériel</option>
-          <option value="argent">Argent</option>
-          <option value="sang">Sang</option>
-          <option value="autre">Autre</option>
-        </select>
-      </div>
-      <!-- Description du don -->
-      <div class="form-group">
-        <label for="donDescription">Description du Don</label>
-        <textarea id="donDescription" name="donDescription" rows="5" placeholder="Décrivez votre don" required></textarea>
-      </div>
-      <!-- Téléchargement d'image -->
-      <div class="form-group">
-        <label for="donImage">Image du Don</label>
-        <input type="file" id="donImage" name="donImage" accept="image/*">
-      </div>
-      <!-- Bouton d'envoi -->
-      <button type="submit">Envoyer le Don</button>
-    </form>
+    <!-- Colonne gauche: Formulaire de Don -->
+    <div class="form-container">
+      <div class="donation-form">
+        <h1>Formulaire de Don</h1>
+        <form action="/submit-donation" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="donorName">Nom du Donateur</label>
+            <input type="text" id="donorName" name="donorName" placeholder="Votre nom" required>
+          </div>
+          <div class="form-group">
+            <label for="donorEmail">Email</label>
+            <input type="email" id="donorEmail" name="donorEmail" placeholder="Votre email" required>
+          </div>
+          <div class="form-group">
+            <label for="donType">Type de Don</label>
+            <select id="donType" name="donType" required>
+              <option value="">-- Sélectionnez --</option>
+              <option value="materiel">Matériel</option>
+              <option value="argent">Argent</option>
+              <option value="sang">Sang</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="donDescription">Description du Don</label>
+            <textarea id="donDescription" name="donDescription" rows="5" placeholder="Décrivez votre don" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="donImage">Image du Don</label>
+            <input type="file" id="donImage" name="donImage" accept="image/*">
+          </div>
+          <button type="submit">Envoyer le Don</button>
+        </form>
+      </div>    
+      <div class="motivation-container">
+      <p >"Un don aujourd’hui, un sourire pour demain"</p>
+    </div>
+    </div>
+    <!-- Colonne droite: Message de Motivation -->
+
   </div>
 </body>
 </html>
+
 
 
 
