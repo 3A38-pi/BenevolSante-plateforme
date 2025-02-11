@@ -1,11 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Utilisateur{% endblock %}
+{% block title %}Create New Utilisateur{% endblock %}
 
 {% block body %}
-    <h1>Create new Utilisateur</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h1 class="text-center mb-4 text-primary">Create New Utilisateur</h1>
 
-    {{ include('utilisateur/_form.html.twig') }}
+        <form method="post">
+            {{ form_start(form) }}
+            <div class="row">
+                {% for field in form %}
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(field) }}
+                        {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                        
+                        {% if not form.vars.valid and field.vars.errors|length > 0 %}
+                            <div class="text-danger mt-1">
+                                {% for error in field.vars.errors %}
+                                    <small>{{ error.message }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
 
-    <a href="{{ path('app_utilisateur_index') }}">back to list</a>
+            <div class="text-center">
+                <button class="btn btn-primary btn-lg shadow-sm px-5" type="submit">
+                    Save
+                </button>
+            </div>
+            {{ form_end(form) }}
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{{ path('app_utilisateur_index') }}" class="btn btn-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
