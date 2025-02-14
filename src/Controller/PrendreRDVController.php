@@ -15,4 +15,24 @@ final class PrendreRDVController extends AbstractController
             'controller_name' => 'PrendreRDVController',
         ]);
     }
+
+    #[Route('/prendre-rdv', name: 'app_prendre_rdv')]
+public function prendreRendezVous(Request $request, EntityManagerInterface $em): Response
+{
+    $rdv = new RendezVous();
+    $form = $this->createForm(RendezVousType::class, $rdv);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->persist($rdv);
+        $em->flush();
+
+        $this->addFlash('success', 'Rendez-vous pris avec succès !');
+        return $this->redirectToRoute('app_prendre_rdv');
+    }
+
+    return $this->render('rendez_vous/prendre_rdv.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 }
