@@ -634,3 +634,10 @@
     color: #1a1888; /* Modifier la couleur */
     margin-bottom: 20px; /* Ajouter un espace sous le titre */
 }
+
+
+.img-fluide {
+  height: 78px;
+  width: 90px;
+  }
+  

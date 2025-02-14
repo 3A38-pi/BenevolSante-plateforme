@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GestionRectutementController!{% endblock %}
+
+{% block body %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Recrutements</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Liste des Recrutements</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Poste</th>
+                    <th>Objectif</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Médecin</td>
+                    <td>Recrutement de 5 médecins spécialisés</td>
+                    <td>
+                     <a href="{{path('app_gestion_recrutement_details')}}" class="dropdown-item">details </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Infirmier</td>
+                    <td>Recrutement d'infirmiers pour urgences</td>
+                    <td>
+                        <a href="#" class="btn btn-info">Détails</a>
+                    </td>
+                </tr>
+                <!-- Plus de lignes pour chaque recrutement -->
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+{% endblock %}
