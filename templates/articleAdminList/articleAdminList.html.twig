@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Articles</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+
+
+
+<div class="container-xxl py-5 ">
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+   
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+    <th scope="col">id</th>
+      <th scope="col">Titre</th>
+      <th scope="col">Image Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Tags</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for article in articles %}
+    <tr>
+    {# {{ article.id }} #}
+      <th scope="row">{{ loop.index }}</th>
+      <td>{{ article.titre }}</td>
+      <td>{{ article.image }}</td>
+     <td> {{ article.description|split(' ')|slice(0, 7)|join(' ') ~ '...' }}    </td>
+      <td>{{ article.tags }}</td>
+        <td>
+        <a href="{{ path('editArticle', {'id': article.id} )}}" class="btn btn-primary">Modifier</a>
+        <a href="" class="btn btn-danger">Supprimer</a>
+        </td>
+        </tr>
+    {% endfor %}
+
+
+    </tr>
+  </tbody>
+</table>
+</div>
+{% endblock %}

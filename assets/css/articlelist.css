@@ -1,0 +1,91 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Merriweather', serif;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.container h1 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.article-header {
+    margin-bottom: 20px;
+}
+
+.article-header h1 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.article-meta {
+    color: gray;
+    font-size: 14px;
+}
+
+.article-meta i {
+    margin-right: 5px;
+}
+
+.article-image-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.article-image {
+    width: 100%;
+    height: auto;
+}
+
+.article-description {
+    text-align: justify;
+    margin-top: 30px;
+    font-size: 15px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.article-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    font-size: 14px;
+}
+
+.tags {
+    color: DodgerBlue;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.tags i {
+    color: grey;
+    margin-right: 5px;
+}
+
+.tags a {
+    color: DodgerBlue;
+}
