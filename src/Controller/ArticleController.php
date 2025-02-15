@@ -28,7 +28,7 @@ final class ArticleController extends AbstractController
         $articles = $this->em->getRepository(Article::class)->findAll();
 
 
-        return $this->render('article/articleList.html.twig', [
+        return $this->render('templates_users/article/articleList.html.twig', [
             'articles' => $articles,
         ]);
     }
@@ -37,7 +37,7 @@ final class ArticleController extends AbstractController
     #[Route('/articleDescription', name: 'articleDescription')]
     public function goToArticleDescription(): Response
     {
-        return $this->render('articleDescription/articledescription.html.twig', [
+        return $this->render('templates_users/articleDescription/articleDescription.html.twig', [
             'controller_name' => 'ArticleController',
         ]);
     }
@@ -72,7 +72,7 @@ final class ArticleController extends AbstractController
            
         }
        
-        return $this->render('articleForm/articleForm.html.twig', [
+        return $this->render('templates_admin/articleForm/articleForm.html.twig', [
             'form' => $form->createView(),
         ]);
 
@@ -87,7 +87,7 @@ final class ArticleController extends AbstractController
         $articles = $this->em->getRepository(Article::class)->findAll();
 
 
-        return $this->render('articleAdminList/articleAdminList.html.twig', [
+        return $this->render('templates_admin/articleAdminList/articleAdminList.html.twig', [
             'articles' => $articles,
        
         ]);
