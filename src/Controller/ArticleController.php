@@ -34,13 +34,20 @@ final class ArticleController extends AbstractController
     }
 
 
-    #[Route('/articleDescription', name: 'articleDescription')]
-    public function goToArticleDescription(): Response
+    #[Route('/articleDescription/{id}', name: 'articleDescription')]
+    public function goToArticleDescription($id): Response
     {
+        $article = $this->em->getRepository(Article::class)->find($id);
+    
+        if (!$article) {
+            throw $this->createNotFoundException("L'article n'existe pas.");
+        }
+    
         return $this->render('templates_users/articleDescription/articleDescription.html.twig', [
-            'controller_name' => 'ArticleController',
+            'article' => $article,
         ]);
     }
+    
 
 
     #[Route('/createArticle', name: 'createArticle')]
@@ -68,7 +75,7 @@ final class ArticleController extends AbstractController
             $this->em->flush();
 
             // $this->addFlush('success', 'Article ajouté avec succès !');
-            return $this->redirectToRoute('ArticleList');
+            return $this->redirectToRoute('adminArticleList');
            
         }
        
