@@ -68,6 +68,16 @@
                 </div>
 
                 <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Blogs</a>
+                    <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                        <a href="{{path('ArticleList')}}" class="dropdown-item">Article </a>
+                        <a href="{{path('createArticle')}}" class="dropdown-item">Article Form </a>
+                        <a href="{{path('adminArticleList')}}" class="dropdown-item">Admin List </a>
+ 
+                    </div>
+                </div>
+
+                <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
                         <a href="{{path('doctors')}}" class="dropdown-item">Our Professional</a>
@@ -590,7 +600,7 @@
 
 
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
+    {# <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a> #}
 {% block js %}
 
     <!-- JavaScript Libraries -->
