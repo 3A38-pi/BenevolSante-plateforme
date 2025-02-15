@@ -1,0 +1,101 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}
+  Liste des Dons en Attente
+{% endblock %}
+
+{% block body %}
+  <div class="container mt-5">
+    <h2 class="mb-4">Dons en Attente de Validation</h2>
+
+    {% for message in app.flashes('success') %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+      <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    {% if dons is not defined %}
+      <p class="text-danger">Erreur : La variable 'dons' n'est pas définie.</p>
+    {% endif %}
+    {% for message in app.flashes('success') %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">{{ message }}</div>
+    {% endfor %}
+
+<!-- Script Affichage message ba3d l accept wala refus mel admin -->
+
+    <script>
+      setTimeout(function () {
+        let alerts = document.querySelectorAll('.alert')
+        alerts.forEach((alert) => {
+          alert.classList.remove('show')
+          alert.classList.add('fade') 
+          setTimeout(() => alert.remove(), 400) 
+        })
+      }, 3000)
+    </script>
+
+
+<!-- Youfa hneee  -->
+
+    <table class="table table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>Date de Création</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for don in dons %}
+          <tr>
+            <td>{{ don.id }}</td>
+            <td>{{ don.titre }}</td>
+            <td>{{ (don.description|slice(0, 50)) ~ '...' }}</td>
+            <td>{{ don.dateCreation|date('d/m/Y') }}</td>
+            <td>
+              <a href="{{ path('admin_accept_don', { id: don.id }) }}" class="btn btn-success btn-sm">Accepter</a>
+              <a href="{{ path('admin_refuse_don', { id: don.id }) }}" class="btn btn-danger btn-sm">Refuser</a>
+              <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#donModal{{ don.id }}">Voir détails</button>
+            </td>
+          </tr>
+
+
+<!-- partie l POPUP detaille -->
+
+          <div class="modal fade" id="donModal{{ don.id }}" tabindex="-1" aria-labelledby="donModalLabel{{ don.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="donModalLabel{{ don.id }}">Détails du Don</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Titre :</strong> {{ don.titre }}</p>
+                <p><strong>Description :</strong> {{ don.description }}</p>
+                <p><strong>Date de Création :</strong> {{ don.dateCreation|date('d/m/Y') }}</p>
+                <p><strong>Statut :</strong> {{ don.valide ? 'Accepté' : 'En attente' }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- touuufa hnee l POPUP -->
+
+
+        {% else %}
+          <tr>
+            <td colspan="5" class="text-center">Aucun don en attente.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

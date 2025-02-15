@@ -35,6 +35,9 @@ class Dons
     #[ORM\OneToMany(mappedBy: "dons", targetEntity: DemandeDons::class, orphanRemoval: true)]
     private Collection $demandes;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageUrl = null;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTime(); // Date automatique
@@ -125,6 +128,18 @@ class Dons
                 $demande->setDons(null);
             }
         }
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): static
+    {
+        $this->imageUrl = $imageUrl;
+
         return $this;
     }
 }
