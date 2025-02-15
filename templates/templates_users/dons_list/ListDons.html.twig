@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Liste des Dons Acceptés
+{% endblock %}
+
+{% block body %}
+  <div class="container mx-4"> <!-- Ajout de mx-3 pour une marge à gauche et à droite -->
+    <h1 class="text-center">Liste des Dons Disponibles</h1>
+
+    <!-- Liste des dons -->
+    <div class="row">
+      {% for don in dons %}
+        <div class="col-md-custom mb-4"> <!-- Utilisation d'une classe personnalisée pour 5 éléments par ligne -->
+          <div class="card h-100">
+            {# Si l'URL de l'image existe, on l'affiche, sinon on affiche une image par défaut #}
+            <img src="{{ don.imageUrl ? asset(don.imageUrl) : asset('img/tawwa dons 3.jpg') }}" class="card-img-top img-fluid" alt="{{ don.titre }}" style="height: 150px; object-fit: cover;" />
+            <div class="card-body text-center">
+              <h5 class="card-title" style="font-size: 1.1rem;">{{ don.titre }}</h5>
+              <p class="card-text" style="font-size: 0.9rem;">{{ don.description|slice(0, 80) }}...</p>
+              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#donModal{{ don.id }}">Voir détails</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal pour afficher les détails -->
+        <div class="modal fade" id="donModal{{ don.id }}" tabindex="-1" aria-labelledby="donModalLabel{{ don.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="donModalLabel{{ don.id }}">{{ don.titre }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  <strong>Description:</strong> {{ don.description }}
+                </p>
+                <p>
+                  <strong>Date de Création:</strong> {{ don.dateCreation|date('d/m/Y') }}
+                </p>
+                <p>
+                  <strong>Ajouté par:</strong> {{ don.donneur.nom }} {{ don.donneur.prenom }}
+                </p>
+                <p>
+                  <strong>Email:</strong> <a href="mailto:{{ don.donneur.email }}">{{ don.donneur.email }}</a>
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p class="text-center">Aucun don disponible pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Ajout du CSS personnalisé pour 5 éléments par ligne -->
+  <style>
+    .col-md-custom {
+      flex: 0 0 20%; /* Chaque élément occupe 20% de la largeur (5 éléments par ligne) */
+      max-width: 20%;
+      padding: 0 10px; /* Espacement entre les cartes */
+    }
+  </style>
+{% endblock %}

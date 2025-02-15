@@ -15,7 +15,7 @@ final class HomeController extends AbstractController
     #[Route('/home', name: 'home')]
     public function index(): Response
     {
-        return $this->render('home/Home.html.twig', [
+        return $this->render('templates_users/home/Home.html.twig', [
             'controller_name' => 'HomeController',
         ]);
     }
@@ -49,7 +49,7 @@ final class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
-
+    
     #[Route('/contact', name: 'contact')]
     public function index6(): Response
     {
@@ -57,20 +57,8 @@ final class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);}
 
-        #[Route('/dashboard', name: 'dashboard')]
-        public function index7(): Response
-        {
-            return $this->render('dashboard/index.html.twig', [
-                'controller_name' => 'HomeController',
-            ]);
-    }
-    #[Route('/dashboard2', name: 'dashboard2')]
-    public function index8(): Response
-    {
-        return $this->render('dashboard2/index.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
-}
+
+
 
 
 
