@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'Événement{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Titre animé -->
+    <h1 class="text-center text-primary animate__animated animate__fadeInDown">Détails de l'Événement</h1>
+
+    <!-- Carte élégante pour l'événement -->
+    <div class="card shadow-lg rounded-lg mt-4 animate__animated animate__zoomIn">
+        <div class="card-body">
+            <!-- Badge ID -->
+            <span class="badge bg-primary float-end p-2">ID: {{ event.id }}</span>
+
+            <!-- Nom de l'événement -->
+            <h3 class="card-title text-uppercase text-primary fw-bold text-center mt-2">
+                <i class="fas fa-calendar-alt"></i> {{ event.nom }}
+            </h3>
+
+            <!-- Affichage de l'image -->
+            {% if event.image %}
+                <div class="text-center my-4">
+                    <img src="{{ asset('uploads/' ~ event.image) }}" class="img-fluid rounded shadow" alt="Image de l'événement" style="max-height: 300px;">
+                </div>
+            {% else %}
+                <p class="text-center text-muted">Aucune image disponible</p>
+            {% endif %}
+
+            <!-- Description -->
+            <p class="card-text text-dark">
+                <strong><i class="fas fa-align-left"></i> Description :</strong>
+                {{ event.description }}
+            </p>
+
+            <!-- Boutons d'action -->
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a href="{{ path('app_event_index') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+                <a href="{{ path('app_event_edit', {'id': event.id}) }}" class="btn btn-warning btn-lg">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                {{ include('event/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ajout de Bootstrap, Animate.css et FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}  

@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Événement{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Titre animé -->
+    <h1 class="text-center text-success animate__animated animate__fadeIn animate__delay-0.5s">Modifier un Événement</h1>
+
+    <!-- Carte avec style moderne -->
+    <div class="card shadow-lg rounded-lg mt-5 animate__animated animate__fadeInUp">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4 text-success">Formulaire d'Édition</h4>
+
+            <!-- Formulaire Symfony -->
+            {{ form_start(form, {'attr': {'class': 'animate__animated animate__fadeInUp'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.nom, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Nom de l\'événement'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.date, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.date, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.lieu, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.lieu, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Lieu de l\'événement'}}) }}
+            </div>
+
+            <!-- Bouton de mise à jour stylisé -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-success btn-lg animate__animated animate__pulse animate__delay-1s">
+                    <i class="fas fa-edit"></i> Mettre à jour
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- Boutons d'actions -->
+    <div class="mt-4 text-center">
+        <a href="{{ path('app_event_index') }}" class="btn btn-outline-success btn-lg">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <!-- Bouton de suppression stylisé -->
+    <div class="mt-3 text-center">
+        {{ include('event/_delete_form.html.twig', {
+            'button_label': '<i class="fas fa-trash-alt"></i> Supprimer',
+            'attr': {'class': 'btn btn-danger btn-lg'}
+        }) }}
+    </div>
+</div>
+
+<!-- Ajout de Bootstrap, Animate.css et FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}  
