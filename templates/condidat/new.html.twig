@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Condidat{% endblock %}
+
+{% block body %}
+    <h1>Create new Condidat</h1>
+
+    {{ include('condidat/_form.html.twig') }}
+
+    <a href="{{ path('app_condidat_index') }}">back to list</a>
+{% endblock %}
