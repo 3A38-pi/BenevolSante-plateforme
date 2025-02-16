@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Condidat{% endblock %}
+
+{% block body %}
+    <h1>Condidat</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ condidat.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ condidat.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ condidat.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ condidat.email }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ condidat.telephone }}</td>
+            </tr>
+            <tr>
+                <th>Cv</th>
+                <td>{{ condidat.cv }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_condidat_index') }}">back to list</a>
+
+    <a href="{{ path('app_condidat_edit', {'id': condidat.id}) }}">edit</a>
+
+    {{ include('condidat/_delete_form.html.twig') }}
+{% endblock %}
