@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'Offre{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center text-primary animate__animated animate__fadeInDown">Détails de l'Offre</h1>
+
+    <div class="card shadow-lg mt-4 animate__animated animate__zoomIn">
+        <div class="card-body">
+            <h3 class="card-title text-uppercase text-primary fw-bold">{{ offre.titreOffre }}</h3>
+            <p class="card-text"><strong>Description :</strong> {{ offre.descriptionOffre }}</p>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_offre_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+                <a href="{{ path('app_offre_edit', {'id': offre.id}) }}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+
+                <!-- Bouton de suppression avec confirmation -->
+                <form action="{{ path('app_offre_delete', {'id': offre.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ajout de Bootstrap et d'animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}
