@@ -6,6 +6,9 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -34,9 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20, options: ["default" => "verrouillé"])]
     private string $etatCompte;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Commentaire::class, cascade: ['persist', 'remove'])]
+    private Collection $commentaires;
+
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
+        $this->commentaires = new ArrayCollection();
 
     }
 
@@ -120,4 +127,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->email;
     }
+
+    // public function getCommentaire(): ?Commentaire
+    // {
+    //     return $this->commentaire;
+    // }
+
+    // public function setCommentaire(?Commentaire $commentaire): static
+    // {
+    //     // unset the owning side of the relation if necessary
+    //     if ($commentaire === null && $this->commentaire !== null) {
+    //         $this->commentaire->setUser(null);
+    //     }
+
+    //     // set the owning side of the relation if necessary
+    //     if ($commentaire !== null && $commentaire->getUser() !== $this) {
+    //         $commentaire->setUser($this);
+    //     }
+
+    //     $this->commentaire = $commentaire;
+
+    //     return $this;
+    // }
+
+    public function getCommentaires(): Collection
+{
+    return $this->commentaires;
+}
+
+public function addCommentaire(Commentaire $commentaire): self
+{
+    if (!$this->commentaires->contains($commentaire)) {
+        $this->commentaires[] = $commentaire;
+        $commentaire->setUser($this);
+    }
+
+    return $this;
+}
+
+public function removeCommentaire(Commentaire $commentaire): self
+{
+    if ($this->commentaires->removeElement($commentaire)) {
+        if ($commentaire->getUser() === $this) {
+            $commentaire->setUser(null);
+        }
+    }
+
+    return $this;
+}
+
 }
