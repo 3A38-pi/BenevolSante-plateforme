@@ -4,8 +4,6 @@
   <a><button onclick="history.back()" class="back-btn">Retour</button></a>
 {% endblock %}
 
-
-
 {% block body %}
 <head>
     <link rel="stylesheet" href="{{ asset('css/articledescription.css') }}">
@@ -25,46 +23,122 @@
 
     <div class="divider"></div>
 
-    <div class="comments-section">
-        <h3>3 commentaires</h3>
-        <div class="comment">
-            <strong>Utilisateur 1</strong>
-            <p>Test</p>
-            <span class="reply-btn" onclick="showReplyBox(this)">Reply</span>
-            <div class="reply-box">
-                <textarea rows="3" placeholder="Écrire une réponse..."></textarea>
-                <button class="submit-btn">Envoyer</button>
+    {% for commentaire in commentaires %}
+        <div class="comment" id="comment-{{ commentaire.id }}">
+            <div class="comment-avatar">
+                <img src="{{ asset('img/about-1.jpg') }}" alt="Avatar">
+            </div>
+
+            <div class="comment-content">
+                <div class="comment-header">
+                    <strong>{{ commentaire.user.nom }} {{ commentaire.user.prenom }}</strong>
+                    <span class="comment-date">June 1, 2024 at 7:59 am</span>
+                </div>
+
+                <p class="comment-text" id="comment-text-{{ commentaire.id }}">{{ commentaire.content }}</p>
+
+                {% if commentaire.user and commentaire.user.id == 1 %}
+                    <div class="comment-actions">
+                        <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
+                        <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        {# <div class="comment">
-            <strong>Utilisateur 2</strong>
-            <p>Second test</p>
-            <span class="reply-btn" onclick="showReplyBox(this)">Reply</span>
-            <div class="reply-box">
-                <textarea rows="3" placeholder="Écrire une réponse..."></textarea>
-                <button class="submit-btn">Envoyer</button>
+    {% else %}
+        <p>Aucun commentaire pour le moment.</p>
+    {% endfor %}
+
+    <!-- Popup de modification -->
+    <div id="editCommentPopup" class="popup">
+        <div class="popup-content">
+            <textarea id="editCommentContent" class="comment-textarea"></textarea>
+            <div class="popup-buttons">
+                <button id="cancelEdit" class="cancel-btn">Annuler</button>
+                <button id="confirmEdit" class="confirm-btn">Modifier</button>
             </div>
         </div>
-    </div> #}
+    </div>
 
-   <br>
-
+    <br><br>
     <div class="add-comment">
         <h3>Ajouter un commentaire</h3>
-        <textarea rows="4" placeholder="Écrire un commentaire..."></textarea>
-        <button class="submit-btn">Poster</button>
+        {{ form_start(form) }}
+            {{ form_row(form.content) }}
+            {{ form_row(form.submit) }}
+        {{ form_end(form) }}
     </div>
 </div>
 
 <script>
-    function showReplyBox(element) {
-        let replyBox = element.nextElementSibling;
-        replyBox.style.display = replyBox.style.display === "block" ? "none" : "block";
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+        let editPopup = document.getElementById("editCommentPopup");
+        let textarea = document.getElementById("editCommentContent");
+        let confirmBtn = document.getElementById("confirmEdit");
+        let cancelBtn = document.getElementById("cancelEdit");
+        let currentCommentId = null;
+
+        document.querySelectorAll(".edit-comment").forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                currentCommentId = this.getAttribute("data-id");
+                textarea.value = this.getAttribute("data-content");
+                editPopup.style.display = "flex";
+            });
+        });
+
+        cancelBtn.addEventListener("click", function() {
+            editPopup.style.display = "none";
+        });
+
+        confirmBtn.addEventListener("click", function() {
+            let newContent = textarea.value;
+            
+            fetch(`/commentaire/modifier/${currentCommentId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: newContent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`comment-text-${currentCommentId}`).innerText = newContent;
+                    editPopup.style.display = "none";
+                } else {
+                    alert("Erreur : " + data.message);
+                }
+            })
+            .catch(error => console.error("Erreur :", error));
+        });
+
+        // Suppression immédiate sans confirmation
+        document.querySelectorAll(".delete-comment").forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                let commentId = this.getAttribute("data-id");
+
+                fetch(`/commentaire/supprimer/${commentId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`comment-${commentId}`).remove();
+                    } else {
+                        alert("Erreur : " + data.message);
+                    }
+                })
+                .catch(error => console.error("Erreur :", error));
+            });
+        });
+    });
 </script>
 
 </body>
 </html>
 {% endblock %}
-
-
