@@ -21,6 +21,16 @@ final class EventController extends AbstractController
             'events' => $eventRepository->findAll(),
         ]);
     }
+    //Affichage front
+   
+    #[Route('/listF', name: 'app_ListF', methods: ['GET'])]
+    public function listF(EventRepository $eventRepository): Response
+    {
+        return $this->render('event/listF.html.twig', [
+            'events' => $eventRepository->findAll(),
+        ]);
+    }
+
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
