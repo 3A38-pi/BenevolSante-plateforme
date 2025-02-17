@@ -38,6 +38,9 @@ class Dons
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageUrl = null;
 
+    #[ORM\Column(type: 'string', length: 50)]
+    private ?string $categorie = null;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTime(); // Date automatique
@@ -48,6 +51,19 @@ class Dons
     {
         return $this->id;
     }
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(string $categorie): self
+    {
+        $this->categorie = $categorie;
+        return $this;
+    }
+
+    
 
     public function getTitre(): ?string
     {

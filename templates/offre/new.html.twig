@@ -13,16 +13,22 @@
             <h4 class="card-title text-center mb-4 text-primary">Formulaire de création</h4>
 
             <!-- Formulaire généré par Symfony avec les champs personnalisés -->
-            {{ form_start(form, {'attr': {'class': 'animate__animated animate__fadeInUp'}}) }}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
             
             <div class="mb-3">
                 {{ form_label(form.titre_offre, null, {'attr': {'class': 'form-label'}}) }}
                 {{ form_widget(form.titre_offre, {'attr': {'class': 'form-control form-control-lg border-primary shadow-sm', 'placeholder': 'Entrez le titre de l\'offre'}}) }}
+                <div class="text-danger">
+                    {{ form_errors(form.titre_offre) }}
+                </div>
             </div>
 
             <div class="mb-3">
                 {{ form_label(form.description_offre, null, {'attr': {'class': 'form-label'}}) }}
                 {{ form_widget(form.description_offre, {'attr': {'class': 'form-control form-control-lg border-primary shadow-sm', 'placeholder': 'Entrez la description de l\'offre', 'rows': '4'}}) }}
+                <div class="text-danger">
+                    {{ form_errors(form.description_offre) }}
+                </div>
             </div>
 
             <!-- Bouton d'action -->
