@@ -32,7 +32,7 @@ final class CondidatController extends AbstractController{
             $entityManager->persist($condidat);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_condidat_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('condidat/new.html.twig', [

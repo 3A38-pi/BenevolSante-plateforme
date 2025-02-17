@@ -21,7 +21,7 @@ class CondidatType extends AbstractType
             ->add('cv')
             ->add('offre', EntityType::class, [
                 'class' => Offre::class,
-'choice_label' => 'id',
+'choice_label' => 'Titre_offre',
             ])
         ;
     }
