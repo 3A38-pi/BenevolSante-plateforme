@@ -1,0 +1,211 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        /* Global Styles */
+        .container {
+            max-width: 900px; /* Set max width for better alignment */
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .text-primary {
+            color: #007bff !important;
+        }
+
+        .text-secondary {
+            color: #6c757d;
+        }
+
+        .mb-4 {
+            margin-bottom: 2rem; /* Increase space between sections */
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .table th,
+        .table td {
+            text-align: left;
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+
+        .table th {
+            font-size: 1.1rem;
+        }
+
+        .icon {
+            margin-right: 8px;
+            color: #007bff;
+        }
+
+        .evaluation-card {
+            margin-top: 3rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+            border-radius: 5px;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            background-color: #004085;
+            border-color: #003366;
+            transform: translateY(1px);
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Détails de l'évaluation{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mb-4 text-primary">{{ evaluation.name }}</h1>
+
+        <!-- Tableau des informations de l'évaluation -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-info-circle icon"></i>Description</th>
+                    <th><i class="fas fa-calendar-alt icon"></i>Date de création</th>
+                    <th><i class="fas fa-question-circle icon"></i>Question</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ evaluation.description ?: 'Aucune description disponible.' }}</td>
+                    <td>{{ evaluation.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ evaluation.question }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Affichage des options de l'évaluation -->
+        {% if evaluation.options is not empty %}
+            <div class="mb-4">
+                <h5 class="text-secondary"><i class="fas fa-list-ul icon"></i>Options:</h5>
+                <ul class="list-group">
+                    {% for option in evaluation.options %}
+                        <li class="list-group-item">{{ option }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Affichage des réponses existantes -->
+        {% if evaluation.responses|length > 0 %}
+            <div class="mb-4">
+                <h5 class="text-secondary"><i class="fas fa-reply icon"></i>Réponses existantes:</h5>
+                <ul class="list-group">
+                    {% for response in evaluation.responses %}
+                        <li class="list-group-item">
+                            <strong>{{ response.answer }}</strong><br>
+                            <small>Note: {{ response.rating }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Formulaire pour répondre à l'évaluation -->
+        <div class="evaluation-card card mt-4 shadow-lg">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-3">Répondez à cette évaluation</h5>
+
+                {# Affichage des messages flash success #}
+                {% for message in app.session.flashbag.get('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                {{ form_start(form, {'attr': {'class': 'form'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.answer, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.answer, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.rating, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.rating, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Envoyer votre réponse</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
