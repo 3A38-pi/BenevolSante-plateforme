@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Participant{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Titre animé -->
+    <h1 class="text-center text-success animate__animated animate__fadeIn animate__delay-0.5s">Créer un Nouveau Participant</h1>
+
+    <!-- Carte avec style moderne -->
+    <div class="card shadow-lg rounded-lg mt-5 animate__animated animate__fadeInUp">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4 text-success">Formulaire de Création</h4>
+
+            <!-- Formulaire Symfony -->
+            {{ form_start(form, {'attr': {'class': 'animate__animated animate__fadeInUp'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.nom, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Entrez votre nom'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.prenom, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Entrez votre prénom'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.email, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Entrez votre email'}}) }}
+            </div>
+
+            <!-- Bouton de soumission stylisé -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-success btn-lg animate__animated animate__pulse animate__delay-1s">
+                    <i class="fas fa-user-plus"></i> Ajouter le Participant
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- Bouton retour bien visible -->
+    <div class="mt-4 text-center">
+        <a href="{{ path('app_participant_index') }}" class="btn btn-outline-success btn-lg">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<!-- Ajout de Bootstrap, Animate.css et FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

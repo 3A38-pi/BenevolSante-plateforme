@@ -18,30 +18,26 @@ class ArticleType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class, [
-                'label' => 'Titre de l\'article',
+                'label' => false,
                 'attr' => ['placeholder' => 'Entrer le titre']
             ])
             ->add('image', FileType::class, [
-                'label' => 'Image de l\'article',
+                'label' => false,
                 'attr' => ['placeholder' => 'Upload une image']
             ])
             ->add('tags', TextType::class, [
-                'label' => 'Tags de l\'article',
+                'label' => false,
                 'attr' => ['placeholder' => 'Detailler quels sont les tags']
             ])
-            // ->add('nombreCommentaire', TextType::class, [
-            //     'label' => 'Nombre de commentaire',
-            //     'attr' => ['placeholder' => 'Entrer le nombre de commentaire']
-            // ])
 
             ->add('description', TextareaType::class, [
-                'label' => 'Description de l\'article',
+                'label' => false,
                 'attr' => ['placeholder' => 'Citer le contenu de l\'article']
             ])
 
             ->add('ajouter', SubmitType::class, [
                 'label' => 'Ajouter l\'article',
-                'attr' => ['class' => 'btn btn-primary']
+                'attr' => ['class' => 'btn bg-gradient-dark w-30 my-4 mb-2']
             ])
         ;
     }
