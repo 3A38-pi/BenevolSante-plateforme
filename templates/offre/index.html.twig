@@ -24,18 +24,17 @@
                     </div>
                 </div>
             </div>
+            
         {% else %}
             <div class="col-12 text-center text-muted">
                 <p>Aucune offre disponible pour le moment.</p>
             </div>
         {% endfor %}
+
+        
     </div>
 
-    <div class="text-center mt-4">
-        <a href="{{ path('app_offre_new') }}" class="btn btn-success btn-lg animate__animated animate__pulse">
-            <i class="fas fa-plus"></i> Créer une nouvelle offre
-        </a>
-    </div>
+    
 </div>
 
 <!-- Ajout de Bootstrap et d'animations -->

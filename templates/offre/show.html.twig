@@ -15,16 +15,7 @@
                 <a href="{{ path('app_offre_index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Retour à la liste
                 </a>
-                <a href="{{ path('app_offre_edit', {'id': offre.id}) }}" class="btn btn-warning">
-                    <i class="fas fa-edit"></i> Modifier
-                </a>
-
-                <!-- Bouton de suppression avec confirmation -->
-                <form action="{{ path('app_offre_delete', {'id': offre.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Supprimer
-                    </button>
-                </form>
+                
             </div>
         </div>
     </div>
