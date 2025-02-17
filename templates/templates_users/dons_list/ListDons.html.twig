@@ -5,19 +5,38 @@
 {% endblock %}
 
 {% block body %}
-  <div class="container mx-4"> <!-- Ajout de mx-3 pour une marge à gauche et à droite -->
+  <div class="container mx-4">
     <h1 class="text-center">Liste des Dons Disponibles</h1>
 
+    <!-- Formulaire de filtrage et recherche -->
+    <div class="mb-4">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-md-3">
+          <select id="categorie-filter" class="form-control">
+            <option value="">Toutes les catégories</option>
+            {% for categorie in categories %}
+              <option value="{{ categorie }}" {{ app.request.query.get('categorie') == categorie ? 'selected' : '' }}>{{ categorie }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="search-input" class="form-control" placeholder="Rechercher un don..." value="{{ app.request.query.get('search') }}" />
+        </div>
+      </div>
+    </div>
+
     <!-- Liste des dons -->
-    <div class="row">
+    <div id="dons-list" class="row">
       {% for don in dons %}
-        <div class="col-md-custom mb-4"> <!-- Utilisation d'une classe personnalisée pour 5 éléments par ligne -->
+        <div class="col-md-custom mb-4 don-item" data-categorie="{{ don.categorie }}" data-titre="{{ don.titre }}">
           <div class="card h-100">
-            {# Si l'URL de l'image existe, on l'affiche, sinon on affiche une image par défaut #}
-            <img src="{{ don.imageUrl ? asset(don.imageUrl) : asset('img/tawwa dons 3.jpg') }}" class="card-img-top img-fluid" alt="{{ don.titre }}" style="height: 150px; object-fit: cover;" />
+            <img src="{{ asset('uploads/images/' ~ don.imageUrl) }}" class="card-img-top img-fluid" alt="{{ don.titre }}" style="height: 150px; object-fit: cover;" />
             <div class="card-body text-center">
-              <h5 class="card-title" style="font-size: 1.1rem;">{{ don.titre }}</h5>
-              <p class="card-text" style="font-size: 0.9rem;">{{ don.description|slice(0, 80) }}...</p>
+              <h5 class="card-title">{{ don.titre }}</h5>
+              <p class="card-text">
+                <strong>Catégorie :</strong> {{ don.categorie }}
+              </p>
+              <p class="card-text">{{ don.description|slice(0, 80) }}...</p>
               <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#donModal{{ don.id }}">Voir détails</button>
             </div>
           </div>
@@ -31,7 +50,11 @@
                 <h5 class="modal-title" id="donModalLabel{{ don.id }}">{{ don.titre }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body">
+              <div class="modal-body text-center">
+                <img src="{{ asset('uploads/images/' ~ don.imageUrl) }}" class="img-fluid mb-3" style="max-width: 100%; height: auto;" alt="{{ don.titre }}" />
+                <p>
+                  <strong>Catégorie :</strong> {{ don.categorie }}
+                </p>
                 <p>
                   <strong>Description:</strong> {{ don.description }}
                 </p>
@@ -47,6 +70,14 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                {% set demande = app.user ? demandes[don.id] ?? null : null %}
+                <button class="btn btn-success btn-sm request-donation" data-don-id="{{ don.id }}" {{ demande and demande.statut == 'en attente' ? 'disabled' : '' }}>
+                  {% if demande and demande.statut == 'en attente' %}
+                    Demande en attente
+                  {% else %}
+                    Demander ce don
+                  {% endif %}
+                </button>
               </div>
             </div>
           </div>
@@ -60,9 +91,63 @@
   <!-- Ajout du CSS personnalisé pour 5 éléments par ligne -->
   <style>
     .col-md-custom {
-      flex: 0 0 20%; /* Chaque élément occupe 20% de la largeur (5 éléments par ligne) */
+      flex: 0 0 20%;
       max-width: 20%;
-      padding: 0 10px; /* Espacement entre les cartes */
+      padding: 0 10px;
     }
   </style>
+
+  <!-- Ajout du JavaScript pour la recherche en temps réel -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // Filtrage en temps réel
+      const searchInput = document.getElementById("search-input");
+      const categoryFilter = document.getElementById("categorie-filter");
+      const donsList = document.getElementById("dons-list");
+      const dons = document.querySelectorAll(".don-item");
+
+      function filterDons() {
+        const searchText = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value.toLowerCase();
+
+        dons.forEach((don) => {
+          const title = don.getAttribute("data-titre").toLowerCase();
+          const category = don.getAttribute("data-categorie").toLowerCase();
+
+          const matchesSearch = title.includes(searchText);
+          const matchesCategory = selectedCategory === "" || category === selectedCategory;
+
+          if (matchesSearch && matchesCategory) {
+            don.style.display = "block";
+          } else {
+            don.style.display = "none";
+          }
+        });
+      }
+
+      searchInput.addEventListener("input", filterDons);
+      categoryFilter.addEventListener("change", filterDons);
+
+      // Gestion des boutons de demande
+      $('.request-donation').on('click', function () {
+        const donId = $(this).data('don-id');
+        console.log("Don ID envoyé :", donId); // Vérifier que l'ID est bien récupéré
+
+        $.ajax({
+          url: "{{ path('demande_don') }}",
+          method: "POST",
+          data: { donId: donId },
+          success: function (response) {
+            alert(response.message);
+            location.reload();
+          },
+          error: function (xhr) {
+            console.error("Erreur serveur :", xhr.responseText);
+            alert("Une erreur est survenue : " + xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
 {% endblock %}

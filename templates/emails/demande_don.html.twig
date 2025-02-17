@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nouvelle demande pour votre don</title>
+</head>
+<body>
+    <h1>Nouvelle demande pour votre don</h1>
+    <p>Bonjour {{ don.donneur.nom }},</p>
+    <p>Une nouvelle demande a été effectuée pour votre don : <strong>{{ don.titre }}</strong>.</p>
+    <p>Détails de la demande :</p>
+    <ul>
+        <li><strong>Bénéficiaire :</strong> {{ beneficiaire.nom }} {{ beneficiaire.prenom }}</li>
+        <li><strong>Date de la demande :</strong> {{ demande.dateDemande|date('d/m/Y H:i') }}</li>
+    </ul>
+    <p>Merci de consulter votre plateforme pour plus de détails.</p>
+    <p>Cordialement,<br>L'équipe de votre plateforme</p>
+</body>
+</html>
