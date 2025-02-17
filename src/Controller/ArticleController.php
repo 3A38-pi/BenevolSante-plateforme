@@ -176,4 +176,40 @@ public function supprimerCommentaire($id, EntityManagerInterface $em): JsonRespo
     return new JsonResponse(["success" => true]);
 }
 
+#[Route('/article/supprimer/{id}', name: 'supprimer_article', methods: ['DELETE'])]
+public function supprimerArticle($id, EntityManagerInterface $em): JsonResponse
+{
+    $article = $em->getRepository(Article::class)->find($id);
+
+    if (!$article) {
+        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
+    }
+
+    $em->remove($article);
+    $em->flush();
+
+    return new JsonResponse(["success" => true]);
+}
+
+
+
+#[Route('/article/{id}/commentaires', name: 'get_article_commentaires', methods: ['GET'])]
+public function getArticleCommentaires($id): JsonResponse
+{
+    $article = $this->em->getRepository(Article::class)->find($id);
+
+    if (!$article) {
+        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
+    }
+
+    $commentaires = $article->getCommentaires()->map(function ($commentaire) {
+        return [
+            "content" => $commentaire->getContent(),
+        ];
+    });
+
+    return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
+}
+
+
 }

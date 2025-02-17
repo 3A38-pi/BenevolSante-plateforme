@@ -1,54 +1,97 @@
 {% extends 'base2.html.twig' %}
 {% block body %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Articles</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    {# <link rel="stylesheet" href="{{ asset('css/style.css') }}"> #}
-</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0 h4 font-weight-bolder">Liste Des Articles</h3>
+            
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                <div class="input-group input-group-outline">
+                    <label class="form-label">Search...</label>
+                    <input type="text" id="search" class="form-control">
+                </div>
+            </div>
+        </div>
 
+        <div class="table-responsive">
+            <table class="table align-items-center">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="text-center font-weight-bold">ID</th>
+                        <th class="font-weight-bold">Titre</th>
+                        <th class="font-weight-bold">Image Name</th>
+                        <th class="font-weight-bold">Description</th>
+                        <th class="font-weight-bold">Tags</th>
+                        <th class="font-weight-bold text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    {% for article in articles %}
+                    <tr>
+                        <td class="text-center text-sm">{{ article.id }}</td>
+                        <td class="text-sm">{{ article.titre|split(' ')|slice(0, 4)|join(' ') ~ '...' }}</td>
+                        <td class="text-sm">{{ article.image }}</td>
+                        <td class="text-sm">{{ article.description|split(' ')|slice(0, 7)|join(' ') ~ '...' }}</td>
+                        <td class="text-sm">{{ article.tags }}</td>
+                        <td class="text-center">
+                            <a href="{{ path('editArticle', {'id': article.id}) }}" target="_blank">
+                                <i class="fas fa-pen me-2" style="color: MediumSpringGreen;"></i>
+                            </a>
+                            <a href="#" class="delete-article" data-id="{{ article.id }}">
+                                <i class="fas fa-trash me-2" style="color: OrangeRed;"></i>
+                            </a>
+                            <a href="#" class="view-comments" data-id="{{ article.id }}">
+    <i class="fas fa-eye" style="color: DimGrey;"></i>
+</a>
 
-<div>
-<table class="table">
-  <thead class="thead-dark">
-    <tr>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
    
-
-<table class="table">
-  <thead class="thead-dark">
-    <tr>
-    <th scope="col">id</th>
-      <th scope="col">Titre</th>
-      <th scope="col">Image Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">Tags</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for article in articles %}
-    <tr>
-    {# {{ article.id }} #}
-      <th scope="row">{{ loop.index }}</th>
-      <td>{{ article.titre }}</td>
-      <td>{{ article.image }}</td>
-     <td> {{ article.description|split(' ')|slice(0, 7)|join(' ') ~ '...' }}    </td>
-      <td>{{ article.tags }}</td>
-        <td>
-        <a href="{{ path('editArticle', {'id': article.id} )}}" class="btn btn-primary">Modifier</a>
-        <a href="" class="btn btn-danger">Supprimer</a>
-        </td>
-        </tr>
-    {% endfor %}
-
-
-    </tr>
-  </tbody>
-</table>
 </div>
+
+
+
+<script>
+ // Filtre de recherche dans le tableau
+ document.getElementById("search").addEventListener("input", function () {
+    let searchValue = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#table-body tr");
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(searchValue) ? "" : "none";
+    });
+});
+
+// Suppression d'un article sans confirmation
+document.querySelectorAll('.delete-article').forEach(button => {
+    button.addEventListener('click', function (event) {
+        event.preventDefault();
+        let articleId = this.getAttribute('data-id');
+
+        fetch(`/article/supprimer/${articleId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.closest('tr').remove();
+            } else {
+                console.error("Erreur: " + data.message);
+            }
+        })
+        .catch(error => console.error("Erreur:", error));
+    });
+});
+
+</script>
+
+
 {% endblock %}
