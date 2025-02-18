@@ -28,7 +28,7 @@
             <div class="comment-content">
                 <div class="comment-header">
                     <strong>{{ commentaire.user.nom }} {{ commentaire.user.prenom }}</strong>
-                    <span class="comment-date">June 1, 2024 at 7:59 am</span>
+                    <span class="comment-date">{{ commentaire.createdAt|date('d/m/Y H:i') }}</span>
                 </div>
 
                 <p class="comment-text" id="comment-text-{{ commentaire.id }}">{{ commentaire.content }}</p>
