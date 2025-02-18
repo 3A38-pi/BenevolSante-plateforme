@@ -48,11 +48,9 @@ class RegistrationFormType extends AbstractType
                 'expanded' => true, // Affiche sous forme de boutons radio
                 'multiple' => false,
                 'label' => 'Type d\'utilisateur'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'S\'inscrire'
-            ]);
-    }
+            ]);}
+        
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {

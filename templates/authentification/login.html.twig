@@ -1,14 +1,35 @@
+{% extends 'base.html.twig' %}
 
+{% block Navbar %}{% endblock %}
 
+{% block title %}Connexion{% endblock %}
 
-<h2>Connexion</h2>
-    {% if error is not null %}
-    <p style="color: red;">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
-    {% endif %}
-    <form method="post">
-        <input type="text" name="_username" placeholder="Email" required />
-        <input type="password" name="_password" placeholder="Mot de passe" required />
-        <button type="submit">Se connecter</button>
-    </form>
-    <p><a href="{{ path('app_register') }}">Créer un compte</a></p>
-    
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-5 rounded" style="max-width: 500px; width: 100%;">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Connexion</h2>
+
+            {% if error is not null %}
+                <div class="alert alert-danger text-center">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <div class="mb-4">
+                    <input type="text" name="_username" class="form-control form-control-lg" placeholder="Email" required />
+                </div>
+                <div class="mb-4">
+                    <input type="password" name="_password" class="form-control form-control-lg" placeholder="Mot de passe" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Se connecter</button>
+            </form>
+
+            <p class="text-center mt-4">
+                <a href="{{ path('app_register') }}" class="text-decoration-none">Créer un compte</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -35,84 +35,86 @@
 </head>
 <body
 {% block Navbar %}
-    <!-- Spinner Start -->
-
-    
-    <!-- Spinner End -->
-
-
     <!-- Navbar Start -->
-    
     <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 wow fadeIn" data-wow-delay="0.1s">
         <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h1 class="m-0 text-primary"> <img class="img-fluide " src="{{asset('img/tawwa don 3.png')}}" alt="">Tawwa Dons</h1>
+            <h1 class="m-0 text-primary">
+                <img class="img-fluide" src="{{ asset('img/tawwa don 3.png') }}" alt="">Tawwa Dons
+            </h1>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span> 
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav" ms-auto p-4 p-lg-0">
-            
-                <a href="{{path('home')}}" class="nav-item nav-link active">Home</a>
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="{{ path('home') }}" class="nav-item nav-link active">Home</a>
                 <a href="" class="nav-item nav-link">About</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{path('dons_accepted')}}" class="dropdown-item">Liste des Dons </a>
-                        <a href="{{path('dons_form')}}" class="dropdown-item">Poster un Dons </a>
- 
+                        <a href="{{ path('dons_accepted') }}" class="dropdown-item">Liste des Dons</a>
+                        <a href="{{ path('dons_form') }}" class="dropdown-item">Poster un Dons</a>
                     </div>
                 </div>
-                     <div class="nav-item dropdown">
+                <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Evaluation</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{path('list_evaluations')}}" class="dropdown-item">Liste des Evaluation </a>
- 
+                        <a href="{{ path('list_evaluations') }}" class="dropdown-item">Liste des Evaluation</a>
                     </div>
                 </div>
-
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Blogs</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{path('ArticleList')}}" class="dropdown-item">Article </a>
-                        
+                        <a href="{{ path('ArticleList') }}" class="dropdown-item">Article</a>
                     </div>
                 </div>
-
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{path('doctors')}}" class="dropdown-item">Our Professional</a>
-                        <a href="{{path('appointment')}}" class="dropdown-item">Appointment</a>
-                        <a href="{{path('testimonial')}}" class="dropdown-item">Testimonial</a>
+                        <a href="{{ path('doctors') }}" class="dropdown-item">Our Professional</a>
+                        <a href="{{ path('appointment') }}" class="dropdown-item">Appointment</a>
+                        <a href="{{ path('testimonial') }}" class="dropdown-item">Testimonial</a>
                     </div>
                 </div>
-
-                    <div class="nav-item dropdown">
+                <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Recrutement</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{path('app_offre_index')}}" class="dropdown-item">List des offres</a>
+                        <a href="{{ path('app_offre_index') }}" class="dropdown-item">List des offres</a>
                     </div>
                 </div>
-                
-                
-             
-                 <div class="nav-item dropdown">
+                <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Evenement</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{path('app_eventfront_index')}}" class="dropdown-item">Evenement</a>
-            
+                        <a href="{{ path('app_eventfront_index') }}" class="dropdown-item">Evenement</a>
                     </div>
                 </div>
-                
-                <a href="{{path('contact')}}" class="nav-item nav-link">Contact</a>
+                <a href="{{ path('contact') }}" class="nav-item nav-link">Contact</a>
             </div>
-            <a href="" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Appointment<i class="fa fa-arrow-right ms-3"></i></a>
+            {# Conditional display: if user is connected, show logout button; otherwise show Login/Register buttons #}
+            {% if app.user %}
+                <form method="post" action="{{ path('app_logout') }}" class="d-inline me-2">
+                    <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Déconnexion</button>
+                </form>
+            {% else %}
+                <div class="d-flex align-items-center">
+                    <a href="{{ path('app_login') }}" class="btn btn-primary rounded-0 py-3 px-lg-4 me-2 d-none d-lg-inline">
+                        Login
+                    </a>
+                    <a href="{{ path('app_register') }}" class="btn btn-secondary rounded-0 py-3 px-lg-4 d-none d-lg-inline">
+                        Register
+                    </a>
+                </div>
+            {% endif %}
+            <a href="" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">
+                Appointment<i class="fa fa-arrow-right ms-3"></i>
+            </a>
         </div>
     </nav>
     <!-- Navbar End -->
-
 {% endblock %}
+
+
+
 {% block body %}
 
     <!-- Header Start -->
