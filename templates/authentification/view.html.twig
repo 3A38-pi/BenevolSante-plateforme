@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page View{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Mes Informations</h1>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>ID :</strong> {{ user.id }}</p>
+            <p><strong>Nom :</strong> {{ user.nom|default('N/A') }}</p>
+            <p><strong>Prénom :</strong> {{ user.prenom|default('N/A') }}</p>
+            <p><strong>Email :</strong> {{ user.email }}</p>
+            <p><strong>Rôles :</strong> {{ user.roles|join(', ') }}</p>
+            <p><strong>Type d'utilisateur :</strong> {{ user.typeUtilisateur|default('N/A') }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
