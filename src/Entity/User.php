@@ -6,8 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(
+    fields: ['email'],
+    message: 'Cet email est déjà utilisé.'
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -16,31 +22,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email ne peut pas être vide')]
+    #[Assert\Email(message: 'Veuillez saisir un email valide')]
+    #[Assert\Regex(
+        pattern: '/^.+@/',
+        message: 'L\'email doit contenir au moins un caractère avant le "@".'
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?string $password = null;
+#[Assert\NotBlank(message: 'Le mot de passe est requis')]
+#[Assert\Length(
+    min: 6,
+    minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caractères'
+)]
+private ?string $password = null;
+
 
     #[ORM\Column]
     private array $roles = [];
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
+        message: 'Le nom ne doit contenir que des lettres, espaces et tirets.'
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
+        message: 'Le prénom ne doit contenir que des lettres, espaces et tirets.'
+    )]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 20, options: ["default" => "verrouillé"])]
     private string $etatCompte;
 
     #[ORM\Column(length: 50)]
-    private ?string $typeUtilisateur = null; // Peut être "donneur", "beneficiaire" ou "professionnel"
-
+    #[Assert\NotBlank(message: 'Le type d\'utilisateur est requis')]
+    #[Assert\Choice(
+        choices: ['donneur', 'beneficiaire', 'professionnel'],
+        message: 'Le type d\'utilisateur doit être "donneur", "beneficiaire" ou "professionnel"'
+    )]
+    private ?string $typeUtilisateur = null;
 
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
-
     }
 
     public function getId(): ?int
