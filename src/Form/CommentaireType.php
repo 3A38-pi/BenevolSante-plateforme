@@ -15,8 +15,11 @@ class CommentaireType extends AbstractType
     {
         $builder
             ->add('content', TextareaType::class, [
-                'label' => false, // Supprime totalement le label
-                'attr' => ['class' => 'form-control', 'placeholder' => 'Écrire un commentaire...']
+                'label' => false,
+                'attr' => [
+                    'class' => 'form-control', 
+                    'placeholder' => 'Écrire un commentaire...'
+                ]
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Poster',

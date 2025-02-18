@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
-
 class ArticleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -19,25 +18,23 @@ class ArticleType extends AbstractType
         $builder
             ->add('titre', TextType::class, [
                 'label' => false,
-                'attr' => ['placeholder' => 'Entrer le titre']
+                'attr'  => ['placeholder' => 'Entrer le titre']
             ])
             ->add('image', FileType::class, [
                 'label' => false,
-                'attr' => ['placeholder' => 'Upload une image']
+                'attr'  => ['placeholder' => 'Upload une image']
             ])
             ->add('tags', TextType::class, [
                 'label' => false,
-                'attr' => ['placeholder' => 'Detailler quels sont les tags']
+                'attr'  => ['placeholder' => 'Detailler quels sont les tags']
             ])
-
             ->add('description', TextareaType::class, [
                 'label' => false,
-                'attr' => ['placeholder' => 'Citer le contenu de l\'article']
+                'attr'  => ['placeholder' => 'Citer le contenu de l\'article']
             ])
-
             ->add('ajouter', SubmitType::class, [
                 'label' => 'Ajouter l\'article',
-                'attr' => ['class' => 'btn bg-gradient-dark w-30 my-4 mb-2']
+                'attr'  => ['class' => 'btn bg-gradient-dark w-30 my-4 mb-2']
             ])
         ;
     }

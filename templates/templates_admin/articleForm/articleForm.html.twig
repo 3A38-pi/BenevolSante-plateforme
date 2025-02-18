@@ -1,57 +1,63 @@
 {% extends 'base2.html.twig' %}
 
-
-
 {% block body %}
 <br>
-<br>
-<br>
-<br>
-    <div class="container position-sticky z-index-sticky top-0">
-        <div class="row">
-            <div class="col-12">
-                <!-- Form -->
-                <div class="card z-index-0 fadeIn3 fadeInBottom">
-                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
-                            <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Ajouter un Article</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {{ form_start(form) }}
-                        
-                            <!-- Titre -->
-                            <div class="input-group input-group-outline my-3">
-                                {{ form_label(form.titre) }}
-                                {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
-                            </div>
 
-                            <!-- Description -->
-                            <div class="input-group input-group-outline my-3">
-                                {{ form_label(form.description) }}
-                                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
-                            </div>
-
-                            <!-- Tags -->
-                            <div class="input-group input-group-outline my-3">
-                                {{ form_label(form.tags) }}
-                                {{ form_widget(form.tags, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-
-                            <!-- Image -->
-                            <div class="input-group input-group-outline my-3">
-                                {{ form_label(form.image) }}
-                                {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-
-                            <!-- Submit Button --> 
-                  
-                         {{ form_widget(form.ajouter) }} 
-                        {{ form_end (form) }}
+<div class="container position-sticky z-index-sticky top-0">
+    <div class="row">
+        <div class="col-12">
+            <!-- Form -->
+            <div class="card z-index-0 fadeIn3 fadeInBottom">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+                        <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Ajouter un Article</h4>
                     </div>
                 </div>
-                <!-- End Form -->
+                <div class="card-body">
+                    {# Désactivation de la validation HTML5 côté client #}
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                    <!-- Titre -->
+                    <div class="input-group input-group-outline my-3">
+                        {{ form_label(form.titre) }}
+                        {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="text-danger small mt-1">{{ form_errors(form.titre) }}</div>
+
+                    <!-- Description -->
+                    <div class="input-group input-group-outline my-3">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                        </div>
+                        <div class="text-danger small mt-1">{{ form_errors(form.description) }}</div>
+                    
+
+                    <!-- Tags -->
+                    <div class="input-group input-group-outline my-3">
+                        {{ form_label(form.tags) }}
+                        {{ form_widget(form.tags, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="text-danger small mt-1">{{ form_errors(form.tags) }}</div>
+                    
+
+                    <!-- Image -->
+                    <div class="input-group input-group-outline my-3">
+                        {{ form_label(form.image) }}
+                        {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="text-danger small mt-1">{{ form_errors(form.image) }}</div>
+                    
+
+                    <!-- Bouton de soumission -->
+                    <div class="text-center">
+                        {{ form_widget(form.ajouter) }}
+                    </div>
+                    
+                    {{ form_end(form) }}
+                </div>
             </div>
+            <!-- Fin du formulaire -->
         </div>
     </div>
+</div>
 {% endblock %}
