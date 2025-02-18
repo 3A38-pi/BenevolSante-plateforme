@@ -51,7 +51,7 @@ final class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $commentaire->setArticle($article);
             // Exemple d'user en dur :
-            $commentaire->setUser($this->em->getRepository(User::class)->find(1));
+            $commentaire->setUser($this->getUser());
 
             $this->em->persist($commentaire);
             $this->em->flush();
@@ -101,10 +101,6 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    /**
-     * Route existante pour l'édition (ne sera plus utilisée si on fait tout en AJAX),
-     * mais vous pouvez la conserver ou la supprimer.
-     */
     #[Route('/editArticle/{id}', name: 'editArticle')]
     public function editArticle(Request $request, $id )
     {
@@ -121,30 +117,31 @@ final class ArticleController extends AbstractController
      * Nouvelle route pour modifier un article en AJAX (POST JSON)
      */
     #[Route('/article/modifier/{id}', name: 'article_modifier', methods: ['POST'])]
-    public function modifierArticle(Request $request, $id): JsonResponse
-    {
-        $article = $this->em->getRepository(Article::class)->find($id);
+public function modifierArticle(Request $request, $id): JsonResponse
+{
+    $article = $this->em->getRepository(Article::class)->find($id);
 
-        if (!$article) {
-            return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
-        }
-
-        $data = json_decode($request->getContent(), true);
-
-        if (!isset($data['titre'], $data['tags'], $data['description'])) {
-            return new JsonResponse(["success" => false, "message" => "Données invalides"], 400);
-        }
-
-        // Mettez à jour l'article
-        $article->setTitre($data['titre']);
-        $article->setTags($data['tags']);
-        $article->setDescription($data['description']);
-
-        $this->em->persist($article);
-        $this->em->flush();
-
-        return new JsonResponse(["success" => true, "message" => "Article modifié avec succès"]);
+    if (!$article) {
+        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
     }
+
+    $data = json_decode($request->getContent(), true);
+
+    if (!isset($data['titre'], $data['categorie'], $data['description'])) {
+        return new JsonResponse(["success" => false, "message" => "Données invalides"], 400);
+    }
+
+    $article->setTitre($data['titre']);
+    // Remplacer l'appel à setTags par setCategorie :
+    $article->setCategorie($data['categorie']);
+    $article->setDescription($data['description']);
+
+    $this->em->persist($article);
+    $this->em->flush();
+
+    return new JsonResponse(["success" => true, "message" => "Article modifié avec succès"]);
+}
+
 
     #[Route('/commentaire/modifier/{id}', name: 'commentaire_modifier', methods: ['POST'])]
     public function modifierCommentaire(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
@@ -213,4 +210,6 @@ final class ArticleController extends AbstractController
 
         return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
     }
+
+    
 }

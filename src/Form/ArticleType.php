@@ -24,10 +24,15 @@ class ArticleType extends AbstractType
                 'label' => false,
                 'attr'  => ['placeholder' => 'Upload une image']
             ])
-            ->add('tags', TextType::class, [
-                'label' => false,
-                'attr'  => ['placeholder' => 'Detailler quels sont les tags']
-            ])
+            // ->add('tags', TextType::class, [
+            //     'label' => false,
+            //     'attr'  => ['placeholder' => 'Detailler quels sont les tags']
+            // ])
+                     
+                        ->add('categorie', TextType::class, [
+                            'label' => false,
+                            'attr'  => ['placeholder' => 'Définir la catégorie']
+                        ])
             ->add('description', TextareaType::class, [
                 'label' => false,
                 'attr'  => ['placeholder' => 'Citer le contenu de l\'article']
