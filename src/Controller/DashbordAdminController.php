@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class DashbordAdminController extends AbstractController
 {
-    #[Route('/dashbord/home', name: 'app_dashbord_home')]
+    #[Route('/dashbord/home', name: 'admin_dashboard')]
     public function dashbord(): Response
     {
         return $this->render('templates_admin/dashboard/index.html.twig', [

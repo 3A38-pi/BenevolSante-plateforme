@@ -22,9 +22,10 @@ use Psr\Log\LoggerInterface;
 final class DonsController extends AbstractController
 {
     #[Route('/dons/form', name: 'dons_form')]
-    public function create(Request $request, #[Autowire('%image_dir%')] string $imageDir, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, #[Autowire('%image_dir%')] string $imageDir, EntityManagerInterface $entityManager , Security $security): Response
     {
-        $user = $entityManager->getRepository(User::class)->find(2);
+        $user = $security->getUser();
+ //       $user = $entityManager->getRepository(User::class)->find(2);
 
         if (!$user) {
             throw $this->createNotFoundException("Aucun utilisateur trouvé avec l'ID 2.");
@@ -166,7 +167,7 @@ final class DonsController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        // Security $security
+        Security $security
     ): JsonResponse {
         $logger->info("Requête reçue pour la création d'une demande de don.");
 
@@ -184,8 +185,8 @@ final class DonsController extends AbstractController
             // Récupérer le don et le bénéficiaire
             $don = $entityManager->getRepository(Dons::class)->find($donId);
             // Remplace 5 par l'ID d'un vrai utilisateur connecté
-            $beneficiaire = $entityManager->getRepository(User::class)->find(5);
-            // $beneficiaire = $security->getUser(); // Utiliser l'utilisateur connecté si la sécurité est bien configurée
+            // $beneficiaire = $entityManager->getRepository(User::class)->find(5);
+            $beneficiaire = $security->getUser(); // Utiliser l'utilisateur connecté si la sécurité est bien configurée
 
             // Vérifier si le don et le bénéficiaire existent
             if (!$don || !$beneficiaire) {
@@ -244,14 +245,14 @@ final class DonsController extends AbstractController
     #[Route('/beneficiaire/mes-demandes', name: 'mes_demandes')]
     public function mesDemandes(Security $security, EntityManagerInterface $entityManager): Response
     {
-        $beneficiaire = $entityManager->getRepository(User::class)->find(5);
-        /*
+       // $beneficiaire = $entityManager->getRepository(User::class)->find(5);
+        
 
     $beneficiaire = $security->getUser();
 
     if (!$beneficiaire) {
         throw $this->createAccessDeniedException();
-    }*/
+    }
 
         $demandes = $entityManager->getRepository(DemandeDons::class)->findBy([
             'beneficiaire' => $beneficiaire
@@ -269,13 +270,13 @@ final class DonsController extends AbstractController
     public function gererDemandes(EntityManagerInterface $entityManager, Security $security): Response
     {
 
-        $donneur = $entityManager->getRepository(User::class)->find(2);
-        /*
+      //  $donneur = $entityManager->getRepository(User::class)->find(2);
+       
      $donneur = $security->getUser();
      if (!$donneur) {
          throw $this->createAccessDeniedException("Accès refusé.");
      }
-        */
+        
         $demandes = $entityManager->getRepository(DemandeDons::class)->findByDonneur($donneur);
 
         return $this->render('templates_users/demandes_recues/demandes_recues.html.twig', [
@@ -288,14 +289,14 @@ final class DonsController extends AbstractController
     public function modifierDemande(DemandeDons $demande, string $action, EntityManagerInterface $entityManager, Security $security): JsonResponse
     {
 
-        $donneur = $entityManager->getRepository(User::class)->find(2);
-        /*
+        //$donneur = $entityManager->getRepository(User::class)->find(2);
+        
         $donneur = $security->getUser();
 
         if ($donneur !== $demande->getDons()->getDonneur()) {
             return new JsonResponse(['message' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
         }
-        */
+       
         if ($action === 'accepter') {
             $demande->setStatut('Acceptée');
         } elseif ($action === 'refuser') {
