@@ -75,6 +75,9 @@ private ?string $description_offre = null;
         return $this->titre_offre;
     }
 
+   
+   
+   
     public function setTitreOffre(string $titre_offre): static
     {
         $this->titre_offre = $titre_offre;
