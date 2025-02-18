@@ -10,30 +10,33 @@
 
             {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
-                <div class="form-group">
-                    {{ form_label(form.titre, 'Titre du Don') }}
-                    {{ form_widget(form.titre, {'attr': {'placeholder': 'Entrez le titre du don', 'class': 'form-control'}}) }}
-                </div>
+         <div class="form-group">
+            {{ form_label(form.titre) }}
+            {{ form_widget(form.titre, {'class': 'form-control'}) }}
+            {{ form_errors(form.titre) }}
+        </div>
 
-                <div class="form-group">
-                    {{ form_label(form.description, 'Description du Don') }}
-                    {{ form_widget(form.description, {'attr': {'rows': '5', 'placeholder': 'Décrivez votre don', 'class': 'form-control'}}) }}
-                </div>
+        <div class="form-group">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, {'class': 'form-control'}) }}
+            {{ form_errors(form.description) }}
+        </div>
 
                 <div class="form-group">
                     {{ form_label(form.dateCreation, 'Date de Création') }}
                     {{ form_widget(form.dateCreation, {'class': 'form-control'}) }}
                 </div>
+        <div class="form-group">
+            {{ form_label(form.categorie) }}
+            {{ form_widget(form.categorie, {'class': 'form-control'}) }}
+            {{ form_errors(form.categorie) }}
+        </div>
 
-                <div class="form-group">
-                    {{ form_label(form.categorie, 'Catégorie') }}
-                    {{ form_widget(form.categorie, {'class': 'form-control'}) }}
-                </div>
-
-                <div class="form-group">
-                    {{ form_label(form.image, 'Image du Don') }}
-                    {{ form_widget(form.image, {'class': 'form-control'}) }}
-                </div>
+        <div class="form-group">
+            {{ form_label(form.image) }}
+            {{ form_widget(form.image, {'class': 'form-control'}) }}
+            {{ form_errors(form.image) }}
+        </div>
 
 
             {{ form_end(form) }}
