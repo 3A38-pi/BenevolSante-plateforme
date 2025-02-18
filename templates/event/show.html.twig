@@ -21,7 +21,7 @@
             <!-- Affichage de l'image avec animation -->
             {% if event.image %}
                 <div class="text-center my-4">
-                    <img src="{{ asset('uploads/' ~ event.image) }}" class="img-fluid rounded shadow animate__animated animate__flipInX" alt="Image de l'événement" style="max-height: 300px;">
+                    <img src="{{asset('uploads/events/' ~ event.image) }}" class="img-fluid rounded shadow animate__animated animate__flipInX" alt="Image de l'événement" style="max-height: 300px;">
                 </div>
             {% else %}
                 <p class="text-center text-muted animate__animated animate__fadeIn">Aucune image disponible</p>
