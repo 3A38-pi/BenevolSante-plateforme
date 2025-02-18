@@ -1,14 +1,14 @@
 
 
-    <h2>Connexion</h2>
-        {% if error is not null %}
+
+<h2>Connexion</h2>
+    {% if error is not null %}
     <p style="color: red;">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
-{% endif %}
+    {% endif %}
     <form method="post">
         <input type="text" name="_username" placeholder="Email" required />
         <input type="password" name="_password" placeholder="Mot de passe" required />
         <button type="submit">Se connecter</button>
     </form>
-
-
+    <p><a href="{{ path('app_register') }}">Créer un compte</a></p>
     
