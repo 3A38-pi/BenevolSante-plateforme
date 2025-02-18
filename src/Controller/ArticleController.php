@@ -188,22 +188,40 @@ public function modifierArticle(Request $request, $id): JsonResponse
     }
 
     #[Route('/article/{id}/commentaires', name: 'get_article_commentaires', methods: ['GET'])]
-    public function getArticleCommentaires($id): JsonResponse
-    {
-        $article = $this->em->getRepository(Article::class)->find($id);
+public function getArticleCommentaires($id): JsonResponse
+{
+    $article = $this->em->getRepository(Article::class)->find($id);
 
-        if (!$article) {
-            return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
-        }
-
-        $commentaires = $article->getCommentaires()->map(function ($commentaire) {
-            return [
-                "content" => $commentaire->getContent(),
-            ];
-        });
-
-        return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
+    if (!$article) {
+        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
     }
+
+    $commentaires = $article->getCommentaires()->map(function ($commentaire) {
+        return [
+            "id"      => $commentaire->getId(),
+            "nom"     => $commentaire->getUser() ? $commentaire->getUser()->getNom() : "",
+            "prenom"  => $commentaire->getUser() ? $commentaire->getUser()->getPrenom() : "",
+            "content" => $commentaire->getContent(),
+            "etat"    => $commentaire->getEtat(),
+        ];
+    })->toArray();
+    
+    return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
+}
+
+#[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
+public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em): JsonResponse
+{
+    // Met à jour l'état du commentaire en "non valide"
+    $commentaire->setEtat("non valide");
+    $em->persist($commentaire);
+    $em->flush();
+    
+    return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
+}
+
+
+
 
     
 }
