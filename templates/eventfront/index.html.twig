@@ -19,8 +19,16 @@
                             <div class="card-body text-center">
                                 <h5 class="card-title fw-bold text-dark">{{ event.nom }}</h5>
                                 <p class="card-text text-muted">{{ event.description|length > 100 ? event.description|slice(0, 100) ~ '...' : event.description }}</p>
+                                
+                                <!-- Affichage de l'attribut 'type' de la catégorie associée à l'événement -->
+                                {% if event.categorie %}
+                                    <p class="text-muted mt-3">Catégorie : {{ event.categorie.type }}</p>
+                                {% else %}
+                                    <p class="text-muted mt-3">Catégorie : Non spécifiée</p>
+                                {% endif %}
+                                
                                 <div class="mt-3">
-                                    <a href="{{ path('app_event_show', {'id': event.id}) }}" class="btn btn-primary btn-sm px-4">Voir Détails</a>
+                                    <a href="{{ path('app_eventfront_show', {'id': event.id}) }}" class="btn btn-primary btn-sm px-4">Voir Détails</a>
                                 </div>
                             </div>
                         </div>
@@ -30,5 +38,12 @@
         {% else %}
             <p class="text-center text-muted fs-5">Aucun événement disponible pour le moment.</p>
         {% endif %}
+        
+        <!-- Le bouton "Envoyer une demande" est séparé et placé en dehors de la boucle -->
+        <div class="d-flex justify-content-center mt-4">
+            <a href="{{ path('app_participant_new') }}" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> participer
+            </a>
+        </div>
     </div>
 {% endblock %}
