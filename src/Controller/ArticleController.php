@@ -128,7 +128,7 @@ public function modifierArticle(Request $request, $id): JsonResponse
 
     $article->setTitre($data['titre']);
     $article->setCategorie($data['categorie']);
-    $article->setDescription($data['description']);
+    $article->setDescription($data['description']); 
 
     $this->em->persist($article);
     $this->em->flush();

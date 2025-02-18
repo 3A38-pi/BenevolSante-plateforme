@@ -30,6 +30,7 @@ final class DonsController extends AbstractController
     ): Response {
         $user = $security->getUser();
     
+
         if (!$user) {
             $this->addFlash('error', "Vous devez être connecté pour ajouter un don.");
             return $this->redirectToRoute('app_login'); // Redirection vers la page de connexion
