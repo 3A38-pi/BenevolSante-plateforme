@@ -31,9 +31,15 @@ class Article
     )]
     private ?string $image = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Les tags ne peuvent pas être vides.")]
-    private ?string $tags = null;
+    // #[ORM\Column(length: 255)]
+    // #[Assert\NotBlank(message: "Les tags ne peuvent pas être vides.")]
+    // private ?string $tags = null;
+
+
+        // Nouveau champ categorie
+        #[ORM\Column(length: 255)]
+        #[Assert\NotBlank(message: "La catégorie ne peut pas être vide.")]
+        private ?string $categorie = null;
 
     #[ORM\Column]
     private ?int $nombreCommentaire = 0;
@@ -78,14 +84,25 @@ class Article
         return $this;
     }
 
-    public function getTags(): ?string
+    // public function getTags(): ?string
+    // {
+    //     return $this->tags;
+    // }
+
+    // public function setTags(string $tags): static
+    // {
+    //     $this->tags = $tags;
+    //     return $this;
+    // }
+
+    public function getCategorie(): ?string
     {
-        return $this->tags;
+        return $this->categorie;
     }
 
-    public function setTags(string $tags): static
+    public function setCategorie(string $categorie): static
     {
-        $this->tags = $tags;
+        $this->categorie = $categorie;
         return $this;
     }
 

@@ -33,12 +33,20 @@
 
                 <p class="comment-text" id="comment-text-{{ commentaire.id }}">{{ commentaire.content }}</p>
 
-                {% if commentaire.user and commentaire.user.id == 1 %}
+                {# {% if commentaire.user and commentaire.user.id == 1 %}
                     <div class="comment-actions">
                         <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
                         <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
                     </div>
-                {% endif %}
+                {% endif %} #}
+
+                {% if app.user and commentaire.user and commentaire.user.id == app.user.id %}
+    <div class="comment-actions">
+        <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
+        <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
+    </div>
+{% endif %}
+
             </div>
         </div>
     {% else %}

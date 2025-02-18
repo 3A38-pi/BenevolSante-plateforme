@@ -125,7 +125,7 @@
                         <th class="font-weight-bold">Titre</th>
                         <th class="font-weight-bold">Image Name</th>
                         <th class="font-weight-bold">Description</th>
-                        <th class="font-weight-bold">Tags</th>
+                        <th class="font-weight-bold">Categorie</th>
                         <th class="font-weight-bold text-center">Actions</th>
                     </tr>
                 </thead>
@@ -140,14 +140,14 @@
                             <td class="text-sm">
                                 {{ article.description|split(' ')|slice(0, 7)|join(' ') ~ '...' }}
                             </td>
-                            <td class="text-sm">{{ article.tags }}</td>
+                            <td class="text-sm">{{ article.categorie }}</td>
                             <td class="text-center">
                                 <!-- Bouton EDIT : ouvre la popup -->
                                 <a href="#"
                                    class="edit-article"
                                    data-id="{{ article.id }}"
                                    data-titre="{{ article.titre }}"
-                                   data-tags="{{ article.tags }}"
+                                   data-tags="{{ article.categorie }}"
                                    data-description="{{ article.description }}">
                                     <i class="fas fa-pen me-2" style="color: MediumSpringGreen;"></i>
                                 </a>
@@ -181,7 +181,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="editArticleTags">Tags</label>
+            <label for="editArticleTags">Categorie</label>
             <input type="text" id="editArticleTags" class="form-control" />
         </div>
 
@@ -271,7 +271,7 @@
                 },
                 body: JSON.stringify({
                     titre: newTitre,
-                    tags: newTags,
+                    categorie: newTags,
                     description: newDescription
                 })
             })
