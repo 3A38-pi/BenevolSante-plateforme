@@ -8,6 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
 use App\Entity\Event;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Categorie;
 
 class EventType extends AbstractType
 {
@@ -16,6 +18,12 @@ class EventType extends AbstractType
         $builder
             ->add('nom')
             ->add('description')
+            ->add('categorie', EntityType::class, [ 
+                'class' => Categorie::class, 
+                'choice_label' => 'type', 
+                'label' => 'Catégorie',
+                'placeholder' => 'Sélectionnez une catégorie',
+            ])
             ->add('image', FileType::class, [
                 'label' => 'Image',
                 'mapped' => false,  // Important pour gérer l'image manuellement
@@ -34,6 +42,7 @@ class EventType extends AbstractType
                     ])
                 ],
             ]);
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void
