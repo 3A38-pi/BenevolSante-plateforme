@@ -21,28 +21,29 @@
             </thead>
             <tbody>
             {% for event in events %}
-                <tr class="animate__animated animate__fadeInUp animate__delay-0.5s">
-                    <td class="text-center fw-bold">{{ event.id }}</td>
-                    <td>{{ event.nom }}</td>
-                    <td>{{ event.description }}</td>
-                    <td>
-                        {% if event.image %}
-                            <img src="{{ asset('uploads/' ~ event.image) }}" alt="Image de l'événement" class="img-thumbnail" style="max-width: 80px; height: auto;">
-                        {% else %}
-                            <span class="text-muted">No image</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-center">
-                        <a href="{{ path('app_event_show', {'id': event.id}) }}" class="btn btn-info btn-sm hvr-grow">
-                            <i class="fas fa-eye"></i> Show
-                        </a>
-                    </td>
-                </tr>
+    <tr class="animate__animated animate__fadeInUp animate__delay-0.5s">
+        <td class="text-center fw-bold">{{ event.id }}</td>
+        <td>{{ event.nom }}</td>
+        <td>{{ event.description }}</td>
+        <td>
+            {% if event.image %}
+                <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="Image de l'événement" class="img-thumbnail" style="max-width: 80px; height: auto;">
             {% else %}
-                <tr>
-                    <td colspan="5" class="text-center text-muted animate__animated animate__fadeIn">No records found</td>
-                </tr>
-            {% endfor %}
+                <span class="text-muted">No image</span>
+            {% endif %}
+        </td>
+        <td class="text-center">
+            <a href="{{ path('app_event_show', {'id': event.id}) }}" class="btn btn-info btn-sm hvr-grow">
+                <i class="fas fa-eye"></i> Show
+            </a>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="5" class="text-center text-muted animate__animated animate__fadeIn">No records found</td>
+    </tr>
+{% endfor %}
+
             </tbody>
         </table>
     </div>
