@@ -24,9 +24,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(type: 'json')] // Utilisation du type JSON pour stocker un tableau
+    #[ORM\Column]
     private array $roles = [];
-    
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $nom = null;
@@ -37,8 +36,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20, options: ["default" => "verrouillé"])]
     private string $etatCompte;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Commentaire::class, cascade: ['persist', 'remove'])]
-    private Collection $commentaires;
+    #[ORM\Column(length: 50)]
+    private ?string $typeUtilisateur = null; // Peut être "donneur", "beneficiaire" ou "professionnel"
+
+
 
     public function __construct()
     {
@@ -76,12 +77,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return array_unique($this->roles);
+        return array_unique(array_merge($this->roles, ['ROLE_USER']));
     }
 
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+        return $this;
+    }
+
+    public function getTypeUtilisateur(): ?string
+    {
+        return $this->typeUtilisateur;
+    }
+
+    public function setTypeUtilisateur(string $type): self
+    {
+        $this->typeUtilisateur = $type;
         return $this;
     }
 

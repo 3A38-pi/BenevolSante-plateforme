@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Demandes de Dons{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="text-center">Mes Demandes de Dons</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Don</th>
+                <th>Date de Demande</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for demande in demandes %}
+                <tr>
+                    <td>{{ demande.dons.titre }}</td>
+                    <td>{{ demande.dateDemande|date('d/m/Y') }}</td>
+                    <td>{{ demande.statut }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">Aucune demande trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

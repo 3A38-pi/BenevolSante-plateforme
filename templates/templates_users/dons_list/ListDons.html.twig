@@ -8,6 +8,18 @@
   <div class="container mx-4">
     <h1 class="text-center">Liste des Dons Disponibles</h1>
 
+    <!-- Boutons d'accès aux listes de demandes -->
+    <div class="d-flex justify-content-center my-4">
+      {% if app.user %}
+        {% if is_granted('ROLE_BENEFICIAIRE') %}
+          <a href="{{ path('mes_demandes') }}" class="btn btn-info mx-2">Voir mes demandes</a>
+        {% endif %}
+        {% if is_granted('ROLE_DONNEUR') %}
+          <a href="{{ path('gerer_demandes') }}" class="btn btn-warning mx-2">Gérer les demandes reçues</a>
+        {% endif %}
+      {% endif %}
+    </div>
+
     <!-- Formulaire de filtrage et recherche -->
     <div class="mb-4">
       <div class="row justify-content-center align-items-center">
@@ -33,9 +45,7 @@
             <img src="{{ asset('uploads/images/' ~ don.imageUrl) }}" class="card-img-top img-fluid" alt="{{ don.titre }}" style="height: 150px; object-fit: cover;" />
             <div class="card-body text-center">
               <h5 class="card-title">{{ don.titre }}</h5>
-              <p class="card-text">
-                <strong>Catégorie :</strong> {{ don.categorie }}
-              </p>
+              <p class="card-text"><strong>Catégorie :</strong> {{ don.categorie }}</p>
               <p class="card-text">{{ don.description|slice(0, 80) }}...</p>
               <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#donModal{{ don.id }}">Voir détails</button>
             </div>
@@ -52,32 +62,24 @@
               </div>
               <div class="modal-body text-center">
                 <img src="{{ asset('uploads/images/' ~ don.imageUrl) }}" class="img-fluid mb-3" style="max-width: 100%; height: auto;" alt="{{ don.titre }}" />
-                <p>
-                  <strong>Catégorie :</strong> {{ don.categorie }}
-                </p>
-                <p>
-                  <strong>Description:</strong> {{ don.description }}
-                </p>
-                <p>
-                  <strong>Date de Création:</strong> {{ don.dateCreation|date('d/m/Y') }}
-                </p>
-                <p>
-                  <strong>Ajouté par:</strong> {{ don.donneur.nom }} {{ don.donneur.prenom }}
-                </p>
-                <p>
-                  <strong>Email:</strong> <a href="mailto:{{ don.donneur.email }}">{{ don.donneur.email }}</a>
-                </p>
+                <p><strong>Catégorie :</strong> {{ don.categorie }}</p>
+                <p><strong>Description:</strong> {{ don.description }}</p>
+                <p><strong>Date de Création:</strong> {{ don.dateCreation|date('d/m/Y') }}</p>
+                <p><strong>Ajouté par:</strong> {{ don.donneur.nom }} {{ don.donneur.prenom }}</p>
+                <p><strong>Email:</strong> <a href="mailto:{{ don.donneur.email }}">{{ don.donneur.email }}</a></p>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                {% set demande = app.user ? demandes[don.id] ?? null : null %}
-                <button class="btn btn-success btn-sm request-donation" data-don-id="{{ don.id }}" {{ demande and demande.statut == 'en attente' ? 'disabled' : '' }}>
-                  {% if demande and demande.statut == 'en attente' %}
-                    Demande en attente
-                  {% else %}
-                    Demander ce don
-                  {% endif %}
-                </button>
+                {% if is_granted('ROLE_BENEFICIAIRE') %}
+                  {% set demande = demandes[don.id] ?? null %}
+                  <button class="btn btn-success btn-sm request-donation" data-don-id="{{ don.id }}" {{ demande and demande.statut == 'en attente' ? 'disabled' : '' }}>
+                    {% if demande and demande.statut == 'en attente' %}
+                      Demande en attente
+                    {% else %}
+                      Demander ce don
+                    {% endif %}
+                  </button>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -104,7 +106,6 @@
       // Filtrage en temps réel
       const searchInput = document.getElementById("search-input");
       const categoryFilter = document.getElementById("categorie-filter");
-      const donsList = document.getElementById("dons-list");
       const dons = document.querySelectorAll(".don-item");
 
       function filterDons() {
@@ -118,11 +119,7 @@
           const matchesSearch = title.includes(searchText);
           const matchesCategory = selectedCategory === "" || category === selectedCategory;
 
-          if (matchesSearch && matchesCategory) {
-            don.style.display = "block";
-          } else {
-            don.style.display = "none";
-          }
+          don.style.display = matchesSearch && matchesCategory ? "block" : "none";
         });
       }
 
@@ -132,7 +129,6 @@
       // Gestion des boutons de demande
       $('.request-donation').on('click', function () {
         const donId = $(this).data('don-id');
-        console.log("Don ID envoyé :", donId); // Vérifier que l'ID est bien récupéré
 
         $.ajax({
           url: "{{ path('demande_don') }}",

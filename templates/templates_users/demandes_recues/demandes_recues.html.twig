@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les Demandes de Dons{% endblock %}
+
+{% block body %}
+<h1>Gérer les Demandes de Dons</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Bénéficiaire</th>
+            <th>Don</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for demande in demandes %}
+            <tr>
+                <td>{{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</td>
+                <td>{{ demande.dons.titre }}</td>
+                <td>{{ demande.statut }}</td>
+                <td>
+                    {% if demande.statut == 'En attente' %}
+                        <button class="btn btn-success" onclick="gererDemande({{ demande.id }}, 'accepter')">Accepter</button>
+                        <button class="btn btn-danger" onclick="gererDemande({{ demande.id }}, 'refuser')">Refuser</button>
+                    {% else %}
+                        <span>{{ demande.statut }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune demande en attente.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function gererDemande(demandeId, action) {
+    fetch(`/demande/${demandeId}/${action}`, {
+        method: "POST",
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        location.reload();
+    })
+    .catch(error => console.error("Erreur :", error));
+}
+</script>
+{% endblock %}
