@@ -1,0 +1,45 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Condidat index{% endblock %}
+
+{% block body %}
+    <h1>Condidat index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Email</th>
+                <th>Telephone</th>
+                <th>Cv</th>
+                <th>Offre</th> <!-- Colonne pour afficher le titre de l'offre -->
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for condidat in condidats %}
+            <tr>
+                <td>{{ condidat.id }}</td>
+                <td>{{ condidat.nom }}</td>
+                <td>{{ condidat.prenom }}</td>
+                <td>{{ condidat.email }}</td>
+                <td>{{ condidat.telephone }}</td>
+                <td>{{ condidat.cv }}</td>
+                <td>{{ condidat.offre ? condidat.offre.titreOffre : 'Aucune offre' }}</td> <!-- Affiche le titre de l'offre -->
+                <td>
+                    <a href="{{ path('app_condidatback_show', {'id': condidat.id}) }}">show</a>
+                    <a href="{{ path('app_condidatback_edit', {'id': condidat.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_condidatback_new') }}">Create new</a>
+{% endblock %}

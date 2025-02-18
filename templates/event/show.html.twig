@@ -1,0 +1,64 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Détails de l'Événement{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Titre animé -->
+    <h1 class="text-center text-primary animate__animated animate__fadeInDown">Détails de l'Événement</h1>
+
+    <!-- Carte élégante et animée -->
+    <div class="card shadow-lg rounded-lg mt-4 animate__animated animate__zoomIn animate__faster">
+        <div class="card-body position-relative">
+            <!-- Badge ID animé -->
+            <span class="badge bg-primary float-end p-2 animate__animated animate__bounceInRight animate__delay-1s">ID: {{ event.id }}</span>
+
+            <!-- Nom de l'événement avec animation -->
+            <h3 class="card-title text-uppercase text-primary fw-bold text-center mt-2 animate__animated animate__fadeInUp animate__delay-0.5s">
+                <i class="fas fa-calendar-alt"></i> {{ event.nom }}
+            </h3>
+
+            <!-- Affichage de l'image avec animation -->
+            {% if event.image %}
+                <div class="text-center my-4">
+                    <img src="{{ asset('uploads/' ~ event.image) }}" class="img-fluid rounded shadow animate__animated animate__flipInX" alt="Image de l'événement" style="max-height: 300px;">
+                </div>
+            {% else %}
+                <p class="text-center text-muted animate__animated animate__fadeIn">Aucune image disponible</p>
+            {% endif %}
+
+            <!-- Description avec effet de slide -->
+            <p class="card-text text-dark animate__animated animate__fadeInLeft animate__delay-0.8s">
+                <strong><i class="fas fa-align-left"></i> Description :</strong>
+                {{ event.description }}
+            </p>
+
+            <!-- Boutons d'action animés -->
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a href="{{ path('app_event_index') }}" class="btn btn-outline-primary btn-lg hvr-bounce-to-right">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+                <a href="{{ path('app_event_edit', {'id': event.id}) }}" class="btn btn-warning btn-lg hvr-bounce-to-right">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                {{ include('event/_delete_form.html.twig') }}
+
+                <!-- Bouton dropdown avec effet hover -->
+                <div class="btn-group animate__animated animate__bounceIn animate__delay-1s">
+                    
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item hvr-fade" href="{{ path('app_event_show', {'id': event.id}) }}"><i class="fas fa-eye"></i> Show</a></li>
+                        <li><a class="dropdown-item hvr-fade" href="{{ path('app_event_new') }}"><i class="fas fa-plus-circle"></i> Create New</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Ajout de Bootstrap, Animate.css, Hover.css et FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

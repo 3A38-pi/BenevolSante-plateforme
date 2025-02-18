@@ -1,0 +1,83 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Créer un Nouvel Événement{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <!-- En-tête avec animation -->
+        <div class="text-center mb-4">
+            <h1 class="text-primary animate__animated animate__fadeInDown">📅 Créer un Nouvel Événement</h1>
+            <p class="text-muted">Remplissez le formulaire ci-dessous pour ajouter un nouvel événement.</p>
+        </div>
+
+        <!-- Barre de progression fictive -->
+        <div class="progress mb-3">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 70%;"></div>
+        </div>
+
+        <!-- Carte du formulaire -->
+        <div class="card shadow-lg p-4 animate__animated animate__zoomIn">
+            <div class="card-body">
+                <h2 class="card-title text-center text-dark mb-3">📝 Détails de l'Événement</h2>
+
+                <div class="mt-3">
+                    {{ include('event/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bouton retour stylisé -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_event_index') }}" class="btn btn-outline-primary btn-lg animate__animated animate__pulse animate__infinite">
+                ⬅ Retour à la Liste
+            </a>
+        </div>
+    </div>
+
+    <!-- Ajout de styles et animations -->
+    <style>
+        /* Effet d'ombre et d'animation pour la carte */
+        .card {
+            border-radius: 12px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Effet de bouton */
+        .btn {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Animation des champs de formulaire */
+        input, textarea, select {
+            transition: all 0.3s ease-in-out;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Animation de la barre de progression */
+        .progress {
+            height: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+
+    <!-- Ajout de la bibliothèque Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}

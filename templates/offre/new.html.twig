@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Offre{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Titre avec une animation fluide -->
+    <h1 class="text-center text-primary animate__animated animate__fadeIn animate__delay-0.5s">Créer une Nouvelle Offre</h1>
+
+    <!-- Card avec bordure arrondie et ombre subtile -->
+    <div class="card shadow-lg rounded-lg mt-5 animate__animated animate__fadeInUp">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4 text-primary">Formulaire de création</h4>
+
+            <!-- Formulaire généré par Symfony avec les champs personnalisés -->
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            
+            <div class="mb-3">
+                {{ form_label(form.titre_offre, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.titre_offre, {'attr': {'class': 'form-control form-control-lg border-primary shadow-sm', 'placeholder': 'Entrez le titre de l\'offre'}}) }}
+                <div class="text-danger">
+                    {{ form_errors(form.titre_offre) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.description_offre, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.description_offre, {'attr': {'class': 'form-control form-control-lg border-primary shadow-sm', 'placeholder': 'Entrez la description de l\'offre', 'rows': '4'}}) }}
+                <div class="text-danger">
+                    {{ form_errors(form.description_offre) }}
+                </div>
+            </div>
+
+            <!-- Bouton d'action -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary btn-lg animate__animated animate__pulse animate__delay-1s">
+                    <i class="fas fa-save"></i> Créer l'Offre
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- Bouton retour avec style conservé -->
+    <div class="mt-4 text-center">
+        <a href="{{ path('app_offre_index') }}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<!-- Ajout de Bootstrap, Animate.css et icônes FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

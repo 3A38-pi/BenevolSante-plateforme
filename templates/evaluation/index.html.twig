@@ -1,0 +1,73 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Créer une Évaluation{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-clipboard-list"></i> Créer une Évaluation</h4>
+            </div>
+            <div class="card-body">
+                
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                <!-- Champ 'name' avec erreur affichée -->
+                <div class="mb-3">
+                    {{ form_label(form.name, 'Nom de l\'évaluation', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Évaluation de Math'}}) }}
+                    <div class="text-danger">{{ form_errors(form.name) }}</div>
+                </div>
+
+                <!-- Champ 'question' avec erreur affichée -->
+                <div class="mb-3">
+                    {{ form_label(form.question, 'Question', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.question, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la question'}}) }}
+                    <div class="text-danger">{{ form_errors(form.question) }}</div>
+                </div>
+
+                <!-- Champ 'description' -->
+                <div class="mb-3">
+                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Ajoutez une description'}}) }}
+                    <div class="text-danger">{{ form_errors(form.description) }}</div>
+                </div>
+
+                <!-- Champ 'options' -->
+                <div class="mb-3">
+                    {{ form_label(form.options, 'Options', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                    {{ form_widget(form.options, {'attr': {'class': 'form-control', 'placeholder': 'Option1, Option2, Option3'}}) }}
+                    <small class="form-text text-muted">Séparez les options par une virgule.</small>
+                    <div class="text-danger">{{ form_errors(form.options) }}</div>
+                </div>
+
+                <!-- Champ 'openEnded' -->
+                <div class="form-check mb-3">
+                    {{ form_widget(form.openEnded, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.openEnded, 'Réponse ouverte', {'label_attr': {'class': 'form-check-label'}}) }}
+                    <div class="text-danger">{{ form_errors(form.openEnded) }}</div>
+                </div>
+
+                <!-- Bouton de soumission avec animation -->
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="fas fa-save"></i> Créer
+                </button>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", function(event) {
+                form.classList.add("was-validated");
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Événements{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="text-center mb-5 text-primary fw-bold">Découvrez Nos Événements</h1>
+
+        {% if events is not empty %}
+            <div class="row g-4">
+                {% for event in events %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                            {% if event.image %}
+                                <img src="{{ asset('uploads/' ~ event.image) }}" class="card-img-top img-fluid" alt="Image de l'événement" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top text-center py-5 bg-light text-muted">Pas d'image</div>
+                            {% endif %}
+                            <div class="card-body text-center">
+                                <h5 class="card-title fw-bold text-dark">{{ event.nom }}</h5>
+                                <p class="card-text text-muted">{{ event.description|length > 100 ? event.description|slice(0, 100) ~ '...' : event.description }}</p>
+                                
+                                <!-- Affichage de l'attribut 'type' de la catégorie associée à l'événement -->
+                                {% if event.categorie %}
+                                    <p class="text-muted mt-3">Catégorie : {{ event.categorie.type }}</p>
+                                {% else %}
+                                    <p class="text-muted mt-3">Catégorie : Non spécifiée</p>
+                                {% endif %}
+                                
+                                <div class="mt-3">
+                                    <a href="{{ path('app_eventfront_show', {'id': event.id}) }}" class="btn btn-primary btn-sm px-4">Voir Détails</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-muted fs-5">Aucun événement disponible pour le moment.</p>
+        {% endif %}
+        
+        <!-- Le bouton "Envoyer une demande" est séparé et placé en dehors de la boucle -->
+        <div class="d-flex justify-content-center mt-4">
+            <a href="{{ path('app_participant_new') }}" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> participer
+            </a>
+        </div>
+    </div>
+{% endblock %}
