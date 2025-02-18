@@ -21,7 +21,7 @@ class Event
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]  // Image est maintenant nullable
     private ?string $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
@@ -51,7 +51,6 @@ class Event
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -63,7 +62,6 @@ class Event
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -72,10 +70,9 @@ class Event
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): static
     {
         $this->image = $image;
-
         return $this;
     }
 
@@ -87,7 +84,6 @@ class Event
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
-
         return $this;
     }
 
