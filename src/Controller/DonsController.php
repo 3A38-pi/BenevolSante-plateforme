@@ -22,10 +22,9 @@ use Psr\Log\LoggerInterface;
 final class DonsController extends AbstractController
 {
     #[Route('/dons/form', name: 'dons_form')]
-    public function create(Request $request, #[Autowire('%image_dir%')] string $imageDir, EntityManagerInterface $entityManager , Security $security): Response
+    public function create(Request $request, #[Autowire('%image_dir%')] string $imageDir, EntityManagerInterface $entityManager): Response
     {
-        $user = $security->getUser();
- //       $user = $entityManager->getRepository(User::class)->find(2);
+        $user = $entityManager->getRepository(User::class)->find(2);
 
         if (!$user) {
             throw $this->createNotFoundException("Aucun utilisateur trouvé avec l'ID 2.");
