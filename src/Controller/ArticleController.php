@@ -42,15 +42,12 @@ final class ArticleController extends AbstractController
         if (!$article) {
             throw $this->createNotFoundException("L'article n'existe pas.");
         }
-
-        // Création d'un nouveau commentaire
         $commentaire = new Commentaire();
         $form = $this->createForm(CommentaireType::class, $commentaire);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $commentaire->setArticle($article);
-            // Exemple d'user en dur :
             $commentaire->setUser($this->getUser());
 
             $this->em->persist($commentaire);
@@ -113,9 +110,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    /**
-     * Nouvelle route pour modifier un article en AJAX (POST JSON)
-     */
+
     #[Route('/article/modifier/{id}', name: 'article_modifier', methods: ['POST'])]
 public function modifierArticle(Request $request, $id): JsonResponse
 {
@@ -132,9 +127,8 @@ public function modifierArticle(Request $request, $id): JsonResponse
     }
 
     $article->setTitre($data['titre']);
-    // Remplacer l'appel à setTags par setCategorie :
     $article->setCategorie($data['categorie']);
-    $article->setDescription($data['description']);
+    $article->setDescription($data['description']); 
 
     $this->em->persist($article);
     $this->em->flush();

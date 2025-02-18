@@ -23,6 +23,7 @@ class AddDonsType extends AbstractType
                 'label' => 'Titre du Don',
                 'attr' => ['class' => 'form-control'],
             ])
+            
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'attr' => ['class' => 'form-control'],
@@ -49,7 +50,7 @@ class AddDonsType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '2M',
+                        'maxSize' => '4M',
                         'mimeTypes' => ['image/jpeg', 'image/png'],
                         'mimeTypesMessage' => 'Veuillez uploader une image JPG ou PNG valide.',
                     ]),
