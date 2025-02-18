@@ -166,10 +166,10 @@ final class DonsController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        Security $security
+        // Security $security
     ): JsonResponse {
         $logger->info("Requête reçue pour la création d'une demande de don.");
-    
+
         try {
             // Récupérer l'ID du don depuis la requête
             $donId = $request->request->get('donId');
@@ -177,22 +177,22 @@ final class DonsController extends AbstractController
                 $logger->error("Aucun ID de don fourni dans la requête.");
                 return new JsonResponse(['message' => 'Aucun ID de don fourni'], Response::HTTP_BAD_REQUEST);
             }
-    
+
             // Log pour voir si le donId est bien reçu
             $logger->info("Don ID reçu : $donId");
-    
+
             // Récupérer le don et le bénéficiaire
             $don = $entityManager->getRepository(Dons::class)->find($donId);
             // Remplace 5 par l'ID d'un vrai utilisateur connecté
             $beneficiaire = $entityManager->getRepository(User::class)->find(5);
             // $beneficiaire = $security->getUser(); // Utiliser l'utilisateur connecté si la sécurité est bien configurée
-    
+
             // Vérifier si le don et le bénéficiaire existent
             if (!$don || !$beneficiaire) {
                 $logger->error("Don ou utilisateur introuvable.");
                 return new JsonResponse(['message' => 'Erreur, don ou utilisateur introuvable'], Response::HTTP_BAD_REQUEST);
             }
-    
+
             // Vérifier si une demande "En attente" ou "Acceptée" existe déjà pour ce don et ce bénéficiaire
             $existingDemande = $entityManager->getRepository(DemandeDons::class)
                 ->createQueryBuilder('d')
@@ -204,7 +204,7 @@ final class DonsController extends AbstractController
                 ->setParameter('statuts', ['En attente', 'Acceptée'])
                 ->getQuery()
                 ->getOneOrNullResult();
-    
+
             if ($existingDemande) {
                 $logger->info("Une demande en attente ou acceptée existe déjà.", [
                     'demande_id' => $existingDemande->getId(),
@@ -212,88 +212,100 @@ final class DonsController extends AbstractController
                 ]);
                 return new JsonResponse(['message' => 'Vous avez déjà une demande en attente ou acceptée pour ce don.'], Response::HTTP_CONFLICT);
             }
-    
+
             // Création de la nouvelle demande
             $demande = new DemandeDons();
             $demande->setDons($don);
             $demande->setBeneficiaire($beneficiaire);
             $demande->setDateDemande(new \DateTime());
             $demande->setStatut('En attente');
-    
+
             // Enregistrer la demande en base de données
             $entityManager->persist($demande);
             $entityManager->flush();
-    
+
             // Log de succès
             $logger->info("Demande de don créée avec succès pour le don ID : $donId");
-    
+
             // Retourner une réponse JSON de succès
             return new JsonResponse(['message' => 'Demande envoyée avec succès'], Response::HTTP_OK);
         } catch (\Exception $e) {
             // Log de l'erreur
             $logger->error("Erreur lors de la création de la demande de don : " . $e->getMessage());
-    
+
             // Retourner une réponse JSON d'erreur
             return new JsonResponse(['message' => 'Erreur interne : ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
 
 
 
-    #[Route('/dons/mes-demandes', name: 'mes_demandes')]
-    public function mesDemandes(EntityManagerInterface $entityManager, Security $security): Response
+    /////// recuperer liste des demandes pour les Bénéficiaires : tjiiiblou list mtee3 7ajet elli tlabhom bch ychouf etat mtee3hom
+    #[Route('/beneficiaire/mes-demandes', name: 'mes_demandes')]
+    public function mesDemandes(Security $security, EntityManagerInterface $entityManager): Response
     {
-        $user = $security->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
+        $beneficiaire = $entityManager->getRepository(User::class)->find(5);
+        /*
+
+    $beneficiaire = $security->getUser();
+
+    if (!$beneficiaire) {
+        throw $this->createAccessDeniedException();
+    }*/
 
         $demandes = $entityManager->getRepository(DemandeDons::class)->findBy([
-            'dons' => $entityManager->getRepository(Dons::class)->findBy(['donneur' => $user]),
-            'statut' => 'en attente'
+            'beneficiaire' => $beneficiaire
         ]);
 
-        return $this->render('templates_users/mes_demandes.html.twig', [
+        return $this->render('templates_users/listeDemande_Beneficiaire/listeDemande_beneficiaire.html.twig', [
+            'demandes' => $demandes,
+        ]);
+    }
+
+
+
+    //recuperer liste des demande pour le donneur ta3tiiih bch y accepti demande walla yrefusiiii
+    #[Route('/donneur/gerer-demandes', name: 'gerer_demandes')]
+    public function gererDemandes(EntityManagerInterface $entityManager, Security $security): Response
+    {
+
+        $donneur = $entityManager->getRepository(User::class)->find(2);
+        /*
+     $donneur = $security->getUser();
+     if (!$donneur) {
+         throw $this->createAccessDeniedException("Accès refusé.");
+     }
+        */
+        $demandes = $entityManager->getRepository(DemandeDons::class)->findByDonneur($donneur);
+
+        return $this->render('templates_users/demandes_recues/demandes_recues.html.twig', [
             'demandes' => $demandes
         ]);
     }
 
-
-
-    #[Route('/demande/accept/{id}', name: 'accepter_demande')]
-    public function accepterDemande(DemandeDons $demande, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+    //lel beneficiaire bch y accepti wala yrefusiiiii demande 
+    #[Route('/demande/{id}/{action}', name: 'modifier_demande', methods: ['POST'])]
+    public function modifierDemande(DemandeDons $demande, string $action, EntityManagerInterface $entityManager, Security $security): JsonResponse
     {
-        $demande->setStatut('acceptée');
+
+        $donneur = $entityManager->getRepository(User::class)->find(2);
+        /*
+        $donneur = $security->getUser();
+
+        if ($donneur !== $demande->getDons()->getDonneur()) {
+            return new JsonResponse(['message' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
+        }
+        */
+        if ($action === 'accepter') {
+            $demande->setStatut('Acceptée');
+        } elseif ($action === 'refuser') {
+            $demande->setStatut('Refusée');
+        } else {
+            return new JsonResponse(['message' => 'Action non valide.'], Response::HTTP_BAD_REQUEST);
+        }
+
         $entityManager->flush();
 
-        // Envoyer un email au bénéficiaire
-        $email = (new Email())
-            ->from('noreply@plateforme.com')
-            ->to($demande->getBeneficiaire()->getEmail())
-            ->subject('Votre demande a été acceptée !')
-            ->html("<p>Votre demande pour le don <strong>{$demande->getDons()->getTitre()}</strong> a été acceptée.</p>");
-
-        $mailer->send($email);
-
-        return $this->redirectToRoute('mes_demandes');
-    }
-
-    #[Route('/demande/refuse/{id}', name: 'refuser_demande')]
-    public function refuserDemande(DemandeDons $demande, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
-    {
-        $demande->setStatut('refusée');
-        $entityManager->flush();
-
-        // Envoyer un email au bénéficiaire
-        $email = (new Email())
-            ->from('noreply@plateforme.com')
-            ->to($demande->getBeneficiaire()->getEmail())
-            ->subject('Votre demande a été refusée.')
-            ->html("<p>Votre demande pour le don <strong>{$demande->getDons()->getTitre()}</strong> a été refusée.</p>");
-
-        $mailer->send($email);
-
-        return $this->redirectToRoute('mes_demandes');
+        return new JsonResponse(['message' => "Demande $action avec succès."], Response::HTTP_OK);
     }
 }

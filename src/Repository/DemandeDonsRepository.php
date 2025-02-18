@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\DemandeDons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;
 
 /**
  * @extends ServiceEntityRepository<DemandeDons>
@@ -15,6 +16,17 @@ class DemandeDonsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, DemandeDons::class);
     }
+
+    public function findByDonneur(User $donneur)
+{
+    return $this->createQueryBuilder('d')
+        ->join('d.dons', 'don')
+        ->where('don.donneur = :donneur')
+        ->setParameter('donneur', $donneur)
+        ->getQuery()
+        ->getResult();
+}
+
 
 //    /**
 //     * @return DemandeDons[] Returns an array of DemandeDons objects
