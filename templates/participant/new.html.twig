@@ -13,7 +13,7 @@
             <h4 class="card-title text-center mb-4 text-success">Formulaire de Création</h4>
 
             <!-- Formulaire Symfony -->
-          {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
             <div class="mb-3">
                 {{ form_label(form.nom, null, {'attr': {'class': 'form-label'}}) }}
@@ -28,6 +28,16 @@
             <div class="mb-3">
                 {{ form_label(form.email, null, {'attr': {'class': 'form-label'}}) }}
                 {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Entrez votre email'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.numtel, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.numtel, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Entrez votre numéro de téléphone'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.event, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.event, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm'}}) }}
             </div>
 
             <!-- Bouton de soumission stylisé -->

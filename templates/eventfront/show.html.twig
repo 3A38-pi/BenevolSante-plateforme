@@ -19,13 +19,13 @@
             </h3>
 
             <!-- Affichage de l'image avec animation -->
-            {% if event.image %}
-                <div class="text-center my-4">
-                    <img src="{{ asset('uploads/' ~ event.image) }}" class="img-fluid rounded shadow animate__animated animate__flipInX" alt="Image de l'événement" style="max-height: 300px;">
-                </div>
-            {% else %}
-                <p class="text-center text-muted animate__animated animate__fadeIn">Aucune image disponible</p>
-            {% endif %}
+           {% if event.image %}
+    <div class="text-center my-4">
+        <img src="{{ asset('uploads/events/' ~ event.image) }}" class="img-fluid rounded shadow animate__animated animate__flipInX" alt="Image de l'événement" style="max-height: 300px;">
+    </div>
+{% else %}
+    <p class="text-center text-muted animate__animated animate__fadeIn">Aucune image disponible</p>
+{% endif %}
 
             <!-- Description avec effet de slide -->
             <p class="card-text text-dark animate__animated animate__fadeInLeft animate__delay-0.8s">

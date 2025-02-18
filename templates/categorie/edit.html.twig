@@ -1,14 +1,33 @@
-
 {% extends 'base2.html.twig' %}
 
-{% block title %}Edit Categorie{% endblock %}
+{% block title %}Edit Category{% endblock %}
 
 {% block body %}
-    <h1>Edit Categorie</h1>
+    <div class="container">
+        <h1 class="my-4">Edit Category</h1>
 
-    {{ include('categorie/_form.html.twig', {'button_label': 'Update'}) }}
+        {# Affichage des erreurs s'il y en a #}
+        {% if app.flashes('error') is not empty %}
+            <div class="alert alert-danger">
+                {% for flash_message in app.flashes('error') %}
+                    <p>{{ flash_message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    <a href="{{ path('app_categorie_index') }}">back to list</a>
+        {# Formulaire de mise à jour de la catégorie #}
+        <div class="mb-4">
+            {{ include('categorie/_form.html.twig', {'button_label': 'Update'}) }}
+        </div>
 
-    {{ include('categorie/_delete_form.html.twig') }}
+        {# Lien pour revenir à la liste des catégories #}
+        <div>
+            <a href="{{ path('app_categorie_index') }}" class="btn btn-secondary">Back to list</a>
+        </div>
+
+        {# Formulaire de suppression de la catégorie #}
+        <div class="mt-4">
+            {{ include('categorie/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}
