@@ -33,20 +33,12 @@
 
                 <p class="comment-text" id="comment-text-{{ commentaire.id }}">{{ commentaire.content }}</p>
 
-                {# {% if commentaire.user and commentaire.user.id == 1 %}
+                {% if app.user and commentaire.user and commentaire.user.id == app.user.id %}
                     <div class="comment-actions">
                         <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
                         <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
                     </div>
-                {% endif %} #}
-
-                {% if app.user and commentaire.user and commentaire.user.id == app.user.id %}
-    <div class="comment-actions">
-        <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
-        <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
-    </div>
-{% endif %}
-
+                {% endif %}
             </div>
         </div>
     {% else %}
@@ -66,24 +58,26 @@
 
     <br>
     <br>
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-    <div class="mb-3">
-        {{ form_label(form.content, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.content) }}
-        <div class="text-danger small mt-1">
-            {{ form_errors(form.content) }}
-        </div>
-    </div>
+    {% if app.user %}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="mb-3">
+                {{ form_label(form.content, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.content) }}
+                <div class="text-danger small mt-1">
+                    {{ form_errors(form.content) }}
+                </div>
+            </div>
 
-    <div>
-        {{ form_widget(form.submit) }}
-    </div>
+            <div>
+                {{ form_widget(form.submit) }}
+            </div>
+        {{ form_end(form) }}
 
-    {{ form_end(form) }}
+    {% endif %}
 </div>
 
-<!-- Inclusion du fichier JS externe -->
+
 <script src="{{ asset('js/commentaire.js') }}"></script>
 
 </body>
