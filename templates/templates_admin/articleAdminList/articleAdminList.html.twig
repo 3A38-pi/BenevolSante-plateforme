@@ -14,26 +14,21 @@
         border-radius: 8px;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     }
-
     /* ----- Table ----- */
     .table-responsive {
         margin-top: 20px;
     }
-
     thead.bg-light {
         background-color: #f8f9fa !important;
     }
-
     th, td {
         vertical-align: middle !important;
         font-size: 14px;
     }
-
     /* ----- Search Bar ----- */
     .input-group.input-group-outline {
         width: 200px;
     }
-
     /* ----- Popup / Modal ----- */
     .popup {
         display: none; /* caché par défaut */
@@ -45,7 +40,7 @@
         background: rgba(0, 0, 0, 0.5);
         justify-content: center;
         align-items: center;
-        z-index: 999; /* pour passer au-dessus du contenu */
+        z-index: 999;
     }
     .popup-content {
         background: #fff;
@@ -55,17 +50,14 @@
         max-width: 600px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-
     .popup-content h4 {
         margin-bottom: 15px;
     }
-
     .form-group label {
         font-weight: bold;
         margin-bottom: 5px;
         display: inline-block;
     }
-
     .form-control {
         width: 100%;
         padding: 8px 10px;
@@ -73,18 +65,15 @@
         border: 1px solid #ccc;
         font-size: 14px;
     }
-
     .form-group textarea.form-control {
         resize: vertical;
     }
-
     .popup-buttons {
         display: flex;
         justify-content: flex-end;
         gap: 15px;
         margin-top: 20px;
     }
-
     .cancel-btn, .confirm-btn {
         padding: 8px 15px;
         border: none;
@@ -92,15 +81,45 @@
         cursor: pointer;
         font-weight: bold;
     }
-
     .cancel-btn {
         background: #dc3545;
         color: #fff;
     }
-
     .confirm-btn {
         background: #007bff;
         color: #fff;
+    }
+    /* --- Styles pour la pop-up des commentaires --- */
+    .comment-line {
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .comment-details {
+        flex-grow: 1;
+    }
+    .comment-details p {
+        margin: 5px 0;
+    }
+    /* Nouveau style pour le bouton de désactivation */
+    .deactivate-comment-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        color: #dc3545;
+        margin-left: 10px;
+        transition: color 0.2s ease;
+    }
+    .deactivate-comment-btn:hover {
+        color: #c82333;
+    }
+    /* Style appliqué aux commentaires désactivés */
+    .deactivated .comment-details {
+        text-decoration: line-through;
+        opacity: 0.5;
     }
 </style>
 
@@ -108,7 +127,6 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="mb-0 h4 font-weight-bolder">Liste Des Articles</h3>
-            
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                 <div class="input-group input-group-outline">
                     <label class="form-label">Search...</label>
@@ -116,7 +134,6 @@
                 </div>
             </div>
         </div>
-
         <div class="table-responsive">
             <table class="table align-items-center">
                 <thead class="bg-light">
@@ -142,7 +159,7 @@
                             </td>
                             <td class="text-sm">{{ article.categorie }}</td>
                             <td class="text-center">
-                                <!-- Bouton EDIT : ouvre la popup -->
+                                <!-- Bouton EDIT -->
                                 <a href="#"
                                    class="edit-article"
                                    data-id="{{ article.id }}"
@@ -151,13 +168,11 @@
                                    data-description="{{ article.description }}">
                                     <i class="fas fa-pen me-2" style="color: MediumSpringGreen;"></i>
                                 </a>
-
-                                <!-- Bouton DELETE : supprime l'article -->
+                                <!-- Bouton DELETE -->
                                 <a href="#" class="delete-article" data-id="{{ article.id }}">
                                     <i class="fas fa-trash me-2" style="color: OrangeRed;"></i>
                                 </a>
-
-                                <!-- Bouton VIEW COMMENTS (exemple, si vous l'utilisez) -->
+                                <!-- Bouton VIEW COMMENTS -->
                                 <a href="#" class="view-comments" data-id="{{ article.id }}">
                                     <i class="fas fa-eye" style="color: DimGrey;"></i>
                                 </a>
@@ -170,26 +185,22 @@
     </div>
 </div>
 
-{# -- Popup pour éditer l'article -- #}
+{# --- Popup pour éditer l'article (existante) --- #}
 <div id="editArticlePopup" class="popup">
     <div class="popup-content">
         <h4>Modifier l'article</h4>
-
         <div class="form-group mb-3">
             <label for="editArticleTitre">Titre</label>
             <input type="text" id="editArticleTitre" class="form-control" />
         </div>
-
         <div class="form-group mb-3">
             <label for="editArticleTags">Categorie</label>
             <input type="text" id="editArticleTags" class="form-control" />
         </div>
-
         <div class="form-group mb-3">
             <label for="editArticleDescription">Description</label>
             <textarea id="editArticleDescription" class="form-control" rows="3"></textarea>
         </div>
-
         <div class="popup-buttons">
             <button id="cancelEditArticle" class="cancel-btn">Annuler</button>
             <button id="confirmEditArticle" class="confirm-btn">Modifier</button>
@@ -197,78 +208,82 @@
     </div>
 </div>
 
-{# --- JS : Recherche, Suppression, Édition en AJAX --- #}
+{# --- Nouveau popup pour afficher les commentaires --- #}
+<div id="viewCommentsPopup" class="popup">
+    <div class="popup-content">
+        <h4>Commentaires</h4>
+        <div id="commentsContainer">
+            {# Les commentaires seront insérés ici via JS #}
+        </div>
+        <div class="popup-buttons">
+            <button id="closeViewComments" class="cancel-btn">Fermer</button>
+        </div>
+    </div>
+</div>
+
+{# --- JS : Recherche, Suppression, Édition et Affichage des Commentaires --- #}
 <script>
-    // --- Recherche en direct ---
+    // Recherche en direct
     document.getElementById("search").addEventListener("input", function () {
         let searchValue = this.value.toLowerCase();
         let rows = document.querySelectorAll("#table-body tr");
-
         rows.forEach(row => {
             let text = row.innerText.toLowerCase();
             row.style.display = text.includes(searchValue) ? "" : "none";
         });
     });
 
-    // --- Suppression d'un article (sans confirmation) ---
+    // Suppression d'un article
     document.querySelectorAll('.delete-article').forEach(button => {
         button.addEventListener('click', function (event) {
             event.preventDefault();
             let articleId = this.getAttribute('data-id');
-
-            fetch(`/article/supprimer/${articleId}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    this.closest('tr').remove();
-                } else {
-                    console.error("Erreur: " + data.message);
-                }
-            })
-            .catch(error => console.error("Erreur:", error));
+            fetch(`/article/supprimer/${articleId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('tr').remove();
+                    } else {
+                        console.error("Erreur: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
         });
     });
 
-    // --- Édition d'un article via popup ---
+    // Édition d'un article via popup (existante)
     document.addEventListener("DOMContentLoaded", function() {
-        let editPopup        = document.getElementById("editArticlePopup");
-        let titreInput       = document.getElementById("editArticleTitre");
-        let tagsInput        = document.getElementById("editArticleTags");
-        let descInput        = document.getElementById("editArticleDescription");
-        let confirmBtn       = document.getElementById("confirmEditArticle");
-        let cancelBtn        = document.getElementById("cancelEditArticle");
+        let editPopup = document.getElementById("editArticlePopup");
+        let titreInput = document.getElementById("editArticleTitre");
+        let tagsInput = document.getElementById("editArticleTags");
+        let descInput = document.getElementById("editArticleDescription");
+        let confirmBtn = document.getElementById("confirmEditArticle");
+        let cancelBtn = document.getElementById("cancelEditArticle");
         let currentArticleId = null;
 
-        // Ouvrir la popup et pré-remplir les champs
         document.querySelectorAll(".edit-article").forEach(button => {
             button.addEventListener("click", function(event) {
                 event.preventDefault();
-                currentArticleId     = this.getAttribute("data-id");
-                titreInput.value     = this.getAttribute("data-titre");
-                tagsInput.value      = this.getAttribute("data-tags");
-                descInput.value      = this.getAttribute("data-description");
+                currentArticleId = this.getAttribute("data-id");
+                titreInput.value = this.getAttribute("data-titre");
+                tagsInput.value = this.getAttribute("data-tags");
+                descInput.value = this.getAttribute("data-description");
                 editPopup.style.display = "flex";
             });
         });
 
-        // Bouton ANNULER : ferme la popup
         cancelBtn.addEventListener("click", function() {
             editPopup.style.display = "none";
         });
 
-        // Bouton MODIFIER : envoie la requête POST pour mettre à jour l'article
         confirmBtn.addEventListener("click", function() {
-            let newTitre       = titreInput.value;
-            let newTags        = tagsInput.value;
+            let newTitre = titreInput.value;
+            let newTags = tagsInput.value;
             let newDescription = descInput.value;
 
             fetch(`/article/modifier/${currentArticleId}`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     titre: newTitre,
                     categorie: newTags,
@@ -278,21 +293,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Mettre à jour directement la ligne du tableau
                     let row = document.querySelector(`.edit-article[data-id='${currentArticleId}']`).closest("tr");
-                    
-                    // 2e colonne : Titre
                     row.querySelector("td:nth-child(2)").textContent = newTitre;
-
-                    // 5e colonne : Tags
                     row.querySelector("td:nth-child(5)").textContent = newTags;
-
-                    // 4e colonne : Description (tronquée à 7 mots si besoin)
                     let descArr = newDescription.split(" ");
                     let truncatedDesc = descArr.slice(0, 7).join(" ");
                     if (descArr.length > 7) truncatedDesc += "...";
                     row.querySelector("td:nth-child(4)").textContent = truncatedDesc;
-
                     editPopup.style.display = "none";
                 } else {
                     alert("Erreur : " + data.message);
@@ -301,5 +308,81 @@
             .catch(error => console.error("Erreur :", error));
         });
     });
+
+   
+
+
+    // Affichage des commentaires via popup
+document.addEventListener("DOMContentLoaded", function() {
+    let viewPopup = document.getElementById("viewCommentsPopup");
+    let commentsContainer = document.getElementById("commentsContainer");
+    let closeCommentsBtn = document.getElementById("closeViewComments");
+
+    document.querySelectorAll(".view-comments").forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            let articleId = this.getAttribute("data-id");
+            // Récupérer les commentaires via AJAX
+            fetch(`/article/${articleId}/commentaires`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    commentsContainer.innerHTML = "";
+                    data.commentaires.forEach(comment => {
+                        let commentDiv = document.createElement("div");
+                        commentDiv.classList.add("comment-line");
+                        
+                        // Si le commentaire n'est pas valide, ajouter la classe pour le style strikethrough
+                        if(comment.etat !== 'valide'){
+                            commentDiv.classList.add("deactivated");
+                        }
+                        
+                        let commentDetails = document.createElement("div");
+                        commentDetails.classList.add("comment-details");
+                        commentDetails.innerHTML = `<p><strong>${comment.nom} ${comment.prenom}</strong></p>
+                                                    <p>${comment.content}</p>`;
+                        
+                        // Bouton de désactivation
+                        let deactivateBtn = document.createElement("button");
+                        deactivateBtn.classList.add("deactivate-comment-btn");
+                        deactivateBtn.innerHTML = '<i class="fas fa-user-slash"></i>';
+                        deactivateBtn.addEventListener("click", function(event) {
+                            event.preventDefault();
+                            fetch(`/commentaire/desactiver/${comment.id}`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    commentDiv.classList.add("deactivated");
+                                } else {
+                                    alert("Erreur: " + data.message);
+                                }
+                            })
+                            .catch(error => console.error("Erreur:", error));
+                        });
+                        
+                        commentDiv.appendChild(commentDetails);
+                        commentDiv.appendChild(deactivateBtn);
+                        commentsContainer.appendChild(commentDiv);
+                    });
+                    viewPopup.style.display = "flex";
+                } else {
+                    alert("Erreur: " + data.message);
+                }
+            })
+            .catch(error => console.error("Erreur:", error));
+        });
+    });
+
+    closeCommentsBtn.addEventListener("click", function() {
+        viewPopup.style.display = "none";
+    });
+});
+
 </script>
 {% endblock %}

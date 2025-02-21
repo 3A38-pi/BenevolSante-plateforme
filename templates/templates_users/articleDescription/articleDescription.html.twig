@@ -20,6 +20,7 @@
     <div class="divider"></div>
 
     {% for commentaire in commentaires %}
+       {% if commentaire.etat == 'valide' %}
         <div class="comment" id="comment-{{ commentaire.id }}">
             <div class="comment-avatar">
                 <img src="{{ asset('img/about-1.jpg') }}" alt="Avatar">
@@ -41,8 +42,10 @@
                 {% endif %}
             </div>
         </div>
+          {% endif %}
     {% else %}
         <p>Aucun commentaire pour le moment.</p>
+       
     {% endfor %}
 
     <!-- Popup de modification -->

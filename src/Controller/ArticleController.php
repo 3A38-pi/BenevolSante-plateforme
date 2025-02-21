@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use App\Entity\Commentaire;
 use App\Form\CommentaireType;
-use App\Entity\User;
+use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class ArticleController extends AbstractController
@@ -49,7 +49,6 @@ final class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $commentaire->setArticle($article);
             $commentaire->setUser($this->getUser());
-
             $this->em->persist($commentaire);
             $this->em->flush();
 
@@ -63,30 +62,57 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/createArticle', name: 'createArticle')]
-    public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir) 
-    {
-        $article = new Article();
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
+    // #[Route('/createArticle', name: 'createArticle')]
+    // public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir) 
+    // {
+    //     $article = new Article();
+    //     $form = $this->createForm(ArticleType::class, $article);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($image = $form['image']->getData()) {
-                $filename = uniqid() . '.' . $image->guessExtension();
-                $image->move($imageDir, $filename);
-                $article->setImage($filename);
-            }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         if ($image = $form['image']->getData()) {
+    //             $filename = uniqid() . '.' . $image->guessExtension();
+    //             $image->move($imageDir, $filename);
+    //             $article->setImage($filename);
+    //         }
 
-            $this->em->persist($article);
-            $this->em->flush();
+    //         $this->em->persist($article);
+    //         $this->em->flush();
 
-            return $this->redirectToRoute('adminArticleList');
-        }
+    //         return $this->redirectToRoute('adminArticleList');
+    //     }
        
-        return $this->render('templates_admin/articleForm/articleForm.html.twig', [
-            'form' => $form->createView(),
-        ]);
+    //     return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
+
+    #[Route('/createArticle', name: 'createArticle')]
+public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
+{
+    $article = new Article();
+    $form = $this->createForm(ArticleType::class, $article);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        if ($image = $form['image']->getData()) {
+            $filename = uniqid() . '.' . $image->guessExtension();
+            $image->move($imageDir, $filename);
+            $article->setImage($filename);
+        }
+
+
+
+        $this->em->persist($article);
+        $this->em->flush();
+
+        return $this->redirectToRoute('adminArticleList');
     }
+   
+    return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/adminArticleList', name: 'adminArticleList')]
     public function goToAdminArticleList(): Response
@@ -188,22 +214,40 @@ public function modifierArticle(Request $request, $id): JsonResponse
     }
 
     #[Route('/article/{id}/commentaires', name: 'get_article_commentaires', methods: ['GET'])]
-    public function getArticleCommentaires($id): JsonResponse
-    {
-        $article = $this->em->getRepository(Article::class)->find($id);
+public function getArticleCommentaires($id): JsonResponse
+{
+    $article = $this->em->getRepository(Article::class)->find($id);
 
-        if (!$article) {
-            return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
-        }
-
-        $commentaires = $article->getCommentaires()->map(function ($commentaire) {
-            return [
-                "content" => $commentaire->getContent(),
-            ];
-        });
-
-        return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
+    if (!$article) {
+        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
     }
+
+    $commentaires = $article->getCommentaires()->map(function ($commentaire) {
+        return [
+            "id"      => $commentaire->getId(),
+            "nom"     => $commentaire->getUser() ? $commentaire->getUser()->getNom() : "",
+            "prenom"  => $commentaire->getUser() ? $commentaire->getUser()->getPrenom() : "",
+            "content" => $commentaire->getContent(),
+            "etat"    => $commentaire->getEtat(),
+        ];
+    })->toArray();
+    
+    return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
+}
+
+#[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
+public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em): JsonResponse
+{
+    // Met à jour l'état du commentaire en "non valide"
+    $commentaire->setEtat("non valide");
+    $em->persist($commentaire);
+    $em->flush();
+    
+    return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
+}
+
+
+
 
     
 }
