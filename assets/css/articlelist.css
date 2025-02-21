@@ -103,3 +103,30 @@
 .tags a:hover {
     text-decoration: underline;
 }
+
+/* Par exemple, dans articlelist.css */
+
+.pagination-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination-btn {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 10px 15px;
+    background: DodgerBlue; /* votre couleur de fond */
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.pagination-btn:hover {
+    background: #58adfc; /* nuance au survol */
+}
+
+.pagination-btn.active {
+    font-weight: bold;
+    border: 2px solid #000000;
+}
+

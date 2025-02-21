@@ -24,15 +24,32 @@ final class ArticleController extends AbstractController
         $this->em = $em;
     }
 
-    #[Route('/article', name: 'ArticleList')]
-    public function goToArticleList(): Response
-    {
-        $articles = $this->em->getRepository(Article::class)->findAll();
 
-        return $this->render('templates_users/article/articleList.html.twig', [
-            'articles' => $articles,
-        ]);
-    }
+    #[Route('/article/{page}', name: 'ArticleList', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
+public function goToArticleList(int $page = 1): Response
+{
+    $articlesPerPage = 9;
+
+    // 1) Calcul de l’offset (combien on “saute” d’articles)
+    $offset = ($page - 1) * $articlesPerPage;
+
+    // 2) Récupérer 9 articles à partir de l’offset
+    //    Ici, on trie par ID décroissant, adaptez selon votre besoin
+    $articles = $this->em->getRepository(Article::class)
+                         ->findBy([], ['id' => 'DESC'], $articlesPerPage, $offset);
+
+    // 3) Compter le total d’articles
+    $totalArticles = $this->em->getRepository(Article::class)->count([]);
+
+    // 4) Calculer le nombre total de pages
+    $totalPages = (int) ceil($totalArticles / $articlesPerPage);
+
+    return $this->render('templates_users/article/articleList.html.twig', [
+        'articles' => $articles,
+        'currentPage' => $page,
+        'totalPages'  => $totalPages,
+    ]);
+}
 
     #[Route('/articleDescription/{id}', name: 'articleDescription')]
     public function goToArticleDescription(Request $request, $id): Response
@@ -62,34 +79,10 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    // #[Route('/createArticle', name: 'createArticle')]
-    // public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir) 
-    // {
-    //     $article = new Article();
-    //     $form = $this->createForm(ArticleType::class, $article);
-    //     $form->handleRequest($request);
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         if ($image = $form['image']->getData()) {
-    //             $filename = uniqid() . '.' . $image->guessExtension();
-    //             $image->move($imageDir, $filename);
-    //             $article->setImage($filename);
-    //         }
-
-    //         $this->em->persist($article);
-    //         $this->em->flush();
-
-    //         return $this->redirectToRoute('adminArticleList');
-    //     }
-       
-    //     return $this->render('templates_admin/articleForm/articleForm.html.twig', [
-    //         'form' => $form->createView(),
-    //     ]);
-    // }
-
+   
     #[Route('/createArticle', name: 'createArticle')]
-public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
-{
+    public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
+    {
     $article = new Article();
     $form = $this->createForm(ArticleType::class, $article);
     $form->handleRequest($request);
@@ -138,8 +131,8 @@ public function createArticle(Request $request, #[Autowire('%image_dir%')] strin
 
 
     #[Route('/article/modifier/{id}', name: 'article_modifier', methods: ['POST'])]
-public function modifierArticle(Request $request, $id): JsonResponse
-{
+    public function modifierArticle(Request $request, $id): JsonResponse
+    {
     $article = $this->em->getRepository(Article::class)->find($id);
 
     if (!$article) {
@@ -214,8 +207,8 @@ public function modifierArticle(Request $request, $id): JsonResponse
     }
 
     #[Route('/article/{id}/commentaires', name: 'get_article_commentaires', methods: ['GET'])]
-public function getArticleCommentaires($id): JsonResponse
-{
+    public function getArticleCommentaires($id): JsonResponse
+    {
     $article = $this->em->getRepository(Article::class)->find($id);
 
     if (!$article) {
@@ -245,9 +238,6 @@ public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInt
     
     return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
 }
-
-
-
 
     
 }
