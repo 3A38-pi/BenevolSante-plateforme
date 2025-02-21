@@ -1,90 +1,105 @@
-body {
-    background-color: #f8f9fa;
+/* ----- Container global ----- */
+.container-articles {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
-.container {
-    max-width: 800px;
-    margin: 40px auto;
-    background: white;
+/* ----- Grille : 3 colonnes sur grands écrans ----- */
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+/* ----- Carte de chaque article ----- */
+.article-card {
+    background: #fff;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    text-align: center;
+    position: relative;
+    font-size: 13px; /* Taille globale du texte réduite */
+    text-align: left; /* Aligne tout le contenu à gauche */
 }
 
-.container h1 {
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-
-.article-header {
-    margin-bottom: 20px;
-}
-
-.article-header h1 {
-    font-weight: bold;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.article-meta {
-    color: gray;
-    font-size: 14px;
-}
-
-.article-meta i {
-    margin-right: 5px;
-}
-
+/* ----- Conteneur de l’image avec effet zoom ----- */
 .article-image-container {
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    overflow: hidden;
+    margin: 0 0 20px 0;
     border-radius: 10px;
-    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
 }
-
 .article-image {
     width: 100%;
     height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.article-image-container:hover .article-image {
+    transform: scale(1.05); /* Zoom au survol */
 }
 
+/* ----- Overlay de la date en haut à gauche de l'image ----- */
+.article-date-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #0d6efd;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px; /* Police réduite */
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* ----- Titre de l’article (aligné à gauche) ----- */
+.article-title {
+    font-size: 14px; /* Police réduite */
+    font-weight: bold;
+    color: #333;
+    margin: 5px 0 10px 0;
+    text-transform: uppercase; /* Si vous souhaitez retirer, supprimez cette ligne */
+}
+
+/* ----- Description tronquée à 2 lignes, sans justify ----- */
 .article-description {
-    text-align: justify;
-    margin-top: 30px;
-    font-size: 15px;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 15px;
+    
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;         /* Tronquer après 2 lignes */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    /* Retirer l'alignement justify */
 }
 
+/* ----- Pied de l’article : “Read More” aligné à gauche ----- */
 .article-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 30px;
-    font-size: 14px;
+    margin-top: 5px;
 }
 
+/* ----- Style du lien “Read More” ----- */
 .tags {
     color: DodgerBlue;
     font-weight: bold;
-    display: flex;
+    display: inline-flex; 
     align-items: center;
+    margin: 0;
+    font-size: 13px; /* Police réduite */
 }
-
 .tags i {
     color: grey;
     margin-right: 5px;
 }
-
 .tags a {
     color: DodgerBlue;
+    text-decoration: none;
+}
+.tags a:hover {
+    text-decoration: underline;
 }

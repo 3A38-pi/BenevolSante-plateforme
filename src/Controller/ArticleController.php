@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use App\Entity\Commentaire;
 use App\Form\CommentaireType;
-use App\Entity\User;
+use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class ArticleController extends AbstractController
@@ -49,7 +49,6 @@ final class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $commentaire->setArticle($article);
             $commentaire->setUser($this->getUser());
-
             $this->em->persist($commentaire);
             $this->em->flush();
 
@@ -63,30 +62,57 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/createArticle', name: 'createArticle')]
-    public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir) 
-    {
-        $article = new Article();
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
+    // #[Route('/createArticle', name: 'createArticle')]
+    // public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir) 
+    // {
+    //     $article = new Article();
+    //     $form = $this->createForm(ArticleType::class, $article);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($image = $form['image']->getData()) {
-                $filename = uniqid() . '.' . $image->guessExtension();
-                $image->move($imageDir, $filename);
-                $article->setImage($filename);
-            }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         if ($image = $form['image']->getData()) {
+    //             $filename = uniqid() . '.' . $image->guessExtension();
+    //             $image->move($imageDir, $filename);
+    //             $article->setImage($filename);
+    //         }
 
-            $this->em->persist($article);
-            $this->em->flush();
+    //         $this->em->persist($article);
+    //         $this->em->flush();
 
-            return $this->redirectToRoute('adminArticleList');
-        }
+    //         return $this->redirectToRoute('adminArticleList');
+    //     }
        
-        return $this->render('templates_admin/articleForm/articleForm.html.twig', [
-            'form' => $form->createView(),
-        ]);
+    //     return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
+
+    #[Route('/createArticle', name: 'createArticle')]
+public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
+{
+    $article = new Article();
+    $form = $this->createForm(ArticleType::class, $article);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        if ($image = $form['image']->getData()) {
+            $filename = uniqid() . '.' . $image->guessExtension();
+            $image->move($imageDir, $filename);
+            $article->setImage($filename);
+        }
+
+
+
+        $this->em->persist($article);
+        $this->em->flush();
+
+        return $this->redirectToRoute('adminArticleList');
     }
+   
+    return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/adminArticleList', name: 'adminArticleList')]
     public function goToAdminArticleList(): Response
