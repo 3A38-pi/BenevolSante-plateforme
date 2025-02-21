@@ -1,3 +1,4 @@
+{# templates_users/article/articleList.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
@@ -9,7 +10,6 @@
     <div class="articles-grid">
         {% for article in articles %}
             <div class="article-card">
-                
                 <!-- Image + overlay date -->
                 <div class="article-image-container">
                     <img 
@@ -22,10 +22,10 @@
                     </div>
                 </div>
 
-                <!-- Titre à gauche -->
+                <!-- Titre -->
                 <h2 class="article-title">{{ article.titre }}</h2>
 
-                <!-- Description : tronquée à 2 lignes et max 250 caractères -->
+                <!-- Description tronquée (2 lignes, max 250 caractères) -->
                 <p class="article-description">
                     {% if article.description|length > 250 %}
                         {{ article.description|slice(0, 250) ~ '...' }}
@@ -48,9 +48,37 @@
                         </a>
                     </p>
                 </div>
-
             </div>
         {% endfor %}
     </div>
+</div>
+
+<!-- PAGINATION -->
+<div class="pagination-container">
+    {% if totalPages > 1 %}
+        {# Bouton "page précédente" #}
+        {% if currentPage > 1 %}
+            <a class="pagination-btn" href="{{ path('ArticleList', { page: currentPage - 1 }) }}">
+                &laquo;
+            </a>
+        {% endif %}
+
+        {# Liens vers chaque page #}
+        {% for pageNumber in 1..totalPages %}
+            <a 
+                class="pagination-btn {% if pageNumber == currentPage %}active{% endif %}"
+                href="{{ path('ArticleList', { page: pageNumber }) }}"
+            >
+                {{ pageNumber }}
+            </a>
+        {% endfor %}
+
+        {# Bouton "page suivante" #}
+        {% if currentPage < totalPages %}
+            <a class="pagination-btn" href="{{ path('ArticleList', { page: currentPage + 1 }) }}">
+                &raquo;
+            </a>
+        {% endif %}
+    {% endif %}
 </div>
 {% endblock %}
