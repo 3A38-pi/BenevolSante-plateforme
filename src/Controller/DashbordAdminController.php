@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\NotificationRepository;
 
 final class DashbordAdminController extends AbstractController
 {
@@ -23,6 +24,20 @@ final class DashbordAdminController extends AbstractController
             'controller_name' => 'DashbordAdminController',
         ]);
     }
+
+    // Exemple dans un DashboardController ou un MainController
+#[Route('/home', name: 'dashboard')]
+public function dashboard(NotificationRepository $notifRepo): Response
+{
+    $user = $this->getUser();
+    // S’il n’y a pas d’utilisateur connecté, on renvoie un tableau vide
+    $notifications = $user ? $notifRepo->findBy(['user' => $user], ['createdAt' => 'DESC']) : [];
+
+    return $this->render('base.html.twig', [
+        'notifications' => $notifications,
+    ]);
+}
+
 
 
 }

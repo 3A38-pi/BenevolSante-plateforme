@@ -68,14 +68,6 @@
                         <a href="{{ path('ArticleList') }}" class="dropdown-item">Articles</a>
                     </div>
                 </div>
-                {# <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu rounded-0 rounded-bottom m-0">
-                        <a href="{{ path('doctors') }}" class="dropdown-item">Our Professional</a>
-                        <a href="{{ path('appointment') }}" class="dropdown-item">Appointment</a>
-                        <a href="{{ path('testimonial') }}" class="dropdown-item">Testimonial</a>
-                    </div>
-                </div> #}
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Recrutement</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom m-0">
@@ -88,8 +80,41 @@
                         <a href="{{ path('app_eventfront_index') }}" class="dropdown-item">Evenement</a>
                     </div>
                 </div>
-                {# <a href="{{ path('contact') }}" class="nav-item nav-link">Contact</a> #}
             </div>
+                <!-- Section après "Evenement" -->
+<!-- Icône cloche -->
+<div class="nav-item me-3 bell-icon position-relative" id="bellIcon">
+    <a href="#" class="nav-link">
+        <i class="fa fa-bell"></i>
+    </a>
+</div>
+{% set notifications = user_notifications() %}
+<!-- Fenêtre de notifications -->
+<div id="notificationPopup" class="notification-popup d-none">
+    <div class="notif-header">
+        <h5>Notifications</h5>
+        <button id="closeNotifBtn" class="close-popup">&times;</button>
+    </div>
+    <hr>
+    <div class="notif-content">
+        {% for notification in notifications %}
+            <div class="notif-item">
+                <strong class="notif-title">Commentaire supprimé</strong>
+                <p class="notif-text">
+                    {{ notification.message }}
+                    <br>
+                    <span class="notif-date">{{ notification.createdAt|date('d M Y') }}</span>
+                </p>
+            </div>
+        {% else %}
+            <p>Aucune notification pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+
             {# Conditional display: if user is connected, show logout button; otherwise show Login/Register buttons #}
             {% if app.user %}
                 <form method="post" action="{{ path('app_logout') }}" class="d-inline me-2">
@@ -614,6 +639,43 @@
 
     <!-- Template Javascript -->
     <script src="  {{asset('js/main.js')}} "></script>
+//     <script>
+// document.addEventListener('DOMContentLoaded', () => {
+//     const bellIcon = document.getElementById('bellIcon');
+//     const notifPopup = document.getElementById('notificationPopup');
+//     const closePopupBtn = document.getElementById('closePopupBtn');
+
+//     bellIcon.addEventListener('click', (e) => {
+//         e.preventDefault();
+//         notifPopup.classList.toggle('d-none'); // affiche/masque la pop-up
+//     });
+
+//     closePopupBtn.addEventListener('click', () => {
+//         notifPopup.classList.add('d-none');
+//     });
+// });
+// </script>
+
+<!-- Script pour ouvrir/fermer la pop-up -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bellIcon = document.getElementById('bellIcon'); // Assurez-vous d'avoir cet élément dans la Navbar
+    const notifPopup = document.getElementById('notificationPopup');
+    const closeNotifBtn = document.getElementById('closeNotifBtn');
+
+    if(bellIcon) {
+        bellIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            notifPopup.classList.toggle('d-none');
+        });
+    }
+
+    closeNotifBtn.addEventListener('click', function() {
+        notifPopup.classList.add('d-none');
+    });
+});
+</script>
+
     {% endblock %}
 </body>
 </html>
