@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use App\Entity\Commentaire;
 use App\Form\CommentaireType;
-use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Notification;
 
 final class ArticleController extends AbstractController
 {
@@ -24,38 +24,29 @@ final class ArticleController extends AbstractController
         $this->em = $em;
     }
 
-
     #[Route('/article/{page}', name: 'ArticleList', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
-public function goToArticleList(int $page = 1): Response
-{
-    $articlesPerPage = 9;
+    public function goToArticleList(int $page = 1): Response
+    {
+        $articlesPerPage = 9;
+        $offset = ($page - 1) * $articlesPerPage;
 
-    // 1) Calcul de l’offset (combien on “saute” d’articles)
-    $offset = ($page - 1) * $articlesPerPage;
+        $articles = $this->em->getRepository(Article::class)
+                             ->findBy([], ['id' => 'DESC'], $articlesPerPage, $offset);
 
-    // 2) Récupérer 9 articles à partir de l’offset
-    //    Ici, on trie par ID décroissant, adaptez selon votre besoin
-    $articles = $this->em->getRepository(Article::class)
-                         ->findBy([], ['id' => 'DESC'], $articlesPerPage, $offset);
+        $totalArticles = $this->em->getRepository(Article::class)->count([]);
+        $totalPages = (int) ceil($totalArticles / $articlesPerPage);
 
-    // 3) Compter le total d’articles
-    $totalArticles = $this->em->getRepository(Article::class)->count([]);
-
-    // 4) Calculer le nombre total de pages
-    $totalPages = (int) ceil($totalArticles / $articlesPerPage);
-
-    return $this->render('templates_users/article/articleList.html.twig', [
-        'articles' => $articles,
-        'currentPage' => $page,
-        'totalPages'  => $totalPages,
-    ]);
-}
+        return $this->render('templates_users/article/articleList.html.twig', [
+            'articles' => $articles,
+            'currentPage' => $page,
+            'totalPages'  => $totalPages,
+        ]);
+    }
 
     #[Route('/articleDescription/{id}', name: 'articleDescription')]
     public function goToArticleDescription(Request $request, $id): Response
-    {   
+    {
         $article = $this->em->getRepository(Article::class)->find($id);
-
         if (!$article) {
             throw $this->createNotFoundException("L'article n'existe pas.");
         }
@@ -79,39 +70,35 @@ public function goToArticleList(int $page = 1): Response
         ]);
     }
 
-   
     #[Route('/createArticle', name: 'createArticle')]
     public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
     {
-    $article = new Article();
-    $form = $this->createForm(ArticleType::class, $article);
-    $form->handleRequest($request);
+        $article = new Article();
+        $form = $this->createForm(ArticleType::class, $article);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        if ($image = $form['image']->getData()) {
-            $filename = uniqid() . '.' . $image->guessExtension();
-            $image->move($imageDir, $filename);
-            $article->setImage($filename);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($image = $form['image']->getData()) {
+                $filename = uniqid() . '.' . $image->guessExtension();
+                $image->move($imageDir, $filename);
+                $article->setImage($filename);
+            }
+
+            $this->em->persist($article);
+            $this->em->flush();
+
+            return $this->redirectToRoute('adminArticleList');
         }
-
-
-
-        $this->em->persist($article);
-        $this->em->flush();
-
-        return $this->redirectToRoute('adminArticleList');
+       
+        return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
-   
-    return $this->render('templates_admin/articleForm/articleForm.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
 
     #[Route('/adminArticleList', name: 'adminArticleList')]
     public function goToAdminArticleList(): Response
     {
         $articles = $this->em->getRepository(Article::class)->findAll();
-
         return $this->render('templates_admin/articleAdminList/articleAdminList.html.twig', [
             'articles' => $articles,
         ]);
@@ -123,56 +110,44 @@ public function goToArticleList(int $page = 1): Response
         $article = $this->em->getRepository(Article::class)->find($id);
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
-
         return $this->render('articleForm/articleForm.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-
     #[Route('/article/modifier/{id}', name: 'article_modifier', methods: ['POST'])]
     public function modifierArticle(Request $request, $id): JsonResponse
     {
-    $article = $this->em->getRepository(Article::class)->find($id);
-
-    if (!$article) {
-        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
+        $article = $this->em->getRepository(Article::class)->find($id);
+        if (!$article) {
+            return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
+        }
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['titre'], $data['categorie'], $data['description'])) {
+            return new JsonResponse(["success" => false, "message" => "Données invalides"], 400);
+        }
+        $article->setTitre($data['titre']);
+        $article->setCategorie($data['categorie']);
+        $article->setDescription($data['description']); 
+        $this->em->persist($article);
+        $this->em->flush();
+        return new JsonResponse(["success" => true, "message" => "Article modifié avec succès"]);
     }
-
-    $data = json_decode($request->getContent(), true);
-
-    if (!isset($data['titre'], $data['categorie'], $data['description'])) {
-        return new JsonResponse(["success" => false, "message" => "Données invalides"], 400);
-    }
-
-    $article->setTitre($data['titre']);
-    $article->setCategorie($data['categorie']);
-    $article->setDescription($data['description']); 
-
-    $this->em->persist($article);
-    $this->em->flush();
-
-    return new JsonResponse(["success" => true, "message" => "Article modifié avec succès"]);
-}
-
 
     #[Route('/commentaire/modifier/{id}', name: 'commentaire_modifier', methods: ['POST'])]
     public function modifierCommentaire(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
-
         if (isset($data['content']) && !empty($data['content'])) {
             $commentaire->setContent($data['content']);
             $entityManager->persist($commentaire);
             $entityManager->flush();
-
             return $this->json([
                 'success' => true,
                 'message' => 'Commentaire modifié avec succès',
                 'newContent' => $commentaire->getContent()
             ]);
         }
-
         return $this->json(['success' => false, 'message' => 'Données invalides'], 400);
     }
 
@@ -180,14 +155,11 @@ public function goToArticleList(int $page = 1): Response
     public function supprimerCommentaire($id, EntityManagerInterface $em): JsonResponse
     {
         $commentaire = $em->getRepository(Commentaire::class)->find($id);
-
         if (!$commentaire) {
             return new JsonResponse(["success" => false, "message" => "Commentaire introuvable"], 404);
         }
-
         $em->remove($commentaire);
         $em->flush();
-
         return new JsonResponse(["success" => true]);
     }
 
@@ -195,49 +167,50 @@ public function goToArticleList(int $page = 1): Response
     public function supprimerArticle($id, EntityManagerInterface $em): JsonResponse
     {
         $article = $em->getRepository(Article::class)->find($id);
-
         if (!$article) {
             return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
         }
-
         $em->remove($article);
         $em->flush();
-
         return new JsonResponse(["success" => true]);
     }
 
     #[Route('/article/{id}/commentaires', name: 'get_article_commentaires', methods: ['GET'])]
     public function getArticleCommentaires($id): JsonResponse
     {
-    $article = $this->em->getRepository(Article::class)->find($id);
-
-    if (!$article) {
-        return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
+        $article = $this->em->getRepository(Article::class)->find($id);
+        if (!$article) {
+            return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
+        }
+        $commentaires = $article->getCommentaires()->map(function ($commentaire) {
+            return [
+                "id"      => $commentaire->getId(),
+                "nom"     => $commentaire->getUser() ? $commentaire->getUser()->getNom() : "",
+                "prenom"  => $commentaire->getUser() ? $commentaire->getUser()->getPrenom() : "",
+                "content" => $commentaire->getContent(),
+                "etat"    => $commentaire->getEtat(),
+            ];
+        })->toArray();
+        return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
     }
 
-    $commentaires = $article->getCommentaires()->map(function ($commentaire) {
-        return [
-            "id"      => $commentaire->getId(),
-            "nom"     => $commentaire->getUser() ? $commentaire->getUser()->getNom() : "",
-            "prenom"  => $commentaire->getUser() ? $commentaire->getUser()->getPrenom() : "",
-            "content" => $commentaire->getContent(),
-            "etat"    => $commentaire->getEtat(),
-        ];
-    })->toArray();
-    
-    return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
-}
+    #[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
+    public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em): JsonResponse
+    {
+        // Met à jour l'état du commentaire en "non valide"
+        $commentaire->setEtat("non valide");
+        $em->persist($commentaire);
+        $em->flush();
 
-#[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
-public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em): JsonResponse
-{
-    // Met à jour l'état du commentaire en "non valide"
-    $commentaire->setEtat("non valide");
-    $em->persist($commentaire);
-    $em->flush();
-    
-    return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
-}
+        // Créer une notification pour l'utilisateur qui a créé le commentaire
+        $notification = new Notification();
+        // $notification->setMessage("Commentaire supprimé");
+          $notification->setMessage("Commentaire supprimé : " . $commentaire->getContent());
+        $notification->setUser($commentaire->getUser());
+        $notification->setCommentaire($commentaire);
+        $em->persist($notification);
+        $em->flush();
 
-    
+        return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
+    }
 }

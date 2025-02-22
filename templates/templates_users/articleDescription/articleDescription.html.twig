@@ -5,22 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ article.titre }}</title>
-    <!-- AOS CSS pour les animations au scroll -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
-    
-  
     <link rel="stylesheet" href="{{ asset('css/articledescription.css') }}">
-
 </head>
 
 <body>
 <div class="article-page">
-    <!-- Titre de l'article -->
     <div class="article-header" data-aos="fade-down">
         <h1 class="article-title">{{ article.titre }}</h1>
     </div>
-
-    <!-- Image principale -->
     <div class="article-image-container" data-aos="fade-up">
         <img 
             src="{{ asset('uploads/images/' ~ article.image) }}" 
@@ -28,8 +21,6 @@
             class="article-main-image"
         >
     </div>
-
-    <!-- Bloc Meta (catégorie, date, auteur) -->
     <div class="meta-wrapper" data-aos="fade-up" data-aos-delay="100">
         <div class="article-meta">
             <div class="meta-category">
@@ -43,16 +34,11 @@
             </div>
         </div>
     </div>
-
-    <!-- Séparateur -->
     <div class="meta-separator" data-aos="fade-up" data-aos-delay="150"></div>
-
-    <!-- Description (line-height: 1.4 => moins d'espace) -->
     <div class="article-content" data-aos="fade-up" data-aos-delay="200">
         <p>{{ article.description }}</p>
     </div>
 
-    <!-- Section Commentaires -->
     <div class="comments-section" data-aos="fade-up" data-aos-delay="300">
         {% for commentaire in commentaires %}
             {% if commentaire.etat == 'valide' %}
@@ -62,7 +48,6 @@
                     </div>
                     <div class="comment-content">
                         <div class="comment-header">
-                            <!-- Nom/Prénom à gauche -->
                             <span class="comment-author">
                                 {{ commentaire.user.nom }} {{ commentaire.user.prenom }}
                             </span>
@@ -90,8 +75,6 @@
         {% else %}
             <p>Aucun commentaire pour le moment.</p>
         {% endfor %}
-
-        <!-- Popup de modification (sans voile noir) -->
         <div id="editCommentPopup" class="popup">
             <div class="popup-content">
                 <textarea id="editCommentContent" class="comment-textarea"></textarea>
@@ -120,8 +103,6 @@
         {% endif %}
     </div>
 </div>
-
-<!-- Scripts AOS -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({
