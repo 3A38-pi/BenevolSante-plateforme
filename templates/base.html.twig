@@ -93,7 +93,7 @@
             {# Conditional display: if user is connected, show logout button; otherwise show Login/Register buttons #}
             {% if app.user %}
                 <form method="post" action="{{ path('app_logout') }}" class="d-inline me-2">
-                    <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Deconnexion</button>
+                    <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Déconnexion</button>
                 </form>
             {% else %}
                 <div class="d-flex align-items-center">
