@@ -373,5 +373,106 @@
   width: 90px;
   }
   
+  .bell-icon i {
+    font-size: 20px; /* Taille de l’icône */
+    color: #555;     /* Couleur de l’icône */
+    position: relative;
+}
+
+.badge-notification {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 4px 7px;
+    border-radius: 50%;
+    font-size: 12px;
+    color: #fff;
+}
+
+
+/* ----- Positionnement et style global du pop-up ----- */
+.notification-popup {
+  position: absolute;          /* Ou fixed, selon votre usage */
+  top: 60px;                   /* Ajustez selon la hauteur de votre navbar */
+  right: 20px;                 /* Ajustez la marge à droite */
+  width: 300px;                /* Largeur du panneau */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 9999;
+  padding: 10px 15px;
+  font-family: Arial, sans-serif;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.notif-header h5 {
+  margin: 0;
+  color: #000;       /* Titre "Notifications" en noir */
+}
+
+.close-popup {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #888;       /* Couleur du bouton X */
+}
+
+.notif-content {
+  max-height: 250px; /* Limite la hauteur, scroll si trop long */
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+/* ----- Scrollbar fine et bleue ----- */
+.notif-content::-webkit-scrollbar {
+  width: 3px;                /* épaisseur */
+}
+.notif-content::-webkit-scrollbar-track {
+  background: #f0f0f0;       /* Couleur de fond du rail */
+}
+.notif-content::-webkit-scrollbar-thumb {
+  background: #007bff;       /* Couleur bleue */
+  border-radius: 3px;        /* Coins arrondis */
+}
+
+.notif-item {
+  margin-bottom: 10px;
+}
+
+/* Titre de notification en noir */
+.notif-title {
+  display: block;        /* Pour séparer clairement le titre du texte */
+  color: #000;           /* Noir */
+  margin-bottom: 2px;
+}
+
+/* Texte de la notification en gris */
+.notif-text {
+  color: #666;           /* Gris pour le contenu */
+  margin: 0;            /* Retire la marge par défaut */
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Date en bleu */
+.notif-date {
+  color: #007bff;        /* Bleu */
+}
+
+/* Pied de la pop-up */
+.notif-footer {
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+
 
 
