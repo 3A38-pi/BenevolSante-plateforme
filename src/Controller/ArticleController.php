@@ -14,6 +14,12 @@ use App\Entity\Commentaire;
 use App\Form\CommentaireType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Notification;
+use App\Service\NotificationMailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
+
+
 
 final class ArticleController extends AbstractController
 {
@@ -69,6 +75,10 @@ final class ArticleController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    
+
+
 
     #[Route('/createArticle', name: 'createArticle')]
     public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
@@ -194,23 +204,38 @@ final class ArticleController extends AbstractController
         return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
     }
 
+
     #[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
-    public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em): JsonResponse
-    {
-        // Met à jour l'état du commentaire en "non valide"
-        $commentaire->setEtat("non valide");
-        $em->persist($commentaire);
-        $em->flush();
+public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em, \App\Service\NotificationMailer $notificationMailer): JsonResponse
+{
 
-        // Créer une notification pour l'utilisateur qui a créé le commentaire
-        $notification = new Notification();
-        // $notification->setMessage("Commentaire supprimé");
-          $notification->setMessage("Commentaire supprimé : " . $commentaire->getContent());
-        $notification->setUser($commentaire->getUser());
-        $notification->setCommentaire($commentaire);
-        $em->persist($notification);
-        $em->flush();
+    $commentaire->setEtat("non valide");
+    $em->persist($commentaire);
+    
 
-        return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
-    }
+    $notification = new Notification();
+    $notification->setMessage($commentaire->getContent());
+    $notification->setUser($commentaire->getUser());
+    $notification->setCommentaire($commentaire);
+    $em->persist($notification);
+    
+    $em->flush();
+    $transport = Transport::fromDsn('smtp://amroush123@gmail.com:npcfowmbtolgyqfe@smtp.gmail.com:587');
+    $mailer = new Mailer($transport);
+    $recipientEmail = $commentaire->getUser()->getEmail();
+    $email = (new Email())
+        ->from('amroush123@gmail.com')
+        ->to($recipientEmail)
+        ->subject('Notification : Commentaire désactivé')
+        ->text(sprintf(
+            "Bonjour %s,\n\nVotre commentaire a été désactivé.\nContenu: %s\n\nCordialement,\nL’équipe.",
+            $commentaire->getUser()->getNom(),
+            $commentaire->getContent()
+        ));
+    $mailer->send($email);
+    
+    return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
+}
+
+
 }

@@ -12,6 +12,8 @@ services:
             $router: '@router'
     App\Twig\NotificationExtension:
         tags: ['twig.extension']
+    App\Service\NotificationMailer:
+        arguments: []
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
