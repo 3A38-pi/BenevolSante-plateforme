@@ -9,6 +9,7 @@
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
+/../forbidden_words.json
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
