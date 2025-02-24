@@ -111,14 +111,21 @@ public function show(Event $event): Response
     }
 
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
-    public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $event->getId(), $request->get('_token'))) {
-            $entityManager->remove($event);
-            $entityManager->flush();
+public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
+{
+    if ($this->isCsrfTokenValid('delete' . $event->getId(), $request->get('_token'))) {
+        // Supprimer les participants liés à l'événement
+        foreach ($event->getParticipants() as $participant) {
+            $entityManager->remove($participant);
         }
 
-        return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
+        // Supprimer l'événement
+        $entityManager->remove($event);
+        $entityManager->flush();
     }
+
+    return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
+}
+
     
 }
