@@ -1,0 +1,236 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Messagerie{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<h1>Messagerie</h1>
+
+<div class="conversations">
+    {% for conversation in conversations %}
+        <div class="conversation">
+            <h2>Discussion avec {{ conversation.donneur.nom }} {{ conversation.donneur.prenom }}</h2>
+
+            <div class="messages">
+                {% if conversation.messages is not empty %}
+                    {% for message in conversation.messages %}
+                        <div class="message {% if message.expediteur == app.user %}sent{% else %}received{% endif %}">
+                            <strong>{{ message.expediteur.nom }}:</strong> {{ message.contenu }}
+                            <br>
+                            <small>{{ message.dateEnvoi|date('d/m/Y H:i') }}</small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Aucun message échangé pour le moment. Vous pouvez envoyer un message ci-dessous.</p>
+                {% endif %}
+            </div>
+
+            <form action="{{ path('app_message_send') }}" method="post">
+                <input type="hidden" name="donneur_id" value="{{ conversation.donneur.id }}">
+                <input type="hidden" name="demande_id" value="{{ conversation.demande.id }}">
+                <textarea name="contenu" placeholder="Écrivez votre message..." required></textarea>
+                <button type="submit" class="btn btn-success">Envoyer</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Vous n'avez aucune conversation active.</p>
+    {% endfor %}
+</div>
+</div>
+
+
+
+
+    {# Styles CSS intégrés directement dans la page #}
+    <style>
+        /* Styles pour les messages */
+        .messages {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+            word-wrap: break-word;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .message.sent {
+            background-color: #dcf8c6;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.received {
+            background-color: #ececec;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .message strong {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .message small {
+            color: #777;
+            font-size: 0.8em;
+        }
+
+        /* Styles pour le formulaire */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        form textarea {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 16px;
+    outline: none;
+    background: #f0f2f5;
+    resize: none;
+    height: 40px;
+    overflow: hidden;
+}
+        
+
+        form button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        /* Styles globaux */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .conversations {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .conversation {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Barre de défilement personnalisée */
+        .messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Animation pour les messages */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+
+
+    {# JavaScript intégré directement dans la page #}
+    <script>
+        // Exemple de JavaScript pour faire défiler automatiquement les messages vers le bas
+        const messagesContainers = document.querySelectorAll('.messages');
+        messagesContainers.forEach(container => {
+            container.scrollTop = container.scrollHeight;
+        });
+
+        // Exemple de fonction pour envoyer un message via AJAX (optionnel)
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Empêcher l'envoi du formulaire par défaut
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Ajouter le nouveau message à la liste des messages
+                        const messagesDiv = this.closest('.conversation').querySelector('.messages');
+                        const newMessage = document.createElement('div');
+                        newMessage.classList.add('message', 'sent');
+                        newMessage.innerHTML = `
+                            <strong>${data.expediteur}:</strong> ${data.contenu}
+                            <br>
+                            <small>${new Date().toLocaleString()}</small>
+                        `;
+                        messagesDiv.appendChild(newMessage);
+
+                        // Faire défiler vers le bas
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                        // Réinitialiser le champ de texte
+                        this.querySelector('textarea').value = '';
+                    } else {
+                        alert('Erreur lors de l\'envoi du message.');
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+            });
+        });
+    </script>
+{% endblock %}
