@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Demandes de Dons{% endblock %}
+{% block title %}
+  Mes Demandes de Dons
+{% endblock %}
 
 {% block body %}
   <div class="container">
@@ -15,6 +17,7 @@
             <th>Bénéficiaire</th>
             <th>Date</th>
             <th>Actions</th>
+            <th>Chat</th>
           </tr>
         </thead>
         <tbody>
@@ -23,9 +26,15 @@
               <td>{{ demande.dons.titre }}</td>
               <td>{{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</td>
               <td>{{ demande.dateDemande|date('d/m/Y') }}</td>
+                
               <td>
                 <a href="{{ path('accepter_demande', { id: demande.id }) }}" class="btn btn-success btn-sm">Accepter</a>
                 <a href="{{ path('refuser_demande', { id: demande.id }) }}" class="btn btn-danger btn-sm">Refuser</a>
+              </td>
+              <td>
+                {% if demande.statut == 'Acceptée' %}
+                  <a href="{{ path('messagerie_show', { id: demande.id }) }}" class="btn btn-primary btn-sm"><i class="fas fa-comments"></i> Chat</a>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
