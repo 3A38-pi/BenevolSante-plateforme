@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,6 +32,9 @@
 
     <!-- Template Stylesheet -->
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>   
+    
 {% endblock %}
 </head>
 <body
@@ -157,7 +159,7 @@
             {# Conditional display: if user is connected, show logout button; otherwise show Login/Register buttons #}
             {% if app.user %}
                 <form method="post" action="{{ path('app_logout') }}" class="d-inline me-2">
-                    <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Deconnexion</button>
+                    <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Déconnexion</button>
                 </form>
             {% else %}
                 <div class="d-flex align-items-center">
@@ -646,7 +648,7 @@
                         &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved.
                     </div>
                     <div class="col-md-6 text-center text-md-end">
-                        <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                        <!--/*** This template is free as long as you keep the footer author's credit link/attribution link/backlink. If you'd like to use the template without the footer author's credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
                         Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
                     </div>
                 </div>

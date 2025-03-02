@@ -73,12 +73,12 @@ private ?string $password = null;
      * @var Collection<int, Notification>
      */
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'user')]
-    private Collection $notifications;
+    private Collection $alerts;
 
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
-        $this->notifications = new ArrayCollection();
+        $this->alerts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,24 +177,24 @@ private ?string $password = null;
     /**
      * @return Collection<int, Notification>
      */
-    public function getNotifications(): Collection
+    public function getAlerts(): Collection
     {
-        return $this->notifications;
+        return $this->alerts;
     }
 
-    public function addNotification(Notification $notification): static
+    public function addAlert(Notification $notification): static
     {
-        if (!$this->notifications->contains($notification)) {
-            $this->notifications->add($notification);
+        if (!$this->alerts->contains($notification)) {
+            $this->alerts->add($notification);
             $notification->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeNotification(Notification $notification): static
+    public function removeAlert(Notification $notification): static
     {
-        if ($this->notifications->removeElement($notification)) {
+        if ($this->alerts->removeElement($notification)) {
             // set the owning side to null (unless already changed)
             if ($notification->getUser() === $this) {
                 $notification->setUser(null);
