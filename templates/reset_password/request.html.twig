@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Forgot Password{% endblock %}
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-5 rounded" style="max-width: 500px; width: 100%;">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Forgot Password</h2>
+            {% for flash_error in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+
+            {% for flash_success in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+            {% endfor %}
+            <form method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control form-control-lg" id="email" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 
