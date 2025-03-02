@@ -228,14 +228,14 @@ public function goToArticleDescription(Request $request, int $id): Response
 
     $commentaire->setEtat("non valide");
     $em->persist($commentaire);
-    
 
     $notification = new Notification();
     $notification->setMessage($commentaire->getContent());
     $notification->setUser($commentaire->getUser());
     $notification->setCommentaire($commentaire);
+    $notification->setType(Notification::TYPE_COMMENTAIRE); // Définir le type de notification
     $em->persist($notification);
-    
+
     $em->flush();
     $transport = Transport::fromDsn('smtp://amroush123@gmail.com:npcfowmbtolgyqfe@smtp.gmail.com:587');
     $mailer = new Mailer($transport);

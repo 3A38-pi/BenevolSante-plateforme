@@ -92,7 +92,7 @@
         <i class="fa fa-bell"></i>
     </a>
 </div>
-
+{# 
 {% set notifications = user_notifications() %}
 <!-- Fenêtre de notifications -->
 <div id="notificationPopup" class="notification-popup d-none">
@@ -101,6 +101,7 @@
         <button id="closeNotifBtn" class="close-popup">&times;</button>
     </div>
     <hr>
+
     <div class="notif-content">
         {% for notification in notifications %}
             <div class="notif-item">
@@ -115,7 +116,42 @@
             <p>Aucune notification pour le moment.</p>
         {% endfor %}
     </div>
+</div> #}
+
+
+
+
+
+
+{% set notifications = user_notifications() %}
+<div id="notificationPopup" class="notification-popup d-none">
+    <div class="notif-header">
+        <h5>Notifications</h5>
+        <button id="closeNotifBtn" class="close-popup">&times;</button>
+    </div>
+    <hr>
+    <div class="notif-content">
+        {% for notification in notifications %}
+            <div class="notif-item">
+                {% if notification.type == constant('App\\Entity\\Notification::TYPE_DEMANDE_DONS') %}
+                    <strong class="notif-title">Demande de don</strong>
+                {% elseif notification.type == constant('App\\Entity\\Notification::TYPE_COMMENTAIRE') %}
+                    <strong class="notif-title">Commentaire supprimé</strong>
+                {% endif %}
+                <p class="notif-text">
+                    {{ notification.message }}
+                    <br>
+                    <span class="notif-date">{{ notification.createdAt|date('d M Y') }}</span>
+                </p>
+            </div>
+        {% else %}
+            <p>Aucune notification pour le moment.</p>
+        {% endfor %}
+    </div>
 </div>
+
+
+
 
 
 
