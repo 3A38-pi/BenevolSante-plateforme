@@ -113,6 +113,7 @@ private ?string $password = null;
         return array_unique(array_merge($this->roles, ['ROLE_USER']));
     }
 
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;

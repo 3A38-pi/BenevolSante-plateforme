@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Messagerie{% endblock %}
+{% block title %}Messagerie de benef  {% endblock %}
 
 {% block body %}
 
@@ -38,6 +38,54 @@
     {% endfor %}
 </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -189,6 +237,7 @@
 
     {# JavaScript intégré directement dans la page #}
     <script>
+        
         // Exemple de JavaScript pour faire défiler automatiquement les messages vers le bas
         const messagesContainers = document.querySelectorAll('.messages');
         messagesContainers.forEach(container => {
@@ -232,5 +281,6 @@
                 .catch(error => console.error('Erreur:', error));
             });
         });
+        
     </script>
 {% endblock %}
