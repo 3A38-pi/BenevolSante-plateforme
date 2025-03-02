@@ -41,7 +41,7 @@ final class EventfrontController extends AbstractController
             'form' => $form,
         ]);
     }
-
+    
     #[Route('/{id}', name: 'app_eventfront_show', methods: ['GET'])]
     public function show(Event $event): Response
     {
@@ -78,4 +78,6 @@ final class EventfrontController extends AbstractController
 
         return $this->redirectToRoute('app_eventfront_index', [], Response::HTTP_SEE_OTHER);
     }
+    
+    
 }
