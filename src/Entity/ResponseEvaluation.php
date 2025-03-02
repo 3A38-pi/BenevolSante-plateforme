@@ -1,28 +1,28 @@
 <?php
 
-// src/Entity/Response.php
+// src/Entity/ResponseEvaluation.php
 
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class Response
+class ResponseEvaluation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'text')]
     private string $answer;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $rating = null;
 
     #[ORM\ManyToOne(targetEntity: Question::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Question $question = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $rating = null;
 
     public function getId(): ?int
     {
@@ -40,17 +40,6 @@ class Response
         return $this;
     }
 
-    public function getRating(): ?int
-    {
-        return $this->rating;
-    }
-
-    public function setRating(?int $rating): self
-    {
-        $this->rating = $rating;
-        return $this;
-    }
-
     public function getQuestion(): ?Question
     {
         return $this->question;
@@ -59,6 +48,17 @@ class Response
     public function setQuestion(?Question $question): self
     {
         $this->question = $question;
+        return $this;
+    }
+
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?int $rating): self
+    {
+        $this->rating = $rating;
         return $this;
     }
 }

@@ -168,10 +168,14 @@
                                    data-description="{{ article.description }}">
                                     <i class="fas fa-pen me-2" style="color: MediumSpringGreen;"></i>
                                 </a>
-                                <!-- Bouton DELETE -->
-                                <a href="#" class="delete-article" data-id="{{ article.id }}">
-                                    <i class="fas fa-trash me-2" style="color: OrangeRed;"></i>
-                                </a>
+                                
+                                <!-- Bouton DELETE via formulaire -->
+                                <form action="{{ path('supprimer_article', {id: article.id}) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="delete-article" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');" style="background:none;border:none;">
+                                        <i class="fas fa-trash me-2" style="color: OrangeRed;"></i>
+                                    </button>
+                                </form>
+                                
                                 <!-- Bouton VIEW COMMENTS -->
                                 <a href="#" class="view-comments" data-id="{{ article.id }}">
                                     <i class="fas fa-eye" style="color: DimGrey;"></i>
@@ -221,7 +225,7 @@
     </div>
 </div>
 
-{# --- JS : Recherche, Suppression, Édition et Affichage des Commentaires --- #}
+{# --- JS : Recherche, Édition et Affichage des Commentaires --- #}
 <script>
     // Recherche en direct
     document.getElementById("search").addEventListener("input", function () {
@@ -230,24 +234,6 @@
         rows.forEach(row => {
             let text = row.innerText.toLowerCase();
             row.style.display = text.includes(searchValue) ? "" : "none";
-        });
-    });
-
-    // Suppression d'un article
-    document.querySelectorAll('.delete-article').forEach(button => {
-        button.addEventListener('click', function (event) {
-            event.preventDefault();
-            let articleId = this.getAttribute('data-id');
-            fetch(`/article/supprimer/${articleId}`, { method: 'DELETE' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.closest('tr').remove();
-                    } else {
-                        console.error("Erreur: " + data.message);
-                    }
-                })
-                .catch(error => console.error("Erreur:", error));
         });
     });
 
@@ -309,80 +295,76 @@
         });
     });
 
-   
-
-
     // Affichage des commentaires via popup
-document.addEventListener("DOMContentLoaded", function() {
-    let viewPopup = document.getElementById("viewCommentsPopup");
-    let commentsContainer = document.getElementById("commentsContainer");
-    let closeCommentsBtn = document.getElementById("closeViewComments");
+    document.addEventListener("DOMContentLoaded", function() {
+        let viewPopup = document.getElementById("viewCommentsPopup");
+        let commentsContainer = document.getElementById("commentsContainer");
+        let closeCommentsBtn = document.getElementById("closeViewComments");
 
-    document.querySelectorAll(".view-comments").forEach(button => {
-        button.addEventListener("click", function(event) {
-            event.preventDefault();
-            let articleId = this.getAttribute("data-id");
-            // Récupérer les commentaires via AJAX
-            fetch(`/article/${articleId}/commentaires`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    commentsContainer.innerHTML = "";
-                    data.commentaires.forEach(comment => {
-                        let commentDiv = document.createElement("div");
-                        commentDiv.classList.add("comment-line");
-                        
-                        // Si le commentaire n'est pas valide, ajouter la classe pour le style strikethrough
-                        if(comment.etat !== 'valide'){
-                            commentDiv.classList.add("deactivated");
-                        }
-                        
-                        let commentDetails = document.createElement("div");
-                        commentDetails.classList.add("comment-details");
-                        commentDetails.innerHTML = `<p><strong>${comment.nom} ${comment.prenom}</strong></p>
-                                                    <p>${comment.content}</p>`;
-                        
-                        // Bouton de désactivation
-                        let deactivateBtn = document.createElement("button");
-                        deactivateBtn.classList.add("deactivate-comment-btn");
-                        deactivateBtn.innerHTML = '<i class="fas fa-user-slash"></i>';
-                        deactivateBtn.addEventListener("click", function(event) {
-                            event.preventDefault();
-                            fetch(`/commentaire/desactiver/${comment.id}`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    commentDiv.classList.add("deactivated");
-                                } else {
-                                    alert("Erreur: " + data.message);
-                                }
-                            })
-                            .catch(error => console.error("Erreur:", error));
+        document.querySelectorAll(".view-comments").forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                let articleId = this.getAttribute("data-id");
+                // Récupérer les commentaires via AJAX
+                fetch(`/article/${articleId}/commentaires`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        commentsContainer.innerHTML = "";
+                        data.commentaires.forEach(comment => {
+                            let commentDiv = document.createElement("div");
+                            commentDiv.classList.add("comment-line");
+                            
+                            // Si le commentaire n'est pas valide, ajouter la classe pour le style strikethrough
+                            if(comment.etat !== 'valide'){
+                                commentDiv.classList.add("deactivated");
+                            }
+                            
+                            let commentDetails = document.createElement("div");
+                            commentDetails.classList.add("comment-details");
+                            commentDetails.innerHTML = `<p><strong>${comment.nom} ${comment.prenom}</strong></p>
+                                                        <p>${comment.content}</p>`;
+                            
+                            // Bouton de désactivation
+                            let deactivateBtn = document.createElement("button");
+                            deactivateBtn.classList.add("deactivate-comment-btn");
+                            deactivateBtn.innerHTML = '<i class="fas fa-user-slash"></i>';
+                            deactivateBtn.addEventListener("click", function(event) {
+                                event.preventDefault();
+                                fetch(`/commentaire/desactiver/${comment.id}`, {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        commentDiv.classList.add("deactivated");
+                                    } else {
+                                        alert("Erreur: " + data.message);
+                                    }
+                                })
+                                .catch(error => console.error("Erreur:", error));
+                            });
+                            
+                            commentDiv.appendChild(commentDetails);
+                            commentDiv.appendChild(deactivateBtn);
+                            commentsContainer.appendChild(commentDiv);
                         });
-                        
-                        commentDiv.appendChild(commentDetails);
-                        commentDiv.appendChild(deactivateBtn);
-                        commentsContainer.appendChild(commentDiv);
-                    });
-                    viewPopup.style.display = "flex";
-                } else {
-                    alert("Erreur: " + data.message);
-                }
-            })
-            .catch(error => console.error("Erreur:", error));
+                        viewPopup.style.display = "flex";
+                    } else {
+                        alert("Erreur: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
+            });
+        });
+
+        closeCommentsBtn.addEventListener("click", function() {
+            viewPopup.style.display = "none";
         });
     });
-
-    closeCommentsBtn.addEventListener("click", function() {
-        viewPopup.style.display = "none";
-    });
-});
-
 </script>
 {% endblock %}
