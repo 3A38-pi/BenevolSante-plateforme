@@ -5,7 +5,7 @@
 
 {% block body %}
 <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-lg p-5 rounded animate__animated animate__fadeInUp" style="max-width: 500px; width: 100%;">
+    <div class="card shadow-lg p-5 rounded" style="max-width: 500px; width: 100%;">
         <div class="card-body">
             <h2 class="text-center mb-4">Connexion</h2>
 
@@ -15,7 +15,7 @@
                 </div>
             {% endif %}
 
-            <form method="post" class="animate__animated animate__fadeIn">
+            <form method="post">
                 <div class="mb-4">
                     <input type="text" name="_username" class="form-control form-control-lg" placeholder="Email" required />
                 </div>
@@ -27,38 +27,13 @@
 
             <p class="text-center mt-4">
                 <a href="{{ path('app_register') }}" class="text-decoration-none">Créer un compte</a>
+                <br>
+                <a href="{{ path('app_forgot_password') }}" class="text-decoration-none">Mot de passe oublié ?</a>
             </p>
-
-            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="sign_in_with" data-size="large" data-logo_alignment="left"></div>
         </div>
     </div>
 </div>
-
-<style>
-    .card {
-        animation: fadeInUp 1s ease-out;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3), 0 10px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translate3d(0, 100%, 0);
-        }
-        to {
-            opacity: 1;
-            transform: none;
-        }
-    }
-</style>
-
-<!-- Footer Start -->
+ <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container py-5">
             <div class="row g-5">
@@ -116,25 +91,4 @@
     </div>
 
     <!-- Footer End -->
-
-<script>
-    function onSignIn(googleUser) {
-        var id_token = googleUser.getAuthResponse().id_token;
-        // Envoyer le token ID à votre serveur pour vérification
-        fetch('/auth/google/callback', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id_token: id_token })
-        }).then(response => {
-            // Gérer la réponse de votre serveur
-            if (response.ok) {
-                // Rediriger ou afficher un message de succès
-            } else {
-                // Gérer les erreurs
-            }
-        });
-    }
-</script>
 {% endblock %}
