@@ -35,3 +35,13 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    mailer.default:
+        class: Symfony\Component\Mailer\Mailer
+        arguments:
+            - '@mailer.transport.default'
+
+    mailer.secondary:
+        class: Symfony\Component\Mailer\Mailer
+        arguments:
+            - '@mailer.transport.secondary'
