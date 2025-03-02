@@ -38,7 +38,7 @@ class Question
     #[ORM\OneToMany(mappedBy: 'question', targetEntity: Response::class, cascade: ['persist', 'remove'])]
     private Collection $responses;
 
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: ResponseEvaluation::class)]
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: EvaluationResponse::class)]
     private Collection $responseEvaluations;
 
     public function __construct()

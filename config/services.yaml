@@ -5,11 +5,17 @@ parameters:
     twilio.auth_token: "%env(TWILIO_AUTH_TOKEN)%"
     twilio.phone_number: "%env(TWILIO_PHONE_NUMBER)%"
 
+    sightengine_api_user: '%env(SIGHTENGINE_API_USER)%'
+    sightengine_api_secret: '%env(SIGHTENGINE_API_SECRET)%'
 services:
     App\Security\LoginSuccessHandler:
         arguments:
             $router: '@router'
 
+    App\Twig\NotificationExtension:
+        tags: ['twig.extension']
+    App\Service\NotificationMailer:
+        arguments: []
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -29,3 +35,15 @@ services:
             $twilioSid: '%twilio.sid%'
             $twilioAuthToken: '%twilio.auth_token%'
             $twilioPhoneNumber: '%twilio.phone_number%'
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    mailer.default:
+        class: Symfony\Component\Mailer\Mailer
+        arguments:
+            - '@mailer.transport.default'
+
+    mailer.secondary:
+        class: Symfony\Component\Mailer\Mailer
+        arguments:
+            - '@mailer.transport.secondary'

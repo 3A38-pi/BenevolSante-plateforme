@@ -23,6 +23,11 @@ class EvaluationResponse
     #[ORM\ManyToOne(targetEntity: 'App\Entity\Evaluation')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Evaluation $evaluation = null;
+
+    #[ORM\ManyToOne(targetEntity: Question::class, inversedBy: 'responseEvaluations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Question $question = null;
+
     // Getters et Setters
     public function getId(): ?int
     {
@@ -59,6 +64,17 @@ class EvaluationResponse
     public function setEvaluation(?Evaluation $evaluation): self
     {
         $this->evaluation = $evaluation;
+        return $this;
+    }
+
+    public function getQuestion(): ?Question
+    {
+        return $this->question;
+    }
+
+    public function setQuestion(?Question $question): self
+    {
+        $this->question = $question;
         return $this;
     }
 }

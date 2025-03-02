@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset Password{% endblock %}
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-5 rounded" style="max-width: 500px; width: 100%;">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Reset Password</h2>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="password" class="form-label">New Password</label>
+                    <input type="password" class="form-control form-control-lg" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Reset Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 
