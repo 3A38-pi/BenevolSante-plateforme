@@ -41,8 +41,6 @@ class UserRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    
-
     public function countUsersByType(string $type): int
     {
         return $this->createQueryBuilder('u')
