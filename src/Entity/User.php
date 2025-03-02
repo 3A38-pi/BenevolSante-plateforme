@@ -78,6 +78,11 @@ private ?string $password = null;
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $type;
+
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
@@ -115,6 +120,7 @@ private ?string $password = null;
     {
         return array_unique(array_merge($this->roles, ['ROLE_USER']));
     }
+
 
     public function setRoles(array $roles): self
     {

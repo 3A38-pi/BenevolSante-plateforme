@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reçu de demande de don</title>
+    
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="header">
+            <img src="{{ asset('img/tawwa don 3.png') }}" >
+            <h2>Plateforme de Dons : Tawwa Dons</h2>
+            <p>Partageons pour un monde meilleur.</p>
+        </div>
+
+        <h1>Reçu de demande de don</h1>
+
+        <div class="receipt-info">
+            <h2>Détails de la demande</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Élément</th>
+                        <th>Valeur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Bénéficiaire</td>
+                        <td>{{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <td>Don</td>
+                        <td>{{ demande.dons.titre }}</td>
+                    </tr>
+                    <tr>
+                        <td>Donneur</td>
+                        <td>{{ demande.dons.donneur.nom }} {{ demande.dons.donneur.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <td>Date de la demande</td>
+                        <td>{{ demande.dateDemande|date('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Statut</td>
+                        <td>{{ demande.statut }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Grâce à vous, nous avançons avec espoir</p>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .receipt-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 150px;
+            height: auto;
+        }
+        .header h2 {
+            margin: 10px 0 5px;
+            color: #333;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 0;
+            color: #777;
+            font-size: 16px;
+            font-style: italic;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .receipt-info {
+            margin-bottom: 20px;
+        }
+        .receipt-info p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+        .receipt-info strong {
+            color: #333;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</body>
+</html>
