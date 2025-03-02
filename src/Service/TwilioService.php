@@ -3,7 +3,7 @@ namespace App\Service;
 
 use Twilio\Rest\Client;
 
-class TwilioService 
+class TwilioService
 {
     private $twilioClient;
     private $twilioPhoneNumber;

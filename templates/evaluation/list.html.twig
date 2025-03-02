@@ -5,49 +5,94 @@
 {% block body %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary">Évaluations avec Réponses</h1>
-        <a href="{{ path('create_evaluation') }}" class="btn btn-success">
+        <h1 class="text-primary"><i class="fas fa-clipboard-list"></i> Évaluations et Réponses</h1>
+        <a href="{{ path('create_evaluation') }}" class="btn btn-success shadow">
             <i class="fas fa-plus-circle"></i> Ajouter une évaluation
         </a>
     </div>
 
+    <!-- Barre de recherche -->
+    <div class="input-group mb-4">
+        <span class="input-group-text bg-light"><i class="fas fa-search text-primary"></i></span>
+        <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="Rechercher une évaluation..." onkeyup="filterEvaluations()">
+    </div>
+
     {% if evaluations is empty %}
-        <p class="text-center">Aucune évaluation disponible.</p>
+        <p class="text-center text-muted">Aucune évaluation disponible.</p>
     {% else %}
-        <div class="row">
+        <div class="row" id="evaluationContainer">
             {% for evaluation in evaluations %}
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm h-100">
+                <div class="col-md-6 mb-4 evaluation-item">
+                    <div class="card shadow-lg h-100 border-0 rounded-lg">
+                        <!-- Card Header -->
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-question-circle"></i> {{ evaluation.name }}</h5>
+                        </div>
+
+                        <!-- Card Body -->
                         <div class="card-body">
-                            <h4 class="card-title text-primary">{{ evaluation.question }}</h4>
+                            {% for question in evaluation.questions %}
+                                <div class="question-box p-3 mb-3 border rounded bg-light">
+                                    <p class="fw-bold text-primary">{{ question.content }}</p>
 
-                            {% if evaluation.options is not empty %}
-                                <ul class="list-group mb-3">
-                                    {% for option in evaluation.options %}
-                                        <li class="list-group-item">{{ option }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+                                    <div class="response-section">
+                                        <h6 class="text-secondary"><i class="fas fa-comments"></i> Réponses :</h6>
+                                        {% set responses = question.responseEvaluations %}
+                                        {% set totalResponses = responses|length %}
+                                        {% set vraiResponses = responses|filter(response => response.answer == 'Vrai')|length %}
+                                        {% set fauxResponses = responses|filter(response => response.answer == 'Faux')|length %}
+                                        {% set otherResponses = totalResponses - (vraiResponses + fauxResponses) %}
 
-                            <h5 class="mt-3">Réponses :</h5>
-                            {% if evaluation.responses is empty %}
-                                <p class="text-muted">Aucune réponse enregistrée.</p>
-                            {% else %}
-                                <ul class="list-group">
-                                    {% for response in evaluation.responses %}
-                                        <li class="list-group-item">
-                                            <strong>Réponse :</strong> {{ response.answer }} <br>
-                                            <strong>Note :</strong> ⭐ {{ response.rating }}/5
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+                                        {% if responses is empty %}
+                                            <p class="text-muted">Aucune réponse enregistrée.</p>
+                                        {% else %}
+                                            <ul class="list-group small">
+                                                {% for response in responses %}
+                                                    <li class="list-group-item">
+                                                        <strong><i class="fas fa-comment-dots"></i> Réponse :</strong>
+                                                        {% if response.answer == 'Vrai' %}
+                                                            <span class="badge bg-success">Vrai</span>
+                                                        {% elseif response.answer == 'Faux' %}
+                                                            <span class="badge bg-danger">Faux</span>
+                                                        {% else %}
+                                                            {{ response.answer }}
+                                                        {% endif %}
+                                                        <br>
+                                                        <strong><i class="fas fa-star text-warning"></i> Note :</strong> ⭐ {{ response.rating }}/5
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
 
+                                            <!-- Pourcentage des réponses -->
+                                            {% if totalResponses > 0 %}
+                                                <div class="mt-3">
+                                                    <p class="text-info">
+                                                        <strong>Vrai :</strong> {{ (vraiResponses / totalResponses * 100)|round(2) }}%
+                                                    </p>
+                                                    <p class="text-info">
+                                                        <strong>Faux :</strong> {{ (fauxResponses / totalResponses * 100)|round(2) }}%
+                                                    </p>
+                                                    {% if otherResponses > 0 %}
+                                                        <p class="text-muted">
+                                                            <strong>Autres :</strong> {{ otherResponses }} réponse(s) non catégorisée(s).
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <h6 class="text-secondary"><i class="fas fa-info-circle"></i> Description :</h6>
+                            <p class="text-muted">{{ evaluation.description }}</p>
+
+                            <!-- Boutons d'action -->
                             <div class="d-flex justify-content-between mt-3">
-                                <a href="{{ path('update_evaluation', {'id': evaluation.id}) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Mettre à jour
+                                <a href="{{ path('update_evaluation', {'id': evaluation.id}) }}" class="btn btn-warning btn-sm shadow-sm">
+                                    <i class="fas fa-edit"></i> Modifier
                                 </a>
-                                <a href="{{ path('remove', {'id': evaluation.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette évaluation ?');">
+                                <a href="{{ path('remove', {'id': evaluation.id}) }}" class="btn btn-danger btn-sm shadow-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette évaluation ?');">
                                     <i class="fas fa-trash-alt"></i> Supprimer
                                 </a>
                             </div>
@@ -58,4 +103,18 @@
         </div>
     {% endif %}
 </div>
+
+<!-- Script pour la recherche -->
+<script>
+    function filterEvaluations() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toLowerCase();
+        var evaluations = document.getElementsByClassName("evaluation-item");
+        
+        for (var i = 0; i < evaluations.length; i++) {
+            var question = evaluations[i].getElementsByTagName("h5")[0].innerText.toLowerCase();
+            evaluations[i].style.display = question.includes(filter) ? "block" : "none";
+        }
+    }
+</script>
 {% endblock %}
