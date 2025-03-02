@@ -1,141 +1,5 @@
 /********** Styles pour le Formulaire et Message Motivation **********/
-.container {
-    display:contents;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin: 100px;
-  }
 
-  .form-container {
-    display: flex;
-    justify-content: space-between; /* Espace entre le formulaire et le texte */
-    align-items: center; /* Aligne verticalement */
-    width: 100%;
-    padding-left: 50px;
-    padding-top: 20px;
-}
-
-
-
-  .donation-form {
-    background: #fff;
-    padding: 40px; /* Ajuste au lieu de 20% pour éviter un padding trop grand */
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 100%; /* Augmente la largeur du formulaire */
-    max-width: 800px; /* Évite qu'il devienne trop grand */
-}
-
-  .donation-form h1 {
-    margin-top: 0;
-  }
-  .form-group {
-    margin-bottom: 10px;
-  }
-  .form-group label {
-    display: block;
-    margin-bottom: 2px;
-    font-weight: bold;
-    color: #555;
-  }
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  button {
-    background: #007BFF;
-    color: #fff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  button:hover {
-    background: #0056b3;
-  }
-  .form-container {
-    display: flex;
-    justify-content: space-between; /* Sépare le formulaire et le message */
-    align-items:first baseline; /* Aligne les éléments verticalement */
-    width: 90%; /* S'assure que l'élément occupe toute la largeur */
-}
-
-.motivation-container {
-    margin-right: 80%;
-
-    text-align: right;
-    font-weight: bold;
-    font-size: 2.4em;
-    color: #1a1888;
-    max-width: 3000px; /* Ajuste la largeur pour forcer le retour à la ligne */
-    word-wrap: break-word;
-    display:contents;
-}
-
-
-
-  /********** Template CSS Global **********/
-  :root {
-    --primary: #0463FA;
-    --light: #EFF5FF;
-    --dark: #1B2C51;
-  }
-  .fw-medium { font-weight: 500 !important; }
-  .fw-bold { font-weight: 700 !important; }
-  .fw-black { font-weight: 900 !important; }
-  .back-to-top {
-    position: fixed;
-    display: none;
-    right: 45px;
-    bottom: 45px;
-    z-index: 99;
-  }
-  /*** Spinner ***/
-  #spinner {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .5s ease-out, visibility 0s linear .5s;
-    z-index: 99999;
-  }
-  #spinner.show {
-    transition: opacity .5s ease-out, visibility 0s linear 0s;
-    visibility: visible;
-    opacity: 1;
-  }
-  /*** Button ***/
-  .btn {
-    font-weight: 500;
-    transition: .5s;
-  }
-  .btn.btn-primary,
-  .btn.btn-secondary {
-    color: #FFFFFF;
-  }
-  .btn-square {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: normal;
-  }
-  .btn-sm-square { width: 32px; height: 32px; }
-  .btn-lg-square { width: 48px; height: 48px; }
-  .btn-square,
-  .btn-sm-square,
-  .btn-lg-square {
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: normal;
-  }
   /*** Navbar ***/
   .navbar .dropdown-toggle::after {
     border: none;
@@ -322,141 +186,8 @@
       padding-left: calc(((100% - 1320px) / 2) + .75rem);
     }
   }
-  /*** Team ***/
-  .team-item img {
-    position: relative;
-    top: 0;
-    transition: .5s;
-  }
-  .team-item:hover img {
-    top: -30px;
-  }
-  .team-item .team-text {
-    position: relative;
-    height: 100px;
-    transition: .5s;
-  }
-  .team-item:hover .team-text {
-    margin-top: -60px;
-    height: 160px;
-  }
-  .team-item .team-text .team-social {
-    opacity: 0;
-    transition: .5s;
-  }
-  .team-item:hover .team-text .team-social {
-    opacity: 1;
-  }
-  .team-item .team-social .btn {
-    display: inline-flex;
-    color: var(--primary);
-    background: #FFFFFF;
-    border-radius: 40px;
-  }
-  .team-item .team-social .btn:hover {
-    color: #FFFFFF;
-    background: var(--primary);
-  }
-  /*** Appointment ***/
-  .bootstrap-datetimepicker-widget.bottom {
-    top: auto !important;
-  }
-  .bootstrap-datetimepicker-widget .table * {
-    border-bottom-width: 0px;
-  }
-  .bootstrap-datetimepicker-widget .table th {
-    font-weight: 500;
-  }
-  .bootstrap-datetimepicker-widget.dropdown-menu {
-    padding: 10px;
-    border-radius: 2px;
-  }
-  .bootstrap-datetimepicker-widget table td.active,
-  .bootstrap-datetimepicker-widget table td.active:hover {
-    background: var(--primary);
-  }
-  .bootstrap-datetimepicker-widget table td.today::before {
-    border-bottom-color: var(--primary);
-  }
-  /*** Testimonial ***/
-  .testimonial-carousel::before {
-    position: absolute;
-    content: "";
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 0;
-    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    z-index: 1;
-  }
-  .testimonial-carousel::after {
-    position: absolute;
-    content: "";
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 0;
-    background: linear-gradient(to left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    z-index: 1;
-  }
-  @media (min-width: 768px) {
-    .testimonial-carousel::before,
-    .testimonial-carousel::after {
-      width: 200px;
-    }
-  }
-  @media (min-width: 992px) {
-    .testimonial-carousel::before,
-    .testimonial-carousel::after {
-      width: 300px;
-    }
-  }
-  .testimonial-carousel .owl-item .testimonial-text {
-    background: var(--light);
-    transform: scale(.8);
-    transition: .5s;
-  }
-  .testimonial-carousel .owl-item.center .testimonial-text {
-    background: var(--primary);
-    transform: scale(1);
-  }
-  .testimonial-carousel .owl-item .testimonial-text *,
-  .testimonial-carousel .owl-item .testimonial-item img {
-    transition: .5s;
-  }
-  .testimonial-carousel .owl-item.center .testimonial-text * {
-    color: var(--light) !important;
-  }
-  .testimonial-carousel .owl-item.center .testimonial-item img {
-    background: var(--primary) !important;
-  }
-  .testimonial-carousel .owl-nav {
-    position: absolute;
-    width: 350px;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: space-between;
-    opacity: 0;
-    transition: .5s;
-    z-index: 1;
-  }
-  .testimonial-carousel:hover .owl-nav {
-    width: 300px;
-    opacity: 1;
-  }
-  .testimonial-carousel .owl-nav .owl-prev,
-  .testimonial-carousel .owl-nav .owl-next {
-    position: relative;
-    color: var(--primary);
-    font-size: 45px;
-    transition: .5s;
-  }
-  .testimonial-carousel .owl-nav .owl-prev:hover,
-  .testimonial-carousel .owl-nav .owl-next:hover {
-    color: var(--dark);
-  }
+ 
+ 
   /*** Footer ***/
   .footer .btn.btn-social {
     margin-right: 5px;
@@ -642,5 +373,106 @@
   width: 90px;
   }
   
+  .bell-icon i {
+    font-size: 20px; /* Taille de l’icône */
+    color: #555;     /* Couleur de l’icône */
+    position: relative;
+}
+
+.badge-notification {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 4px 7px;
+    border-radius: 50%;
+    font-size: 12px;
+    color: #fff;
+}
+
+
+/* ----- Positionnement et style global du pop-up ----- */
+.notification-popup {
+  position: absolute;          /* Ou fixed, selon votre usage */
+  top: 60px;                   /* Ajustez selon la hauteur de votre navbar */
+  right: 20px;                 /* Ajustez la marge à droite */
+  width: 300px;                /* Largeur du panneau */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 9999;
+  padding: 10px 15px;
+  font-family: Arial, sans-serif;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.notif-header h5 {
+  margin: 0;
+  color: #000;       /* Titre "Notifications" en noir */
+}
+
+.close-popup {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #888;       /* Couleur du bouton X */
+}
+
+.notif-content {
+  max-height: 250px; /* Limite la hauteur, scroll si trop long */
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+/* ----- Scrollbar fine et bleue ----- */
+.notif-content::-webkit-scrollbar {
+  width: 3px;                /* épaisseur */
+}
+.notif-content::-webkit-scrollbar-track {
+  background: #f0f0f0;       /* Couleur de fond du rail */
+}
+.notif-content::-webkit-scrollbar-thumb {
+  background: #007bff;       /* Couleur bleue */
+  border-radius: 3px;        /* Coins arrondis */
+}
+
+.notif-item {
+  margin-bottom: 10px;
+}
+
+/* Titre de notification en noir */
+.notif-title {
+  display: block;        /* Pour séparer clairement le titre du texte */
+  color: #000;           /* Noir */
+  margin-bottom: 2px;
+}
+
+/* Texte de la notification en gris */
+.notif-text {
+  color: #666;           /* Gris pour le contenu */
+  margin: 0;            /* Retire la marge par défaut */
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Date en bleu */
+.notif-date {
+  color: #007bff;        /* Bleu */
+}
+
+/* Pied de la pop-up */
+.notif-footer {
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+
 
 

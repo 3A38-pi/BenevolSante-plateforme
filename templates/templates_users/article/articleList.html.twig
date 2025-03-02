@@ -1,44 +1,84 @@
+{# templates_users/article/articleList.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
 <head>
     <link rel="stylesheet" href="{{ asset('css/articlelist.css') }}">
 </head>
 
-<body>
+<div class="container-articles">
+    <div class="articles-grid">
         {% for article in articles %}
+            <div class="article-card">
+                <!-- Image + overlay date -->
+                <div class="article-image-container">
+                    <img 
+                        src="{{ asset('uploads/images/' ~ article.image) }}" 
+                        class="article-image" 
+                        alt="Article Image"
+                    >
+                    <div class="article-date-overlay">
+                        {{ article.createdAt|date('d M Y') }}
+                    </div>
+                </div>
 
-    <div class="container">
-        <div class="article-header">
-            <h1> {{ article.titre }} </h1>
-            <p class="article-meta">
-                <i class="fas fa-clock"></i> 12:37 AM 
-                <i class="fas fa-comments"></i>  {{ article.nombreCommentaire }} comments
-            </p>
-        </div>
+                <!-- Titre -->
+                <h2 class="article-title">{{ article.titre }}</h2>
 
-        <div class="article-image-container">
-            <img src="{{ asset('uploads/images/' ~ article.image) }}" class="article-image" alt="Article Image">
-        </div>
+                <!-- Description tronquée (2 lignes, max 250 caractères) -->
+                <p class="article-description">
+                    {% if article.description|length > 250 %}
+                        {{ article.description|slice(0, 250) ~ '...' }}
+                    {% else %}
+                        {{ article.description }}
+                    {% endif %}
+                </p>
 
-        <p class="article-description">
-            {{ article.description }}
-        </p>
-
-        <div class="article-footer">
-            <p class="tags">
-                <i class="fas fa-tags"></i> {{ article.categorie }}
-            </p>
-            <p class="tags">
-                <i class="bi bi-mouse-fill"></i> <a href="{{ path('articleDescription', {'id': article.id}) }}">Read More</a>
-            </p>
-        </div>
+                <!-- Pied de l’article : Read More -->
+                <div class="article-footer">
+                    {# Catégorie masquée si vous ne la voulez pas
+                    <p class="tags">
+                        <i class="fas fa-tags"></i> {{ article.categorie }}
+                    </p>
+                    #}
+                    <p class="tags">
+                        <i class="bi bi-mouse-fill"></i> 
+                        <a href="{{ path('articleDescription', {'id': article.id}) }}">
+                            Read More
+                        </a>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
     </div>
+</div>
 
-    {% endfor %}
+<!-- PAGINATION -->
+<div class="pagination-container">
+    {% if totalPages > 1 %}
+        {# Bouton "page précédente" #}
+        {% if currentPage > 1 %}
+            <a class="pagination-btn" href="{{ path('ArticleList', { page: currentPage - 1 }) }}">
+                &laquo;
+            </a>
+        {% endif %}
 
+        {# Liens vers chaque page #}
+        {% for pageNumber in 1..totalPages %}
+            <a 
+                class="pagination-btn {% if pageNumber == currentPage %}active{% endif %}"
+                href="{{ path('ArticleList', { page: pageNumber }) }}"
+            >
+                {{ pageNumber }}
+            </a>
+        {% endfor %}
 
-</body>
-</html>
+        {# Bouton "page suivante" #}
+        {% if currentPage < totalPages %}
+            <a class="pagination-btn" href="{{ path('ArticleList', { page: currentPage + 1 }) }}">
+                &raquo;
+            </a>
+        {% endif %}
+    {% endif %}
+</div>
 {% endblock %}

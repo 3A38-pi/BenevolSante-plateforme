@@ -1,30 +1,38 @@
 {% extends 'base2.html.twig' %}
 
-{% block title %}Offre{% endblock %}
+{% block title %}Détail de l'Offre{% endblock %}
 
 {% block body %}
-    <h1>Offre</h1>
+    <div class="container mt-4">
+        <h1 class="text-center text-primary mb-4">📄 Détail de l'Offre</h1>
+        
+        <div class="card shadow-lg p-4 mb-4 bg-light animate__animated animate__fadeInUp">
+            <div class="card-body">
+                <h4 class="card-title text-primary"><i class="fas fa-briefcase"></i> {{ offre.titreOffre }}</h4>
+                <p class="card-text"><strong>📌 ID:</strong> {{ offre.id }}</p>
+                <p class="card-text"><strong>📝 Description:</strong> {{ offre.descriptionOffre }}</p>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{{ path('app_offreback_index') }}" class="btn btn-secondary shadow">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+            <div>
+                <a href="{{ path('app_offreback_edit', {'id': offre.id}) }}" class="btn btn-warning shadow">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                <form method="post" action="{{ path('app_offreback_delete', {'id': offre.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.id) }}">
+                    <button type="submit" class="btn btn-danger shadow">
+                        <i class="fas fa-trash-alt"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ offre.id }}</td>
-            </tr>
-            <tr>
-                <th>Titre_offre</th>
-                <td>{{ offre.titreOffre }}</td>
-            </tr>
-            <tr>
-                <th>Description_offre</th>
-                <td>{{ offre.descriptionOffre }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_offreback_index') }}">back to list</a>
-
-    <a href="{{ path('app_offreback_edit', {'id': offre.id}) }}">edit</a>
-
-    {{ include('offreback/_delete_form.html.twig') }}
+    <!-- Ajout d'animations et styles supplémentaires -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 {% endblock %}

@@ -21,46 +21,129 @@ use Psr\Log\LoggerInterface;
 
 final class DonsController extends AbstractController
 {
+    /*
     #[Route('/dons/form', name: 'dons_form')]
-    public function create(Request $request, #[Autowire('%image_dir%')] string $imageDir, EntityManagerInterface $entityManager , Security $security): Response
-    {
+    public function create(
+        Request $request, 
+        #[Autowire('%image_dir%')] string $imageDir, 
+        EntityManagerInterface $entityManager, 
+        Security $security
+    ): Response {
         $user = $security->getUser();
- //       $user = $entityManager->getRepository(User::class)->find(2);
+    
 
         if (!$user) {
-            throw $this->createNotFoundException("Aucun utilisateur trouvé avec l'ID 2.");
+            $this->addFlash('error', "Vous devez être connecté pour ajouter un don.");
+            return $this->redirectToRoute('app_login'); // Redirection vers la page de connexion
         }
-
+    
         $don = new Dons();
         $don->setDonneur($user);
-
+        
         $form = $this->createForm(AddDonsType::class, $don);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $don->setValide(false); // Le don doit être validé avant d'être affiché
-
-            // Gestion de l'upload de l'image
-            if ($image = $form['image']->getData()) {
-                $filename = uniqid() . '.' . $image->guessExtension();
-                $image->move($imageDir, $filename);
-                $don->setImageUrl($filename);
+    
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $don->setValide(false); // Le don doit être validé avant d'être affiché
+    
+                // Gestion de l'upload de l'image
+                if ($image = $form['image']->getData()) {
+                    // Vérifier l'extension de l'image
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                    $extension = $image->guessExtension();
+    
+                    if (!in_array($extension, $allowedExtensions)) {
+                        $this->addFlash('error', "Format d'image non valide. Seuls JPG, PNG et GIF sont autorisés.");
+                        return $this->redirectToRoute('dons_form');
+                    }
+    
+                    $filename = uniqid() . '.' . $extension;
+                    try {
+                        $image->move($imageDir, $filename);
+                        $don->setImageUrl($filename);
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', "Erreur lors de l'upload de l'image.");
+                        return $this->redirectToRoute('dons_form');
+                    }
+                }
+    
+                $entityManager->persist($don);
+                $entityManager->flush();
+    
+                $this->addFlash('success', 'Nouveau don ajouté à vérifier !');
+                return $this->redirectToRoute('dons_accepted');
+            } else {
+                $this->addFlash('error', 'Erreur dans le formulaire. Vérifiez les champs.');
             }
-
-            $entityManager->persist($don);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Nouveau don ajouté à vérifier !');
-            return $this->redirectToRoute('dons_accepted');
         }
-
+    
         return $this->render('/templates_users/dons_form/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
+    */
+
+    #[Route('/dons/form', name: 'dons_form')]
+    public function create(
+        Request $request, 
+        #[Autowire('%image_dir%')] string $imageDir, 
+        EntityManagerInterface $entityManager, 
+        Security $security
+    ): Response {
+        $user = $security->getUser();
+    
+        if (!$user) {
+            $this->addFlash('error', "Vous devez être connecté pour ajouter un don.");
+            return $this->redirectToRoute('app_login');
+        }
+    
+        $don = new Dons();
+        $don->setDonneur($user);
+        
+        $form = $this->createForm(AddDonsType::class, $don);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $don->setValide(false);
+        
+            if ($image = $form->get('imageUrl')->getData()) {
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                $extension = $image->guessExtension();
+            
+                if (!in_array($extension, $allowedExtensions)) {
+                    $this->addFlash('error', "Format d'image non valide. Seuls JPG, PNG et GIF sont autorisés.");
+                    return $this->redirectToRoute('dons_form');
+                }
+        
+                $filename = uniqid() . '.' . $image->guessExtension();
+                try {
+                    $image->move($imageDir, $filename);
+                    $don->setImageUrl($filename); // Stocker seulement le nom du fichier
+                } catch (\Exception $e) {
+                    $this->addFlash('error', "Erreur lors de l'upload de l'image.");
+                    return $this->redirectToRoute('dons_form');
+                }
+            }
+        
+            $entityManager->persist($don);
+            $entityManager->flush();
+        
+            $this->addFlash('success', 'Nouveau don ajouté à vérifier !');
+            return $this->redirectToRoute('dons_accepted');
+        }
+        
+    
+        return $this->render('/templates_users/dons_form/index.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+    
 
 
+
+    /*
 
     #[Route('/admin/dons/request', name: 'app_dashbord_requestDons')]
     public function requestDons(EntityManagerInterface $entityManager): Response
@@ -76,7 +159,7 @@ final class DonsController extends AbstractController
 
 
 
-    // Route pour accepter un don
+    // Route pour accepter un don pour l'admin
     #[Route('/admin/dons/accept/{id}', name: 'admin_accept_don')]
     public function acceptDon(Dons $don, EntityManagerInterface $entityManager): Response
     {
@@ -97,7 +180,38 @@ final class DonsController extends AbstractController
         $this->addFlash('error', 'Le don a été refusé et supprimé.');
         return $this->redirectToRoute('app_dashbord_requestDons');
     }
+*/
 
+
+#[Route('/admin/dons/request', name: 'app_dashbord_requestDons')]
+    public function requestDons(EntityManagerInterface $entityManager): Response
+    {
+        $dons = $entityManager->getRepository(Dons::class)->findBy(['valide' => false]);
+
+        return $this->render('templates_admin/ListDons_Request/List.html.twig', [
+            'dons' => $dons,
+        ]);
+    }
+
+    #[Route('/admin/dons/accept/{id}', name: 'admin_accept_don')]
+    public function acceptDon(Dons $don, EntityManagerInterface $entityManager): Response
+    {
+        $don->setValide(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le don a été accepté.');
+        return $this->redirectToRoute('app_dashbord_requestDons');
+    }
+
+    #[Route('/admin/dons/refuse/{id}', name: 'admin_refuse_don')]
+    public function refuseDon(Dons $don, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($don);
+        $entityManager->flush();
+
+        $this->addFlash('error', 'Le don a été refusé et supprimé.');
+        return $this->redirectToRoute('app_dashbord_requestDons');
+    }
 
 
     //////////////////////////////////////////////////////////
@@ -106,6 +220,7 @@ final class DonsController extends AbstractController
 
 
 
+//hedhi liste principale mteee3 les dons 
 
     #[Route('/dons/accepted', name: 'dons_accepted')]
     public function acceptedDons(Request $request, EntityManagerInterface $entityManager, Security $security): Response
@@ -162,6 +277,7 @@ final class DonsController extends AbstractController
 
 
 
+// pour effectuer la demande d'un don
     #[Route('/demande-don', name: 'demande_don', methods: ['POST'])]
     public function demanderDon(
         Request $request,
@@ -299,6 +415,8 @@ final class DonsController extends AbstractController
        
         if ($action === 'accepter') {
             $demande->setStatut('Acceptée');
+            $demande->activerChat();
+
         } elseif ($action === 'refuser') {
             $demande->setStatut('Refusée');
         } else {
