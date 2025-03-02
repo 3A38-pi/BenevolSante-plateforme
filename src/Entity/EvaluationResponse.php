@@ -1,33 +1,29 @@
 <?php
 
+// src/Entity/EvaluationResponse.php
 
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: 'App\Repository\EvaluationResponseRepository')]
 class EvaluationResponse
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $answer = null;
 
-    #[ORM\Column(type: "integer", nullable: true)]
-    #[Assert\Range(min: 1, max: 5)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $rating = null;
 
-    #[ORM\ManyToOne(targetEntity: "App\Entity\Evaluation")]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Evaluation')]
     #[ORM\JoinColumn(nullable: false)]
-   
     private ?Evaluation $evaluation = null;
-
     // Getters et Setters
-
     public function getId(): ?int
     {
         return $this->id;
