@@ -26,6 +26,8 @@
             "./migrations/.gitignore"
         ]
     },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.6.1"
     "friendsofsymfony/elastica-bundle": {
         "version": "6.5",
         "recipe": {

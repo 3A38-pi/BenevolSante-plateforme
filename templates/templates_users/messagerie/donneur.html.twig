@@ -6,6 +6,8 @@
     <div class="container">
         <h1>Discussion avec {{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</h1>
 
+            
+
         <div class="messages">
             {% for message in messages %}
                 <div class="message {% if message.expediteur == app.user %}sent{% else %}received{% endif %}">
@@ -24,13 +26,6 @@
             <button type="submit" class="btn btn-success">Envoyer</button>
         </form>
     </div>
-
-
-
-
-
-
-
 
 
 
@@ -134,6 +129,8 @@
     </style>
 
     <script>
+
+        
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("messageForm");
             const messageInput = document.getElementById("messageInput");
@@ -177,5 +174,6 @@
                 .catch(error => console.error("Erreur:", error));
             });
         });
+        
     </script>
 {% endblock %}
