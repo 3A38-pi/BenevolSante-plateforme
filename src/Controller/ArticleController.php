@@ -18,16 +18,19 @@ use App\Service\NotificationMailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
+use App\Service\OpenAIService;
 
 
 
 final class ArticleController extends AbstractController
 {
     private $em; 
+    private $openAIService;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, OpenAIService $openAIService)
     {
         $this->em = $em;
+        $this->openAIService = $openAIService;
     }
 
     #[Route('/article/{page}', name: 'ArticleList', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
@@ -49,34 +52,48 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/articleDescription/{id}', name: 'articleDescription')]
-    public function goToArticleDescription(Request $request, $id): Response
-    {
-        $article = $this->em->getRepository(Article::class)->find($id);
-        if (!$article) {
-            throw $this->createNotFoundException("L'article n'existe pas.");
-        }
-        $commentaire = new Commentaire();
-        $form = $this->createForm(CommentaireType::class, $commentaire);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $commentaire->setArticle($article);
-            $commentaire->setUser($this->getUser());
-            $this->em->persist($commentaire);
-            $this->em->flush();
 
+#[Route('/articleDescription/{id}', name: 'articleDescription')]
+public function goToArticleDescription(Request $request, int $id): Response
+{
+    $article = $this->em->getRepository(Article::class)->find($id);
+    if (!$article) {
+        throw $this->createNotFoundException("L'article n'existe pas.");
+    }
+
+    // Création du formulaire pour un nouveau commentaire
+    $commentaire = new Commentaire();
+    $form = $this->createForm(CommentaireType::class, $commentaire);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $commentContent = $commentaire->getContent();
+
+        // Vérification du contenu via le service IA (ex. OpenAIService)
+        if (!$this->openAIService->isCommentAcceptable($commentContent)) {
+            // Le commentaire contient des mots interdits (par exemple "fuck")
+            $this->addFlash('danger', 'Votre commentaire contient des mots interdits et n\'a pas été publié.');
             return $this->redirectToRoute('articleDescription', ['id' => $article->getId()]);
         }
 
-        return $this->render('templates_users/articleDescription/articleDescription.html.twig', [
-            'article' => $article,
-            'commentaires' => $article->getCommentaires(),
-            'form' => $form->createView(),
-        ]);
+        // Le commentaire est jugé acceptable : on le marque comme valide et on l'enregistre
+        $commentaire->setEtat("valide");
+        $commentaire->setArticle($article);
+        $commentaire->setUser($this->getUser());
+
+        $this->em->persist($commentaire);
+        $this->em->flush();
+
+        return $this->redirectToRoute('articleDescription', ['id' => $article->getId()]);
     }
 
-    
+    return $this->render('templates_users/articleDescription/articleDescription.html.twig', [
+        'article' => $article,
+        'commentaires' => $article->getCommentaires(),
+        'form' => $form->createView(),
+    ]);
+}
 
 
 
@@ -206,8 +223,8 @@ final class ArticleController extends AbstractController
 
 
     #[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
-public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em, \App\Service\NotificationMailer $notificationMailer): JsonResponse
-{
+    public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em, \App\Service\NotificationMailer $notificationMailer): JsonResponse
+    {
 
     $commentaire->setEtat("non valide");
     $em->persist($commentaire);

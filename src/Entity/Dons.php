@@ -18,6 +18,7 @@ class Dons
     #[ORM\Column]
     private ?int $id = null;
 
+
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "Le titre est obligatoire.")]
     #[Assert\Length(
@@ -26,9 +27,12 @@ class Dons
         minMessage: "Le titre doit contenir au moins {{ limit }} caractères.",
         maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères."
     )]
+    #[Assert\Regex(
+        pattern: '/[\W_]/',
+        message: "Le titre doit contenir au moins un caractère spécial."
+    )]
     private ?string $titre = null;
-
-
+    
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La description est obligatoire.")]
     #[Assert\Length(
@@ -37,7 +41,12 @@ class Dons
         minMessage: "La description doit contenir au moins {{ limit }} caractères.",
         maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
     )]
+    #[Assert\Regex(
+        pattern: '/[\W_]/',
+        message: "La description doit contenir au moins un caractère spécial."
+    )]
     private ?string $description = null;
+    
 
 #[ORM\Column(type: Types::DATE_MUTABLE)]
 #[Assert\NotNull(message: "La date de création est obligatoire.")]

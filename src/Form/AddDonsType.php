@@ -44,7 +44,7 @@ class AddDonsType extends AbstractType
                 ],
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('image', FileType::class, [
+            ->add('imageUrl', FileType::class, [
                 'label' => 'Image du Don (JPG, PNG)',
                 'mapped' => false, // Ce champ n'est pas directement lié à l'entité
                 'required' => false,
