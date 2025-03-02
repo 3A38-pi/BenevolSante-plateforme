@@ -1,31 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Demandes de Dons{% endblock %}
+{% block title %}
+  Mes Demandes de Dons
+{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1 class="text-center">Mes Demandes de Dons</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Don</th>
-                <th>Date de Demande</th>
-                <th>Statut</th>
-            </tr>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">Mes Demandes de Dons</h1>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Don</th>
+            <th>Date de Demande</th>
+            <th>Statut</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody>
-            {% for demande in demandes %}
-                <tr>
-                    <td>{{ demande.dons.titre }}</td>
-                    <td>{{ demande.dateDemande|date('d/m/Y') }}</td>
-                    <td>{{ demande.statut }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3" class="text-center">Aucune demande trouvée.</td>
-                </tr>
-            {% endfor %}
+          {% for demande in demandes %}
+            <tr>
+              <td class="align-middle">{{ demande.dons.titre }}</td>
+              <td class="align-middle">{{ demande.dateDemande|date('d/m/Y') }}</td>
+              <td class="align-middle">
+                {% if demande.statut == 'En attente' %}
+                  <span class="badge bg-warning text-dark">En attente</span>
+                {% elseif demande.statut == 'Acceptée' %}
+                  <span class="badge bg-success">Acceptée</span>
+                {% elseif demande.statut == 'Validée' %}
+                  <span class="badge bg-info">Validée</span>
+                {% else %}
+                  <span class="badge bg-danger">Refusée</span>
+                {% endif %}
+              </td>
+              <td class="align-middle">
+                {% if demande.statut == 'Acceptée' %}
+                  <a href="{{ path('app_messages', { id: demande.id }) }}" class="btn btn-primary btn-sm"><i class="fas fa-comments"></i> Chat</a>
+                {% elseif demande.statut == 'Validée' and app.user == demande.beneficiaire %}
+                  <a href="{{ path('generer_reçu', { id: demande.id }) }}" class="btn btn-link"><i class="fas fa-print"></i> Imprimer reçu</a>
+                {% else %}
+                  <span class="text-muted">Aucune action</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted">Aucune demande trouvée.</td>
+            </tr>
+          {% endfor %}
         </tbody>
-    </table>
-</div>
+      </table>
+    </div>
+  </div>
 {% endblock %}

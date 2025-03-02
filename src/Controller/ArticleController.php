@@ -240,29 +240,36 @@ final class ArticleController extends AbstractController
         $commentaire->setEtat("non valide");
         $em->persist($commentaire);
 
-        $notification = new Notification();
-        $notification->setMessage($commentaire->getContent());
-        $notification->setUser($commentaire->getUser());
-        $notification->setCommentaire($commentaire);
-        $em->persist($notification);
-        
-        $em->flush();
-        $transport = Transport::fromDsn('smtp://amroush123@gmail.com:npcfowmbtolgyqfe@smtp.gmail.com:587');
-        $mailer = new Mailer($transport);
-        $recipientEmail = $commentaire->getUser()->getEmail();
-        $email = (new Email())
-            ->from('amroush123@gmail.com')
-            ->to($recipientEmail)
-            ->subject('Notification : Commentaire désactivé')
-            ->text(sprintf(
-                "Bonjour %s,\n\nVotre commentaire a été désactivé.\nContenu: %s\n\nCordialement,\nL’équipe.",
-                $commentaire->getUser()->getNom(),
-                $commentaire->getContent()
-            ));
-        $mailer->send($email);
-        
-        return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
-    }
+
+    $commentaire->setEtat("non valide");
+    $em->persist($commentaire);
+
+    $notification = new Notification();
+    $notification->setMessage($commentaire->getContent());
+    $notification->setUser($commentaire->getUser());
+    $notification->setCommentaire($commentaire);
+    $notification->setType(Notification::TYPE_COMMENTAIRE); // Définir le type de notification
+    $em->persist($notification);
+
+    $em->flush();
+    $transport = Transport::fromDsn('smtp://amroush123@gmail.com:npcfowmbtolgyqfe@smtp.gmail.com:587');
+    $mailer = new Mailer($transport);
+    $recipientEmail = $commentaire->getUser()->getEmail();
+    $email = (new Email())
+        ->from('amroush123@gmail.com')
+        ->to($recipientEmail)
+        ->subject('Notification : Commentaire désactivé')
+        ->text(sprintf(
+            "Bonjour %s,\n\nVotre commentaire a été désactivé.\nContenu: %s\n\nCordialement,\nL’équipe.",
+            $commentaire->getUser()->getNom(),
+            $commentaire->getContent()
+        ));
+    $mailer->send($email);
+    
+    return new JsonResponse(["success" => true, "message" => "Commentaire désactivé"]);
+}
+
+
 
     #[Route('/execute-script', name: 'execute_script')]
     public function executeScript(Request $request): Response

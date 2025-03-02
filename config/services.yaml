@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     image_dir: "%kernel.project_dir%/public/uploads/images"
+
     Event_dir: '%kernel.project_dir%/public/uploads/events'
     sightengine_api_user: '%env(SIGHTENGINE_API_USER)%'
     sightengine_api_secret: '%env(SIGHTENGINE_API_SECRET)%'
@@ -32,3 +33,13 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    mailer.default:
+        class: Symfony\Component\Mailer\Mailer
+        arguments:
+            - '@mailer.transport.default'
+
+    mailer.secondary:
+        class: Symfony\Component\Mailer\Mailer
+        arguments:
+            - '@mailer.transport.secondary'
