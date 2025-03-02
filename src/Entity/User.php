@@ -73,12 +73,15 @@ private ?string $password = null;
      * @var Collection<int, Notification>
      */
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'user')]
-    private Collection $alerts;
+    private Collection $notifications;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
 
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
-        $this->alerts = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,30 +180,41 @@ private ?string $password = null;
     /**
      * @return Collection<int, Notification>
      */
-    public function getAlerts(): Collection
+    public function getNotifications(): Collection
     {
-        return $this->alerts;
+        return $this->notifications;
     }
 
-    public function addAlert(Notification $notification): static
+    public function addNotification(Notification $notification): static
     {
-        if (!$this->alerts->contains($notification)) {
-            $this->alerts->add($notification);
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
             $notification->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeAlert(Notification $notification): static
+    public function removeNotification(Notification $notification): static
     {
-        if ($this->alerts->removeElement($notification)) {
+        if ($this->notifications->removeElement($notification)) {
             // set the owning side to null (unless already changed)
             if ($notification->getUser() === $this) {
                 $notification->setUser(null);
             }
         }
 
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
         return $this;
     }
 }

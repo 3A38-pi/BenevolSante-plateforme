@@ -54,8 +54,6 @@ public function findNotificationsByUser(User $user): array
 //        ;
 //    }
 
-    
-
     public function countUsersByType(string $type): int
     {
         return $this->createQueryBuilder('u')
