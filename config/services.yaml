@@ -7,7 +7,8 @@ parameters:
     image_dir: "%kernel.project_dir%/public/uploads/images"
 
     Event_dir: '%kernel.project_dir%/public/uploads/events'
-    openai_api_key: '%env(OPENAI_API_KEY)%'
+    sightengine_api_user: '%env(SIGHTENGINE_API_USER)%'
+    sightengine_api_secret: '%env(SIGHTENGINE_API_SECRET)%'
 services:
     App\Security\LoginSuccessHandler:
         arguments:
@@ -16,9 +17,6 @@ services:
         tags: ['twig.extension']
     App\Service\NotificationMailer:
         arguments: []
-    App\Service\OpenAIService:
-        arguments:
-            $apiKey: '%openai_api_key%'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
