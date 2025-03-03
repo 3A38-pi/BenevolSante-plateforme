@@ -17,28 +17,28 @@ use Doctrine\Persistence\ManagerRegistry;
 #[Route('/event')]
 final class EventController extends AbstractController
 {
-    #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository, Request $request): Response
-    {
-        // Récupérer le terme de recherche
-        $searchTerm = $request->query->get('q');
-        $queryBuilder = $eventRepository->createQueryBuilder('e');
+        #[Route('/', name: 'app_event_index', methods: ['GET'])]
+        public function index(EventRepository $eventRepository, Request $request): Response
+        {
+            // Récupérer le terme de recherche
+            $searchTerm = $request->query->get('q');
+            $queryBuilder = $eventRepository->createQueryBuilder('e');
 
-        // Si un terme de recherche est fourni, filtrer les résultats
-        if ($searchTerm) {
-            $queryBuilder
-                ->where('e.nom LIKE :searchTerm')
-                ->setParameter('searchTerm', '%' . $searchTerm . '%');
-        }
+            // Si un terme de recherche est fourni, filtrer les résultats
+            if ($searchTerm) {
+                $queryBuilder
+                    ->where('e.nom LIKE :searchTerm')
+                    ->setParameter('searchTerm', '%' . $searchTerm . '%');
+            }
 
-        // Exécuter la requête et récupérer les résultats
-        $events = $queryBuilder->getQuery()->getResult();
+            // Exécuter la requête et récupérer les résultats
+            $events = $queryBuilder->getQuery()->getResult();
 
-        // Rendre la vue avec les événements et le terme de recherche
-        return $this->render('event/index.html.twig', [
-            'events' => $events,
-            'query' => $searchTerm // Passer le terme de recherche à la vue
-        ]);
+            // Rendre la vue avec les événements et le terme de recherche
+            return $this->render('event/index.html.twig', [
+                'events' => $events,
+                'query' => $searchTerm // Passer le terme de recherche à la vue
+            ]);
     }
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\EventRepository;
+
 #[Route('/participant')]
 final class ParticipantController extends AbstractController
 {
@@ -23,11 +24,22 @@ final class ParticipantController extends AbstractController
     }
 
     #[Route('/new', name: 'app_participant_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EventRepository $eventRepository, EntityManagerInterface $entityManager): Response
     {
         $participant = new Participant();
         $form = $this->createForm(ParticipantType::class, $participant);
         $form->handleRequest($request);
+
+        // Récupération de l'ID de l'événement depuis l'URL
+        $eventId = $request->query->get('id');
+        if ($eventId) {
+            $event = $eventRepository->find($eventId);
+            if ($event) {
+                $participant->setEvent($event); // Associe l'événement au participant
+            } else {
+                throw $this->createNotFoundException('Événement non trouvé.');
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($participant);
@@ -41,31 +53,6 @@ final class ParticipantController extends AbstractController
             'form' => $form,
         ]);
     }
-    /*#[Route('/new/{id}', name: 'app_participant_new')]
-public function new(Request $request, EventRepository $eventRepository, EntityManagerInterface $entityManager, int $id): Response
-{
-    $event = $eventRepository->find($id);
-    if (!$event) {
-        throw $this->createNotFoundException('Événement non trouvé.');
-    }
-
-    $participant = new Participant();
-    $participant->setEvent($event); // Associe l'événement au participant
-
-    $form = $this->createForm(ParticipantType::class, $participant);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $entityManager->persist($participant);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_eventfront_index'); // Redirection après enregistrement
-    }
-
-    return $this->render('participant/new.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}*/
 
     #[Route('/{id}', name: 'app_participant_show', methods: ['GET'])]
     public function show(Participant $participant): Response

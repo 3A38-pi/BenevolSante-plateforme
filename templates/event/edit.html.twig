@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base2.html.twig' %}
 
 {% block title %}Modifier Événement{% endblock %}
 
@@ -15,14 +15,29 @@
             <!-- Formulaire Symfony -->
             {{ form_start(form, {'attr': {'class': 'animate__animated animate__fadeInUp'}}) }}
 
+            <!-- Champ Nom de l'événement -->
             <div class="mb-3">
                 {{ form_label(form.nom, null, {'attr': {'class': 'form-label'}}) }}
                 {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Nom de l\'événement'}}) }}
             </div>
 
-           
+            <!-- Champ Description -->
+            <div class="mb-3">
+                {{ form_label(form.description, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm', 'placeholder': 'Description de l\'événement'}}) }}
+            </div>
 
-            
+            <!-- Champ Catégorie -->
+            <div class="mb-3">
+                {{ form_label(form.categorie, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.categorie, {'attr': {'class': 'form-select form-select-lg border-success shadow-sm'}}) }}
+            </div>
+
+            <!-- Champ Image -->
+            <div class="mb-3">
+                {{ form_label(form.image, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.image, {'attr': {'class': 'form-control form-control-lg border-success shadow-sm'}}) }}
+            </div>
 
             <!-- Bouton de mise à jour stylisé -->
             <div class="d-flex justify-content-center">
@@ -56,4 +71,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-{% endblock %}  
+{% endblock %}
+          

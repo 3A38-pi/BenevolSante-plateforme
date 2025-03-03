@@ -1,13 +1,68 @@
 {% extends 'base2.html.twig' %}
 
-{% block title %}Edit Participant{% endblock %}
+{% block title %}Modifier Participant{% endblock %}
 
 {% block body %}
-    <h1>Edit Participant</h1>
+<div class="container mt-5">
+    <h1 class="text-center text-warning animate__animated animate__fadeIn animate__delay-0.5s">Modifier un Participant</h1>
 
-    {{ include('participantback/_form.html.twig', {'button_label': 'Update'}) }}
+    <div class="card shadow-lg rounded-lg mt-5 animate__animated animate__fadeInUp">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4 text-warning">Formulaire d'Édition</h4>
 
-    <a href="{{ path('app_participantback_index') }}">back to list</a>
+            {{ form_start(form, {'attr': {'class': 'animate__animated animate__fadeInUp'}}) }}
 
-    {{ include('participantback/_delete_form.html.twig') }}
+            <div class="mb-3">
+                {{ form_label(form.nom, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg border-warning shadow-sm', 'placeholder': 'Nom du participant'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.prenom, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control form-control-lg border-warning shadow-sm', 'placeholder': 'Prénom du participant'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.email, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg border-warning shadow-sm', 'placeholder': 'Email du participant'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.numtel, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.numtel, {'attr': {'class': 'form-control form-control-lg border-warning shadow-sm', 'placeholder': 'Numéro de téléphone'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.event, null, {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.event, {'attr': {'class': 'form-control form-control-lg border-warning shadow-sm'}}) }}
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-warning btn-lg animate__animated animate__pulse animate__delay-1s">
+                    <i class="fas fa-edit"></i> Mettre à jour
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{{ path('app_participant_index') }}" class="btn btn-outline-warning btn-lg">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <div class="mt-3 text-center">
+        {{ include('participant/_delete_form.html.twig', {
+            'button_label': '<i class="fas fa-trash-alt"></i> Supprimer',
+            'attr': {'class': 'btn btn-danger btn-lg'}
+        }) }}
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 {% endblock %}
