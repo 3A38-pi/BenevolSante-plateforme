@@ -40,6 +40,23 @@ final class EventController extends AbstractController
                 'query' => $searchTerm // Passer le terme de recherche à la vue
             ]);
     }
+    #[Route('/statistiques', name: 'app_event_statistiques', methods: ['GET'])]
+    public function statistiques(EntityManagerInterface $em): Response
+    {
+        // Correct the query to match the expected key names
+        $statsCategorie = $em->getRepository(Event::class)
+            ->createQueryBuilder('e')
+            ->select('c.type AS categorieType, COUNT(e.id) AS count')  // Using 'categorieType' and 'count' as keys
+            ->join('e.categorie', 'c')  // Join with Categorie
+            ->groupBy('c.id')  // Group by category ID
+            ->getQuery()
+            ->getResult();
+
+        // Render the statistics page with the data
+        return $this->render('event/statistique.html.twig', [
+            'statsCategorie' => $statsCategorie,  // Pass the statistics to the view
+        ]);
+    }
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
     public function new(Request $request, ManagerRegistry $mr): Response
