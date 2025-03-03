@@ -35,11 +35,13 @@
           <input type="text" id="search-input" class="form-control" placeholder="Rechercher un don..." value="{{ app.request.query.get('search') }}" />
         </div>
       </div>
-    </div>
+    </div> 
 
     <!-- Liste des dons -->
     <div id="dons-list" class="row">
-      {% for don in dons %}
+      {% for don in pagination.items %}
+ 
+
         <div class="col-md-custom mb-4 don-item" data-categorie="{{ don.categorie }}" data-titre="{{ don.titre }}">
           <div class="card h-100">
             <img src="{{ asset('uploads/images/' ~ don.imageUrl) }}" class="card-img-top img-fluid" alt="{{ don.titre }}" style="height: 150px; object-fit: cover;" />
@@ -88,7 +90,14 @@
         <p class="text-center">Aucun don disponible pour le moment.</p>
       {% endfor %}
     </div>
+    <div class="d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(pagination) }}
   </div>
+</div>
+    
+  </div>
+
+
 
   <!-- Ajout du CSS personnalisé pour 5 éléments par ligne -->
   <style>

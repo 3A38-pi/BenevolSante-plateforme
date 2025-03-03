@@ -1,59 +1,113 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gérer les Demandes de Dons{% endblock %}
+{% block title %}
+  Gérer les Demandes de Dons
+{% endblock %}
 
 {% block body %}
-<h1>Gérer les Demandes de Dons d'un beneficiaire  </h1>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">Gérer les Demandes de Dons d'un Bénéficiaire</h1>
 
-<table class="table">
-    <thead>
-        <tr>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover text-center">
+        <thead class="table-dark">
+          <tr>
             <th>Bénéficiaire</th>
             <th>Don</th>
             <th>Statut</th>
             <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for demande in demandes %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for demande in demandes %}
             <tr>
-                <td>{{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</td>
-                <td>{{ demande.dons.titre }}</td>
-                <td>{{ demande.statut }}</td>
-                    <td>
-                        {% if demande.statut == 'En attente' %}
-                            <button class="btn btn-success" onclick="gererDemande({{ demande.id }}, 'accepter')">Accepter</button>
-                            <button class="btn btn-danger" onclick="gererDemande({{ demande.id }}, 'refuser')">Refuser</button>
-                        {% elseif demande.statut == 'Acceptée' %}
-                            <a href="{{ path('app_discussion_donneur', { 'demandeId': demande.id }) }}" class="btn btn-primary">
-                                <i class="fas fa-comments"></i> Chat
-                            </a>                            </a>
-                        {% else %}
-                            <span>{{ demande.statut }}</span>
-                        {% endif %}
-                    </td>
-                    
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">Aucune demande en attente.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+              <td class="align-middle">
+                <strong>{{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</strong>
+              </td>
+              <td class="align-middle">{{ demande.dons.titre }}</td>
+              <td class="align-middle">
+                {% if demande.statut == 'En attente' %}
+                  <span class="badge bg-warning text-dark">En attente</span>
+                {% elseif demande.statut == 'Acceptée' %}
+                  <span class="badge bg-success">Acceptée</span>
+                {% elseif demande.statut == 'Validée' %}
+                  <span class="badge bg-info">Validée</span>
 
-<script>
-function gererDemande(demandeId, action) {
+                {% else %}
+                  <span class="badge bg-danger">Refusée</span>
+                {% endif %}
+                
+
+              </td>
+              <td class="align-middle">
+                {% if demande.statut == 'En attente' %}
+                  <button class="btn btn-success btn-sm me-2" onclick="gererDemande({{ demande.id }}, 'accepter')"><i class="fas fa-check"></i> Accepter</button>
+                  <button class="btn btn-danger btn-sm" onclick="gererDemande({{ demande.id }}, 'refuser')"><i class="fas fa-times"></i> Refuser</button>
+               
+               
+                  {% elseif demande.statut == 'Acceptée' and app.user == demande.dons.donneur  %}
+                  <a href="{{ path('app_discussion_donneur', { demandeId: demande.id }) }}" class="btn btn-primary btn-sm"><i class="fas fa-comments"></i> Chat</a>
+                  <button class="btn btn-success" onclick="validerDemande({{ demande.id }} , 'validee')">Valider la demande</button>
+                 
+                  {% elseif demande.statut == 'Validée' and app.user == demande.dons.donneur  %}
+                  <a href="{{ path('app_discussion_donneur', { demandeId: demande.id }) }}" class="btn btn-primary btn-sm"><i class="fas fa-comments"></i> Chat</a>
+
+                {% else %}
+                  <span class="text-muted">Aucune action disponible</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted">Aucune demande en attente.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function gererDemande(demandeId, action) {
+    console.log(`URL: /demande/${demandeId}/${action}`);
     fetch(`/demande/${demandeId}/${action}`, {
-        method: "POST",
-        headers: { "X-Requested-With": "XMLHttpRequest" }
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
     })
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error('Erreur réseau');
+        }
+        return response.json();
+    })
+    .then((data) => {
         alert(data.message);
         location.reload();
     })
-    .catch(error => console.error("Erreur :", error));
+    .catch((error) => {
+        console.error('Erreur :', error);
+        alert('Une erreur est survenue. Veuillez réessayer.');
+    });
 }
-</script>
+
+
+function validerDemande(demandeId, action) {
+    fetch(`/demande/valider/${demandeId}/${action}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert( data.message);
+        location.reload(); // Recharger la page pour mettre à jour l'interface
+    })
+    .catch(error => console.error('Erreur :', error));
+}
+  </script>
 {% endblock %}

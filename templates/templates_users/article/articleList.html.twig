@@ -5,7 +5,6 @@
 <head>
     <link rel="stylesheet" href="{{ asset('css/articlelist.css') }}">
 </head>
-
 <div class="container-articles">
     <div class="articles-grid">
         {% for article in articles %}
@@ -21,10 +20,8 @@
                         {{ article.createdAt|date('d M Y') }}
                     </div>
                 </div>
-
                 <!-- Titre -->
                 <h2 class="article-title">{{ article.titre }}</h2>
-
                 <!-- Description tronquée (2 lignes, max 250 caractères) -->
                 <p class="article-description">
                     {% if article.description|length > 250 %}
@@ -33,14 +30,8 @@
                         {{ article.description }}
                     {% endif %}
                 </p>
-
                 <!-- Pied de l’article : Read More -->
                 <div class="article-footer">
-                    {# Catégorie masquée si vous ne la voulez pas
-                    <p class="tags">
-                        <i class="fas fa-tags"></i> {{ article.categorie }}
-                    </p>
-                    #}
                     <p class="tags">
                         <i class="bi bi-mouse-fill"></i> 
                         <a href="{{ path('articleDescription', {'id': article.id}) }}">
@@ -52,7 +43,6 @@
         {% endfor %}
     </div>
 </div>
-
 <!-- PAGINATION -->
 <div class="pagination-container">
     {% if totalPages > 1 %}
