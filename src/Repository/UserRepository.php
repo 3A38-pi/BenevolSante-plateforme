@@ -16,19 +16,6 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-
-
-    // src/Repository/NotificationRepository.php
-public function findNotificationsByUser(User $user): array
-{
-    return $this->createQueryBuilder('n')
-        ->where('n.user = :user')
-        ->setParameter('user', $user)
-        ->orderBy('n.createdAt', 'DESC')
-        ->getQuery()
-        ->getResult();
-}
-
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
@@ -53,14 +40,4 @@ public function findNotificationsByUser(User $user): array
 //            ->getOneOrNullResult()
 //        ;
 //    }
-
-    public function countUsersByType(string $type): int
-    {
-        return $this->createQueryBuilder('u')
-            ->select('COUNT(u.id)')
-            ->where('u.typeUtilisateur = :type')
-            ->setParameter('type', $type)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
 }

@@ -14,24 +14,23 @@ use App\Entity\Commentaire;
 use App\Form\CommentaireType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Notification;
+use App\Service\NotificationMailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
 use App\Service\OpenAIService;
-use App\Service\CommentAnalyzer;
-use App\Service\NotificationMailer;
+
+
 
 final class ArticleController extends AbstractController
 {
-    private $em;
+    private $em; 
     private $openAIService;
-    private $commentAnalyzer;
 
-    public function __construct(EntityManagerInterface $em, OpenAIService $openAIService, CommentAnalyzer $commentAnalyzer)
+    public function __construct(EntityManagerInterface $em, OpenAIService $openAIService)
     {
         $this->em = $em;
         $this->openAIService = $openAIService;
-        $this->commentAnalyzer = $commentAnalyzer;
     }
 
     #[Route('/article/{page}', name: 'ArticleList', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
@@ -53,59 +52,50 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/articleDescription/{id}', name: 'articleDescription')]
-    public function goToArticleDescription(Request $request, int $id, CommentAnalyzer $commentAnalyzer): Response
-    {
-        $article = $this->em->getRepository(Article::class)->find($id);
-        if (!$article) {
-            throw $this->createNotFoundException("L'article n'existe pas.");
-        }
 
-        // Création du formulaire pour un nouveau commentaire
-        $commentaire = new Commentaire();
-        $form = $this->createForm(CommentaireType::class, $commentaire);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $commentContent = $commentaire->getContent();
+#[Route('/articleDescription/{id}', name: 'articleDescription')]
+public function goToArticleDescription(Request $request, int $id): Response
+{
+    $article = $this->em->getRepository(Article::class)->find($id);
+    if (!$article) {
+        throw $this->createNotFoundException("L'article n'existe pas.");
+    }
 
-            // Appel à l'API pour analyser le commentaire
-            $analysis = $commentAnalyzer->analyzeComment($commentContent);
+    // Création du formulaire pour un nouveau commentaire
+    $commentaire = new Commentaire();
+    $form = $this->createForm(CommentaireType::class, $commentaire);
+    $form->handleRequest($request);
 
-            // Vérifie dans la catégorie "profanity" si un match avec intensité "high" ou "medium" existe
-            $rejectComment = false;
-            if (isset($analysis['profanity']['matches']) && is_array($analysis['profanity']['matches'])) {
-                foreach ($analysis['profanity']['matches'] as $match) {
-                    if ((isset($match['intensity']) && $match['intensity'] === 'high') || (isset($match['intensity']) && $match['intensity'] === 'medium')) {
-                        $rejectComment = true;
-                        break;
-                    }
-                }
-            }
+    if ($form->isSubmitted() && $form->isValid()) {
+        $commentContent = $commentaire->getContent();
 
-            if ($rejectComment) {
-                // Affichage d'un message d'erreur et redirection sans sauvegarde
-                $this->addFlash('danger', 'Votre commentaire contient des propos trop intenses et n\'a pas été publié.');
-                return $this->redirectToRoute('articleDescription', ['id' => $article->getId()]);
-            }
-
-            // Le commentaire est accepté : on le sauvegarde en base de données
-            $commentaire->setEtat("valide");
-            $commentaire->setArticle($article);
-            $commentaire->setUser($this->getUser());
-
-            $this->em->persist($commentaire);
-            $this->em->flush();
-
+        // Vérification du contenu via le service IA (ex. OpenAIService)
+        if (!$this->openAIService->isCommentAcceptable($commentContent)) {
+            // Le commentaire contient des mots interdits (par exemple "fuck")
+            $this->addFlash('danger', 'Votre commentaire contient des mots interdits et n\'a pas été publié.');
             return $this->redirectToRoute('articleDescription', ['id' => $article->getId()]);
         }
 
-        return $this->render('templates_users/articleDescription/articleDescription.html.twig', [
-            'article' => $article,
-            'commentaires' => $article->getCommentaires(),
-            'form' => $form->createView(),
-        ]);
+        // Le commentaire est jugé acceptable : on le marque comme valide et on l'enregistre
+        $commentaire->setEtat("valide");
+        $commentaire->setArticle($article);
+        $commentaire->setUser($this->getUser());
+
+        $this->em->persist($commentaire);
+        $this->em->flush();
+
+        return $this->redirectToRoute('articleDescription', ['id' => $article->getId()]);
     }
+
+    return $this->render('templates_users/articleDescription/articleDescription.html.twig', [
+        'article' => $article,
+        'commentaires' => $article->getCommentaires(),
+        'form' => $form->createView(),
+    ]);
+}
+
+
 
     #[Route('/createArticle', name: 'createArticle')]
     public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
@@ -142,7 +132,7 @@ final class ArticleController extends AbstractController
     }
 
     #[Route('/editArticle/{id}', name: 'editArticle')]
-    public function editArticle(Request $request, $id)
+    public function editArticle(Request $request, $id )
     {
         $article = $this->em->getRepository(Article::class)->find($id);
         $form = $this->createForm(ArticleType::class, $article);
@@ -200,19 +190,16 @@ final class ArticleController extends AbstractController
         return new JsonResponse(["success" => true]);
     }
 
-    // Suppression d'un article via soumission de formulaire (sans AJAX)
-    #[Route('/article/supprimer/{id}', name: 'supprimer_article', methods: ['POST'])]
-    public function supprimerArticle($id, EntityManagerInterface $em): Response
+    #[Route('/article/supprimer/{id}', name: 'supprimer_article', methods: ['DELETE'])]
+    public function supprimerArticle($id, EntityManagerInterface $em): JsonResponse
     {
         $article = $em->getRepository(Article::class)->find($id);
         if (!$article) {
-            $this->addFlash('danger', "Article introuvable");
-            return $this->redirectToRoute('adminArticleList');
+            return new JsonResponse(["success" => false, "message" => "Article introuvable"], 404);
         }
         $em->remove($article);
         $em->flush();
-        $this->addFlash('success', "Article supprimé avec succès");
-        return $this->redirectToRoute('adminArticleList');
+        return new JsonResponse(["success" => true]);
     }
 
     #[Route('/article/{id}/commentaires', name: 'get_article_commentaires', methods: ['GET'])]
@@ -234,23 +221,21 @@ final class ArticleController extends AbstractController
         return new JsonResponse(["success" => true, "commentaires" => $commentaires]);
     }
 
-    #[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
-    public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em, NotificationMailer $notificationMailer): JsonResponse
-    {
-        $commentaire->setEtat("non valide");
-        $em->persist($commentaire);
 
+    #[Route('/commentaire/desactiver/{id}', name: 'desactiver_commentaire', methods: ['POST'])]
+    public function desactiverCommentaire(Commentaire $commentaire, EntityManagerInterface $em, \App\Service\NotificationMailer $notificationMailer): JsonResponse
+    {
 
     $commentaire->setEtat("non valide");
     $em->persist($commentaire);
+    
 
     $notification = new Notification();
     $notification->setMessage($commentaire->getContent());
     $notification->setUser($commentaire->getUser());
     $notification->setCommentaire($commentaire);
-    $notification->setType(Notification::TYPE_COMMENTAIRE); // Définir le type de notification
     $em->persist($notification);
-
+    
     $em->flush();
     $transport = Transport::fromDsn('smtp://amroush123@gmail.com:npcfowmbtolgyqfe@smtp.gmail.com:587');
     $mailer = new Mailer($transport);
@@ -270,14 +255,4 @@ final class ArticleController extends AbstractController
 }
 
 
-
-    #[Route('/execute-script', name: 'execute_script')]
-    public function executeScript(Request $request): Response
-    {
-        $text = $request->query->get('text', 'Good');
-        ob_start();
-        include $this->getParameter('kernel.project_dir').'/templates/script.php';
-        $result = ob_get_clean();
-        return new Response($result);
-    }
 }

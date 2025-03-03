@@ -21,8 +21,6 @@ class ParticipantType extends AbstractType
             ->add('event', EntityType::class, [
                 'class' => Event::class,
                 'choice_label' => 'nom',
-                'placeholder' => 'Sélectionnez un événement',
-                'required' => true,
             ])
         ;
     }

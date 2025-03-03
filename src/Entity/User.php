@@ -75,9 +75,6 @@ private ?string $password = null;
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'user')]
     private Collection $notifications;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $resetToken = null;
-
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
@@ -115,7 +112,6 @@ private ?string $password = null;
     {
         return array_unique(array_merge($this->roles, ['ROLE_USER']));
     }
-
 
     public function setRoles(array $roles): self
     {
@@ -204,17 +200,6 @@ private ?string $password = null;
             }
         }
 
-        return $this;
-    }
-
-    public function getResetToken(): ?string
-    {
-        return $this->resetToken;
-    }
-
-    public function setResetToken(?string $resetToken): self
-    {
-        $this->resetToken = $resetToken;
         return $this;
     }
 }

@@ -139,7 +139,6 @@ private ?\DateTimeInterface $dateCreation = null;
         return $this;
     }
 
-
     public function getDonneur(): ?User
     {
         return $this->donneur;

@@ -25,15 +25,13 @@ class DemandeDons
     private ?Dons $dons = null;
 
     #[ORM\Column(type: "string", length: 20)]
-    private string $statut = "En attente"; // Possible: "En attente", "Acceptée", "Refusée", "Validée"
-
+    private string $statut = "En attente"; // Possible values: "En attente", "Acceptée", "Refusée"
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateDemande = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $chatActif = false;
-
 
     public function isChatActif(): bool
     {

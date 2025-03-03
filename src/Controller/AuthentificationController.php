@@ -11,13 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Repository\UserRepository;
 
 final class AuthentificationController extends AbstractController
 {
@@ -198,26 +191,4 @@ final class AuthentificationController extends AbstractController
             'user' => $user,
         ]);
     }
-
-    #[Route('/statistics', name: 'statistics')]
-    public function statistics(UserRepository $userRepository): Response
-    {
-        // Get statistics by user type
-        $types = ['donneur', 'beneficiaire', 'professionnel'];
-        $statistics = [];
-        $totalUsers = 0;
-
-        foreach ($types as $type) {
-            $count = $userRepository->countUsersByType($type);
-            $statistics[$type] = $count;
-            $totalUsers += $count; // Calculate total users
-        }
-
-        return $this->render('statistics.html.twig', [
-            'labels' => array_keys($statistics),
-            'data' => array_values($statistics),
-            'totalUsers' => $totalUsers, // Pass total users to the template
-        ]);
-    }
-
 }

@@ -6,7 +6,6 @@ use App\Entity\Dons;
 use App\Form\AddDonsType;
 use App\Entity\User;
 use App\Entity\DemandeDons;
-use App\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,13 +17,6 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Psr\Log\LoggerInterface;
-use Knp\Component\Pager\PaginatorInterface;
-use App\Service\PdfGeneratorService;
-use App\Repository\UserRepository;
-use App\Repository\DemandeDonsRepository;
-
-
-
 
 
 final class DonsController extends AbstractController
@@ -95,36 +87,36 @@ final class DonsController extends AbstractController
 
     #[Route('/dons/form', name: 'dons_form')]
     public function create(
-        Request $request,
-        #[Autowire('%image_dir%')] string $imageDir,
-        EntityManagerInterface $entityManager,
+        Request $request, 
+        #[Autowire('%image_dir%')] string $imageDir, 
+        EntityManagerInterface $entityManager, 
         Security $security
     ): Response {
         $user = $security->getUser();
-
+    
         if (!$user) {
             $this->addFlash('error', "Vous devez être connecté pour ajouter un don.");
             return $this->redirectToRoute('app_login');
         }
-
+    
         $don = new Dons();
         $don->setDonneur($user);
-
+        
         $form = $this->createForm(AddDonsType::class, $don);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $don->setValide(false);
-
+        
             if ($image = $form->get('imageUrl')->getData()) {
                 $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
                 $extension = $image->guessExtension();
-
+            
                 if (!in_array($extension, $allowedExtensions)) {
                     $this->addFlash('error', "Format d'image non valide. Seuls JPG, PNG et GIF sont autorisés.");
                     return $this->redirectToRoute('dons_form');
                 }
-
+        
                 $filename = uniqid() . '.' . $image->guessExtension();
                 try {
                     $image->move($imageDir, $filename);
@@ -134,20 +126,20 @@ final class DonsController extends AbstractController
                     return $this->redirectToRoute('dons_form');
                 }
             }
-
+        
             $entityManager->persist($don);
             $entityManager->flush();
-
+        
             $this->addFlash('success', 'Nouveau don ajouté à vérifier !');
             return $this->redirectToRoute('dons_accepted');
         }
-
-
+        
+    
         return $this->render('/templates_users/dons_form/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }
-
+    
 
 
 
@@ -191,7 +183,7 @@ final class DonsController extends AbstractController
 */
 
 
-    #[Route('/admin/dons/request', name: 'app_dashbord_requestDons')]
+#[Route('/admin/dons/request', name: 'app_dashbord_requestDons')]
     public function requestDons(EntityManagerInterface $entityManager): Response
     {
         $dons = $entityManager->getRepository(Dons::class)->findBy(['valide' => false]);
@@ -228,19 +220,15 @@ final class DonsController extends AbstractController
 
 
 
-    //hedhi liste principale mteee3 les dons 
+//hedhi liste principale mteee3 les dons 
 
     #[Route('/dons/accepted', name: 'dons_accepted')]
-    public function acceptedDons(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        Security $security,
-        PaginatorInterface $paginator
-    ): Response {
+    public function acceptedDons(Request $request, EntityManagerInterface $entityManager, Security $security): Response
+    {
         $repository = $entityManager->getRepository(Dons::class);
         $criteria = ['valide' => true];
 
-        // hedhi recuperiii categorie elli mawjoudin mel base
+        // Récupérer les catégories distinctes
         $categories = $repository->createQueryBuilder('d')
             ->select('DISTINCT d.categorie')
             ->getQuery()
@@ -263,15 +251,9 @@ final class DonsController extends AbstractController
                 ->setParameter('search', "%$search%");
         }
 
-        // $dons = $queryBuilder->getQuery()->getResult();
-        // Paginer les résultats
-        $pagination = $paginator->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            5 // Nombre d'éléments par page
-        );
+        $dons = $queryBuilder->getQuery()->getResult();
 
-        // Récupérer les demandes de l'utilisateur connecté 
+        // Récupérer les demandes de l'utilisateur connecté (si connecté)
         $demandes = [];
         $user = $security->getUser();
         if ($user) {
@@ -282,10 +264,9 @@ final class DonsController extends AbstractController
         }
 
         return $this->render('/templates_users/dons_list/ListDons.html.twig', [
-            // 'dons' => $dons,
-            'pagination' => $pagination,
+            'dons' => $dons,
             'categories' => array_column($categories, 'categorie'),
-            'demandes' => $demandes,
+            'demandes' => $demandes, // Passer la variable au template
         ]);
     }
 
@@ -296,8 +277,7 @@ final class DonsController extends AbstractController
 
 
 
-
-    // pour effectuer la demande d'un don
+// pour effectuer la demande d'un don
     #[Route('/demande-don', name: 'demande_don', methods: ['POST'])]
     public function demanderDon(
         Request $request,
@@ -361,18 +341,6 @@ final class DonsController extends AbstractController
             $entityManager->persist($demande);
             $entityManager->flush();
 
-
-
-            // Créer une notification pour le donneur
-            $notification = new Notification();
-            $notification->setMessage("Nouvelle demande de don pour votre don : " . $don->getTitre());
-            $notification->setUser($don->getDonneur()); // Le donneur est le propriétaire du don
-            $notification->setDemandeDons($demande); // Lier la notification à la demande de don
-            $notification->setType(Notification::TYPE_DEMANDE_DONS); // Définir le type de notification
-
-            $entityManager->persist($notification);
-            $entityManager->flush();
-
             // Log de succès
             $logger->info("Demande de don créée avec succès pour le don ID : $donId");
 
@@ -393,14 +361,14 @@ final class DonsController extends AbstractController
     #[Route('/beneficiaire/mes-demandes', name: 'mes_demandes')]
     public function mesDemandes(Security $security, EntityManagerInterface $entityManager): Response
     {
-        // $beneficiaire = $entityManager->getRepository(User::class)->find(5);
+       // $beneficiaire = $entityManager->getRepository(User::class)->find(5);
+        
 
+    $beneficiaire = $security->getUser();
 
-        $beneficiaire = $security->getUser();
-
-        if (!$beneficiaire) {
-            throw $this->createAccessDeniedException();
-        }
+    if (!$beneficiaire) {
+        throw $this->createAccessDeniedException();
+    }
 
         $demandes = $entityManager->getRepository(DemandeDons::class)->findBy([
             'beneficiaire' => $beneficiaire
@@ -418,170 +386,45 @@ final class DonsController extends AbstractController
     public function gererDemandes(EntityManagerInterface $entityManager, Security $security): Response
     {
 
-        //  $donneur = $entityManager->getRepository(User::class)->find(2);
-
-        $donneur = $security->getUser();
-        if (!$donneur) {
-            throw $this->createAccessDeniedException("Accès refusé.");
-        }
-
+      //  $donneur = $entityManager->getRepository(User::class)->find(2);
+       
+     $donneur = $security->getUser();
+     if (!$donneur) {
+         throw $this->createAccessDeniedException("Accès refusé.");
+     }
+        
         $demandes = $entityManager->getRepository(DemandeDons::class)->findByDonneur($donneur);
 
         return $this->render('templates_users/demandes_recues/demandes_recues.html.twig', [
             'demandes' => $demandes
         ]);
     }
+
+    //lel beneficiaire bch y accepti wala yrefusiiiii demande 
     #[Route('/demande/{id}/{action}', name: 'modifier_demande', methods: ['POST'])]
-    public function modifierDemande(
-        DemandeDons $demande,
-        string $action,
-        EntityManagerInterface $entityManager,
-        Security $security,
-        UserRepository $userRepository
-    ): JsonResponse {
-        try {
-            // Simuler un utilisateur connecté (par exemple, l'utilisateur avec l'ID 1)
-            //$donneur = $userRepository->find(18); // Remplacez 1 par l'ID d'un utilisateur valide
-            $donneur = $security->getUser();
+    public function modifierDemande(DemandeDons $demande, string $action, EntityManagerInterface $entityManager, Security $security): JsonResponse
+    {
 
+        //$donneur = $entityManager->getRepository(User::class)->find(2);
+        
+        $donneur = $security->getUser();
 
-            if (!$donneur) {
-                return new JsonResponse(['message' => 'Utilisateur introuvable.'], Response::HTTP_NOT_FOUND);
-            }
-
-            // Vérifier que l'utilisateur est le donneur du don
-            if ($donneur !== $demande->getDons()->getDonneur()) {
-                return new JsonResponse(['message' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
-            }
-
-            // Traiter l'action (accepter ou refuser)
-            if ($action === 'accepter') {
-                $demande->setStatut('Acceptée');
-                $demande->activerChat();
-
-                // Créer une notification pour le bénéficiaire
-                $notificationBeneficiaire = new Notification();
-                $notificationBeneficiaire->setMessage("Votre demande de don pour le don : " . $demande->getDons()->getTitre() . " a été acceptée.");
-                $notificationBeneficiaire->setUser($demande->getBeneficiaire()); // Notification pour le bénéficiaire
-                $notificationBeneficiaire->setDemandeDons($demande);
-                $notificationBeneficiaire->setType(Notification::TYPE_DEMANDE_DONS);
-
-                $entityManager->persist($notificationBeneficiaire);
-                $entityManager->persist($demande);
-                $entityManager->flush();
-            } elseif ($action === 'refuser') {
-                $demande->setStatut('Refusée');
-
-                // Créer une notification pour le bénéficiaire
-                $notificationBeneficiaire = new Notification();
-                $notificationBeneficiaire->setMessage("Votre demande de don pour le don : " . $demande->getDons()->getTitre() . " a été refusée.");
-                $notificationBeneficiaire->setUser($demande->getBeneficiaire()); // Notification pour le bénéficiaire
-                $notificationBeneficiaire->setDemandeDons($demande);
-                $notificationBeneficiaire->setType(Notification::TYPE_DEMANDE_DONS);
-
-                $entityManager->persist($notificationBeneficiaire);
-                $entityManager->persist($demande);
-                $entityManager->flush();
-            } else {
-                return new JsonResponse(['message' => 'Action non valide.'], Response::HTTP_BAD_REQUEST);
-            }
-
-            return new JsonResponse(['message' => "Demande $action avec succès."], Response::HTTP_OK);
-        } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'Une erreur est survenue : ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($donneur !== $demande->getDons()->getDonneur()) {
+            return new JsonResponse(['message' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
         }
-    }
+       
+        if ($action === 'accepter') {
+            $demande->setStatut('Acceptée');
+            $demande->activerChat();
 
-
-
-    #[Route('/demande/valider/{id}/{action}', name: 'valider_demande', methods: ['POST'])]
-    public function validerDemande(
-        DemandeDons $demande,
-        string $action,
-        EntityManagerInterface $entityManager,
-        Security $security,
-
-    ): JsonResponse {
-        try {
-            // Récupérer l'utilisateur connecté (le donneur)
-            // $donneur = $userRepository->find(18); // Remplacez 1 par l'ID d'un utilisateur valide
-
-           $donneur = $security->getUser();
-    
-            if (!$donneur) {
-                return new JsonResponse(['message' => 'Vous devez être connecté pour effectuer cette action.'], Response::HTTP_UNAUTHORIZED);
-            }
-    
-            // Vérifier que la demande de don est bien liée à un don
-            if (!$demande->getDons()) {
-                return new JsonResponse(['message' => 'Le don associé à cette demande est introuvable.'], Response::HTTP_NOT_FOUND);
-            }
-    
-            // Vérifier que l'utilisateur est bien le donneur du don
-            if ($donneur !== $demande->getDons()->getDonneur()) {
-                return new JsonResponse(['message' => 'Accès refusé. Vous n\'êtes pas le propriétaire de ce don.'], Response::HTTP_FORBIDDEN);
-            }
-    
-            // Vérifier si la demande est déjà validée
-            if ($demande->getStatut() === 'Validée') {
-                return new JsonResponse(['message' => 'Cette demande est déjà validée.'], Response::HTTP_BAD_REQUEST);
-            }
-    
-            // Traiter l'action demandée
-            if ($action === 'validee') {
-                if ($demande->getStatut() !== 'Acceptée') {
-                    return new JsonResponse(['message' => 'La demande doit être acceptée avant de pouvoir être validée.'], Response::HTTP_BAD_REQUEST);
-                }
-                $demande->setStatut('Validée');
-                $notificationBeneficiaire = new Notification();
-                $notificationBeneficiaire->setMessage("Le donneur a valider votre demande de don pour  : " . $demande->getDons()->getTitre() . " Vous pouvez imprimer votre recu.");
-                $notificationBeneficiaire->setUser($demande->getBeneficiaire()); // Notification pour le bénéficiaire
-                $notificationBeneficiaire->setDemandeDons($demande);
-                $notificationBeneficiaire->setType(Notification::TYPE_DEMANDE_DONS);
-
-                $entityManager->persist($notificationBeneficiaire);
-                $entityManager->persist($demande);
-
-
-
-
-
-
-            } else {
-                return new JsonResponse(['message' => 'Action non valide.'], Response::HTTP_BAD_REQUEST);
-            }
-    
-            // Sauvegarder les modifications
-            $entityManager->flush();
-    
-            return new JsonResponse(['message' => "Demande {$action} avec succès."], Response::HTTP_OK);
-    
-        } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'Une erreur est survenue : ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } elseif ($action === 'refuser') {
+            $demande->setStatut('Refusée');
+        } else {
+            return new JsonResponse(['message' => 'Action non valide.'], Response::HTTP_BAD_REQUEST);
         }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => "Demande $action avec succès."], Response::HTTP_OK);
     }
-    
-
-
-    
-
-
-    #[Route('/demande/receipt/{id}', name: 'generer_reçu', methods: ['GET'])]
-public function genererReçu(
-    DemandeDons $demande, 
-    PdfGeneratorService $pdfGenerator
-): Response {
-    // Vérifier que la demande est validée
-    if ($demande->getStatut() !== 'Validée') {
-        throw $this->createAccessDeniedException('La demande doit être validée pour générer un reçu.');
-    }
-
-    // Générer le contenu HTML du reçu
-    $html = $this->renderView('templates_users/recu/recu.html.twig', [
-        'demande' => $demande,
-    ]);
-
-    // Générer et retourner le PDF
-    return $pdfGenerator->generatePdf($html);
-}
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
@@ -11,84 +12,85 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[Route('/event')]
 final class EventController extends AbstractController
 {
-    #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository, Request $request): Response
+    #[Route(name: 'app_event_index', methods: ['GET'])]
+    public function index(EventRepository $eventRepository): Response
     {
-        // Récupérer le terme de recherche
-        $searchTerm = $request->query->get('q');
-        $queryBuilder = $eventRepository->createQueryBuilder('e');
-
-        // Si un terme de recherche est fourni, filtrer les résultats
-        if ($searchTerm) {
-            $queryBuilder
-                ->where('e.nom LIKE :searchTerm')
-                ->setParameter('searchTerm', '%' . $searchTerm . '%');
-        }
-
-        // Exécuter la requête et récupérer les résultats
-        $events = $queryBuilder->getQuery()->getResult();
-
-        // Rendre la vue avec les événements et le terme de recherche
         return $this->render('event/index.html.twig', [
-            'events' => $events,
-            'query' => $searchTerm // Passer le terme de recherche à la vue
+            'events' => $eventRepository->findAll(),
         ]);
     }
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ManagerRegistry $mr): Response
-    {
-        $imageDir = $this->getParameter('Event_dir');
+public function new(Request $request, ManagerRegistry $mr): Response
+{
+    $imageDir = $this->getParameter('Event_dir'); // Récupération du répertoire d'images défini dans config/services.yaml
 
-        $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
-        $form->handleRequest($request);
+    $event = new Event();
+    
+    // Créer le formulaire
+    $form = $this->createForm(EventType::class, $event);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($imageFile = $form['image']->getData()) {
-                if ($imageFile instanceof UploadedFile) {
-                    $fileName = uniqid() . '.' . $imageFile->guessExtension();
-                    
-                    if (!is_dir($imageDir)) {
-                        mkdir($imageDir, 0777, true);
-                    }
-
-                    try {
-                        $imageFile->move($imageDir, $fileName);
-                        $event->setImage($fileName);
-                    } catch (FileException $e) {
-                        $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
-                        return $this->redirectToRoute('app_event_new');
-                    }
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Gestion de l'image
+        if ($imageFile = $form['image']->getData()) {
+            // Vérifier que l'image a bien été téléchargée
+            if ($imageFile instanceof UploadedFile) {
+                // Générer un nom unique pour le fichier
+                $fileName = uniqid() . '.' . $imageFile->guessExtension();
+                
+                // Vérifier que le dossier de destination existe
+                if (!is_dir($imageDir)) {
+                    mkdir($imageDir, 0777, true); // Créer le dossier si nécessaire
+                }
+                
+                // Déplacer l'image vers le dossier cible
+                try {
+                    $imageFile->move($imageDir, $fileName);
+                    // Assigner le nom du fichier à l'entité Event
+                    $event->setImage($fileName);
+                } catch (FileException $e) {
+                    // Gestion des erreurs d'upload de fichier
+                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
+                    return $this->redirectToRoute('app_event_new');
                 }
             }
-
-            $em = $mr->getManager();
-            $em->persist($event);
-            $em->flush();
-
-            $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
-            return $this->redirectToRoute('app_event_index');
         }
 
-        return $this->render('event/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        // Sauvegarder les données avec Doctrine
+        $em = $mr->getManager();
+        $em->persist($event);
+        $em->flush();
+
+        // Message de succès
+        $this->addFlash('success', 'L\'événement a été ajouté avec succès.');
+
+        // Rediriger vers la liste des événements
+        return $this->redirectToRoute('app_event_index');
     }
 
-    #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
-    public function show(Event $event): Response
-    {
-        return $this->render('event/show.html.twig', [
-            'event' => $event,
-        ]);
-    }
+    // Afficher le formulaire dans la vue
+    return $this->render('event/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+#[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
+public function show(Event $event): Response
+{
+    return $this->render('event/show.html.twig', [
+        'event' => $event,
+    ]);
+}
+
+   
 
     #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Event $event, EntityManagerInterface $entityManager): Response
@@ -98,6 +100,7 @@ final class EventController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -108,17 +111,21 @@ final class EventController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
-    public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $event->getId(), $request->get('_token'))) {
-            foreach ($event->getParticipants() as $participant) {
-                $entityManager->remove($participant);
-            }
-
-            $entityManager->remove($event);
-            $entityManager->flush();
+public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
+{
+    if ($this->isCsrfTokenValid('delete' . $event->getId(), $request->get('_token'))) {
+        // Supprimer les participants liés à l'événement
+        foreach ($event->getParticipants() as $participant) {
+            $entityManager->remove($participant);
         }
 
-        return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
+        // Supprimer l'événement
+        $entityManager->remove($event);
+        $entityManager->flush();
     }
+
+    return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
+}
+
+    
 }
