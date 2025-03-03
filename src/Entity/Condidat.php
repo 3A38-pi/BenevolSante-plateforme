@@ -21,6 +21,10 @@ class Condidat
         max: 255,
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
     )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ '-]+$/",
+        message: "Le nom ne doit contenir que des lettres, espaces et tirets."
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
@@ -29,6 +33,10 @@ class Condidat
         min: 3,
         max: 255,
         maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères."
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ '-]+$/",
+        message: "Le prénom ne doit contenir que des lettres, espaces et tirets."
     )]
     private ?string $prenom = null;
 
@@ -51,7 +59,10 @@ class Condidat
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le CV est obligatoire.")]
-    
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Z0-9_.-]+$/",
+        message: "Le nom du fichier CV ne doit contenir que des lettres, chiffres, points, tirets et underscores."
+    )]
     private ?string $cv = null;
 
 

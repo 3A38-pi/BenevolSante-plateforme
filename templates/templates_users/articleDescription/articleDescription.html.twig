@@ -2,90 +2,123 @@
 
 {% block body %}
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.titre }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
     <link rel="stylesheet" href="{{ asset('css/articledescription.css') }}">
 </head>
+
 <body>
-
-<div class="container-xxl">
-    <h1>{{ article.titre }}</h1>
-    
-    <div class="article-image-container">
-        <img src="{{ asset('uploads/images/' ~ article.image) }}" class="article-image" alt="Article Image">
-    </div>
-    
-    <p class="description">
-        {{ article.description }}
-    </p>
-
-    <div class="divider"></div>
-
-    {% for commentaire in commentaires %}
-        <div class="comment" id="comment-{{ commentaire.id }}">
-            <div class="comment-avatar">
-                <img src="{{ asset('img/about-1.jpg') }}" alt="Avatar">
+    {# Bloc des messages flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
             </div>
-
-            <div class="comment-content">
-                <div class="comment-header">
-                    <strong>{{ commentaire.user.nom }} {{ commentaire.user.prenom }}</strong>
-                    <span class="comment-date">June 1, 2024 at 7:59 am</span>
-                </div>
-
-                <p class="comment-text" id="comment-text-{{ commentaire.id }}">{{ commentaire.content }}</p>
-
-                {# {% if commentaire.user and commentaire.user.id == 1 %}
-                    <div class="comment-actions">
-                        <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
-                        <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
-                    </div>
-                {% endif %} #}
-
-                {% if app.user and commentaire.user and commentaire.user.id == app.user.id %}
-    <div class="comment-actions">
-        <a href="#" class="comment-action edit-comment" data-id="{{ commentaire.id }}" data-content="{{ commentaire.content }}">Modifier</a>
-        <a href="#" class="comment-action delete-comment" data-id="{{ commentaire.id }}">Supprimer</a>
-    </div>
-{% endif %}
-
-            </div>
-        </div>
-    {% else %}
-        <p>Aucun commentaire pour le moment.</p>
+        {% endfor %}
     {% endfor %}
 
-    <!-- Popup de modification -->
-    <div id="editCommentPopup" class="popup">
-        <div class="popup-content">
-            <textarea id="editCommentContent" class="comment-textarea"></textarea>
-            <div class="popup-buttons">
-                <button id="cancelEdit" class="cancel-btn">Annuler</button>
-                <button id="confirmEdit" class="confirm-btn">Modifier</button>
+    <div class="article-page">
+        <div class="article-header" data-aos="fade-down">
+            <h1 class="article-title">{{ article.titre }}</h1>
+        </div>
+        <div class="article-image-container" data-aos="fade-up">
+            <img 
+                src="{{ asset('uploads/images/' ~ article.image) }}" 
+                alt="{{ article.titre }}" 
+                class="article-main-image"
+            >
+        </div>
+        <div class="meta-wrapper" data-aos="fade-up" data-aos-delay="100">
+            <div class="article-meta">
+                <div class="meta-category">
+                    Category <strong>{{ article.categorie }}</strong>
+                </div>
+                <div class="meta-date">
+                    Date <strong>{{ article.createdAt|date('F Y') }}</strong>
+                </div>
+                <div class="meta-author">
+                    Author <strong>Degani Omar</strong>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="meta-separator" data-aos="fade-up" data-aos-delay="150"></div>
+        <div class="article-content" data-aos="fade-up" data-aos-delay="200">
+            <p>{{ article.description }}</p>
+        </div>
 
-    <br>
-    <br>
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="comments-section" data-aos="fade-up" data-aos-delay="300">
+            {% for commentaire in commentaires %}
+                {% if commentaire.etat == 'valide' %}
+                    <div class="comment" id="comment-{{ commentaire.id }}">
+                        <div class="comment-avatar">
+                            <img src="{{ asset('img/about-1.jpg') }}" alt="Avatar">
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">
+                                    {{ commentaire.user.nom }} {{ commentaire.user.prenom }}
+                                </span>
+                            </div>
+                            <p class="comment-text" id="comment-text-{{ commentaire.id }}">
+                                {{ commentaire.content }}
+                            </p>
+                            {% if app.user and commentaire.user and commentaire.user.id == app.user.id %}
+                                <div class="comment-actions">
+                                    <a href="#" class="comment-action edit-comment"
+                                       data-id="{{ commentaire.id }}"
+                                       data-content="{{ commentaire.content }}">
+                                       Modifier
+                                    </a>
+                                    <a href="#" class="comment-action delete-comment"
+                                       data-id="{{ commentaire.id }}">
+                                       Supprimer
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p>Aucun commentaire pour le moment.</p>
+            {% endfor %}
+            <div id="editCommentPopup" class="popup">
+                <div class="popup-content">
+                    <textarea id="editCommentContent" class="comment-textarea"></textarea>
+                    <div class="popup-buttons">
+                        <button id="cancelEdit" class="cancel-btn">Annuler</button>
+                        <button id="confirmEdit" class="confirm-btn">Modifier</button>
+                    </div>
+                </div>
+            </div>
 
-    <div class="mb-3">
-        {{ form_label(form.content, null, {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.content) }}
-        <div class="text-danger small mt-1">
-            {{ form_errors(form.content) }}
+            <br><br>
+
+            {% if app.user %}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.content, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.content) }}
+                        <div class="text-danger small mt-1">
+                            {{ form_errors(form.content) }}
+                        </div>
+                    </div>
+                    <div>
+                        {{ form_widget(form.submit) }}
+                    </div>
+                {{ form_end(form) }}
+            {% endif %}
         </div>
     </div>
-
-    <div>
-        {{ form_widget(form.submit) }}
-    </div>
-
-    {{ form_end(form) }}
-</div>
-
-<!-- Inclusion du fichier JS externe -->
-<script src="{{ asset('js/commentaire.js') }}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'slide',
+            once: true,
+        });
+    </script>
+    <script src="{{ asset('js/commentaire.js') }}"></script>
 </body>
-</html>
 {% endblock %}

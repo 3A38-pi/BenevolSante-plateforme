@@ -30,6 +30,18 @@ class Commentaire
     #[ORM\JoinColumn(nullable: false)]
     private ?Article $article = null;
 
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $etat = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->etat = 'valide';
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -43,19 +55,17 @@ class Commentaire
     public function setContent(string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -67,7 +77,29 @@ class Commentaire
     public function setArticle(?Article $article): static
     {
         $this->article = $article;
+        return $this;
+    }
 
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        // On peut forcer le retour en DateTimeImmutable si vous le souhaitez
+        return $this->createdAt instanceof \DateTimeImmutable ? $this->createdAt : \DateTimeImmutable::createFromMutable($this->createdAt);
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(string $etat): static
+    {
+        $this->etat = $etat;
         return $this;
     }
 }

@@ -20,26 +20,28 @@ class Article
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le titre ne peut pas être vide.")]
     #[Assert\Length(min: 3, max: 255, minMessage: "Le titre doit contenir au moins {{ limit }} caractères.")]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z0-9\s\'\.]+$/',
+        message: 'Ajouter un titre valide.'
+    )]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "L'image est obligatoire.")]
     #[Assert\File(
-        maxSize: "2M",
+        maxSize: "6M",
         mimeTypes: ["image/jpeg", "image/png"],
         mimeTypesMessage: "Veuillez uploader une image valide (JPG ou PNG)."
     )]
     private ?string $image = null;
-
-    // #[ORM\Column(length: 255)]
-    // #[Assert\NotBlank(message: "Les tags ne peuvent pas être vides.")]
-    // private ?string $tags = null;
-
-
-        // Nouveau champ categorie
-        #[ORM\Column(length: 255)]
-        #[Assert\NotBlank(message: "La catégorie ne peut pas être vide.")]
-        private ?string $categorie = null;
+    
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La catégorie ne peut pas être vide.")]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z0-9\s\'\.]+$/',
+        message: 'Verifier la catégorie.'
+    )]
+    private ?string $categorie = null;
 
     #[ORM\Column]
     private ?int $nombreCommentaire = 0;
@@ -47,14 +49,22 @@ class Article
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "La description est obligatoire.")]
     #[Assert\Length(min: 10, minMessage: "La description doit contenir au moins {{ limit }} caractères.")]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z0-9\s\'\.]+$/',
+        message: 'La description ne doit pas contenir de caractères spéciaux.'
+    )]
     private ?string $description = null;
 
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'article', cascade: ['persist', 'remove'])]
     private Collection $commentaires;
+
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $createdAt = null;
     
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
     
     public function getId(): ?int
@@ -83,17 +93,6 @@ class Article
         $this->image = $image;
         return $this;
     }
-
-    // public function getTags(): ?string
-    // {
-    //     return $this->tags;
-    // }
-
-    // public function setTags(string $tags): static
-    // {
-    //     $this->tags = $tags;
-    //     return $this;
-    // }
 
     public function getCategorie(): ?string
     {
@@ -152,6 +151,18 @@ class Article
                 $commentaire->setArticle(null);
             }
         }
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
         return $this;
     }
 }

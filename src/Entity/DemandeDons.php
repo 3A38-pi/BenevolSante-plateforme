@@ -30,8 +30,25 @@ class DemandeDons
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateDemande = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $chatActif = false;
+
+    public function isChatActif(): bool
+    {
+        return $this->chatActif;
+    }
+
+    public function setChatActif(bool $chatActif): self
+    {
+        $this->chatActif = $chatActif;
+
+        return $this;
+    }
+
     #[ORM\OneToMany(mappedBy: "demandeDon", targetEntity: Messagerie::class, cascade: ["remove"])]
     private Collection $messages;
+
+
 
     public function __construct()
     {
@@ -39,10 +56,19 @@ class DemandeDons
         $this->messages = new ArrayCollection();
     }
 
+
+
+
     // Getter & Setter pour id
     public function getId(): ?int
     {
         return $this->id;
+
+    }
+
+    public function activerChat(): void
+    {
+        $this->chatActif = true;
     }
 
     // Getter & Setter pour beneficiaire
@@ -59,7 +85,7 @@ class DemandeDons
 
     // Getter & Setter pour dons
 
-    
+
     public function getDons(): ?Dons
     {
         return $this->dons;
@@ -110,14 +136,12 @@ class DemandeDons
         return $this;
     }
     public function removeMessage(Messagerie $message): self
-{
-    if ($this->messages->removeElement($message)) {
-        if ($message->getDemandeDon() !== null && $message->getDemandeDon() === $this) {
-            $message->setDemandeDon(null);
+    {
+        if ($this->messages->removeElement($message)) {
+            if ($message->getDemandeDon() !== null && $message->getDemandeDon() === $this) {
+                $message->setDemandeDon(null);
+            }
         }
+        return $this;
     }
-    return $this;
-}
-
-
 }

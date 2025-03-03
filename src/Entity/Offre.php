@@ -21,24 +21,32 @@ class Offre
 
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
-    #[Assert\Length(
-        min: 3,
-        minMessage: "Le titre doit contenir au moins {{ limit }} caractères.",
-        max: 255,
-        maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères."
-    )]
-    private ?string $titre_offre = null;
+#[Assert\NotBlank(message: "Le titre est obligatoire.")]
+#[Assert\Length(
+    min: 3,
+    minMessage: "Le titre doit contenir au moins {{ limit }} caractères.",
+    max: 255,
+    maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères."
+)]
+#[Assert\Regex(
+    pattern: "/^[a-zA-Z0-9\s]+$/",
+    message: "Le titre ne peut contenir que des lettres, des chiffres et des espaces."
+)]
+private ?string $titre_offre = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "La description est obligatoire.")]
-    #[Assert\Length(
-        min: 3,
-        minMessage: "La description doit contenir au moins {{ limit }} caractères.",
-        max: 255,
-        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
-    )]
-    private ?string $description_offre = null;
+#[ORM\Column(length: 255)]
+#[Assert\NotBlank(message: "La description est obligatoire.")]
+#[Assert\Length(
+    min: 3,
+    minMessage: "La description doit contenir au moins {{ limit }} caractères.",
+    max: 255,
+    maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
+)]
+#[Assert\Regex(
+    pattern: "/^[a-zA-Z0-9\s]+$/",
+    message: "La description ne peut contenir que des lettres, des chiffres et des espaces."
+)]
+private ?string $description_offre = null;
 
 
 
@@ -67,6 +75,9 @@ class Offre
         return $this->titre_offre;
     }
 
+   
+   
+   
     public function setTitreOffre(string $titre_offre): static
     {
         $this->titre_offre = $titre_offre;

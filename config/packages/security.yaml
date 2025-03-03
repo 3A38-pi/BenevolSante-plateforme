@@ -2,6 +2,7 @@ security:
     password_hashers:
         App\Entity\User:
             algorithm: auto
+    
 
     role_hierarchy:
         ROLE_ADMIN: [ROLE_DONNEUR, ROLE_BENEFICIAIRE, ROLE_PROFESSIONNEL]
@@ -41,3 +42,5 @@ security:
         - { path: ^/donneur, roles: ROLE_DONNEUR }
         - { path: ^/beneficiaire, roles: ROLE_BENEFICIAIRE }
         - { path: ^/professionnel, roles: ROLE_PROFESSIONNEL }
+        - { path: ^/pages/profile\.html$, roles: ROLE_ADMIN }
+        - { path: ^/dashbord/home, roles: ROLE_ADMIN }    

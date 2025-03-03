@@ -27,6 +27,18 @@ class DemandeDonsRepository extends ServiceEntityRepository
         ->getResult();
 }
 
+public function findByChatActifForDonneur(User $donneur)
+{
+    return $this->createQueryBuilder('d')
+        ->join('d.dons', 'don')
+        ->where('don.donneur = :donneur')
+        ->andWhere('d.chatActif = true')
+        ->setParameter('donneur', $donneur)
+        ->getQuery()
+        ->getResult();
+}
+
+
 
 //    /**
 //     * @return DemandeDons[] Returns an array of DemandeDons objects
