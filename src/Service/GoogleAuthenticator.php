@@ -109,7 +109,6 @@ class GoogleAuthenticator extends AbstractAuthenticator
 
         $request->getSession()->set('user_id', $user->getId());
 
-        // Redirect to the user's role interface
         return new RedirectResponse($this->router->generate('home'));
     }
 
