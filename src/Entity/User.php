@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank(message: 'L\'email ne peut pas être vide')]
     #[Assert\Email(message: 'Veuillez saisir un email valide')]
     #[Assert\Regex(
@@ -32,26 +32,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $email = null;
 
-    #[ORM\Column]
-#[Assert\NotBlank(message: 'Le mot de passe est requis')]
-#[Assert\Length(
-    min: 6,
-    minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caractères'
-)]
-private ?string $password = null;
-
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank(message: 'Le mot de passe est requis')]
+    #[Assert\Length(
+        min: 6,
+        minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caractères'
+    )]
+    private ?string $password = null;
 
     #[ORM\Column]
     private array $roles = [];
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Regex(
         pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
         message: 'Le nom ne doit contenir que des lettres, espaces et tirets.'
     )]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Regex(
         pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
         message: 'Le prénom ne doit contenir que des lettres, espaces et tirets.'
@@ -102,7 +101,7 @@ private ?string $password = null;
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
@@ -113,7 +112,7 @@ private ?string $password = null;
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
         return $this;
@@ -123,7 +122,6 @@ private ?string $password = null;
     {
         return array_unique(array_merge($this->roles, ['ROLE_USER']));
     }
-
 
     public function setRoles(array $roles): self
     {
@@ -147,7 +145,7 @@ private ?string $password = null;
         return $this->nom;
     }
 
-    public function setNom(?string $nom): static
+    public function setNom(string $nom): self
     {
         $this->nom = $nom;
         return $this;
@@ -158,7 +156,7 @@ private ?string $password = null;
         return $this->prenom;
     }
 
-    public function setPrenom(?string $prenom): static
+    public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
         return $this;
