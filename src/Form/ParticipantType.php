@@ -18,13 +18,7 @@ class ParticipantType extends AbstractType
             ->add('prenom')
             ->add('email')
             ->add('numtel')
-            ->add('event', EntityType::class, [
-                'class' => Event::class,
-                'choice_label' => 'nom',
-                'placeholder' => 'Sélectionnez un événement',
-                'required' => true,
-            ])
-        ;
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

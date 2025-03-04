@@ -17,27 +17,44 @@ use Doctrine\Persistence\ManagerRegistry;
 #[Route('/event')]
 final class EventController extends AbstractController
 {
-    #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository, Request $request): Response
+        #[Route('/', name: 'app_event_index', methods: ['GET'])]
+        public function index(EventRepository $eventRepository, Request $request): Response
+        {
+            // Récupérer le terme de recherche
+            $searchTerm = $request->query->get('q');
+            $queryBuilder = $eventRepository->createQueryBuilder('e');
+
+            // Si un terme de recherche est fourni, filtrer les résultats
+            if ($searchTerm) {
+                $queryBuilder
+                    ->where('e.nom LIKE :searchTerm')
+                    ->setParameter('searchTerm', '%' . $searchTerm . '%');
+            }
+
+            // Exécuter la requête et récupérer les résultats
+            $events = $queryBuilder->getQuery()->getResult();
+
+            // Rendre la vue avec les événements et le terme de recherche
+            return $this->render('event/index.html.twig', [
+                'events' => $events,
+                'query' => $searchTerm // Passer le terme de recherche à la vue
+            ]);
+    }
+    #[Route('/statistiques', name: 'app_event_statistiques', methods: ['GET'])]
+    public function statistiques(EntityManagerInterface $em): Response
     {
-        // Récupérer le terme de recherche
-        $searchTerm = $request->query->get('q');
-        $queryBuilder = $eventRepository->createQueryBuilder('e');
+        // Correct the query to match the expected key names
+        $statsCategorie = $em->getRepository(Event::class)
+            ->createQueryBuilder('e')
+            ->select('c.type AS categorieType, COUNT(e.id) AS count')  // Using 'categorieType' and 'count' as keys
+            ->join('e.categorie', 'c')  // Join with Categorie
+            ->groupBy('c.id')  // Group by category ID
+            ->getQuery()
+            ->getResult();
 
-        // Si un terme de recherche est fourni, filtrer les résultats
-        if ($searchTerm) {
-            $queryBuilder
-                ->where('e.nom LIKE :searchTerm')
-                ->setParameter('searchTerm', '%' . $searchTerm . '%');
-        }
-
-        // Exécuter la requête et récupérer les résultats
-        $events = $queryBuilder->getQuery()->getResult();
-
-        // Rendre la vue avec les événements et le terme de recherche
-        return $this->render('event/index.html.twig', [
-            'events' => $events,
-            'query' => $searchTerm // Passer le terme de recherche à la vue
+        // Render the statistics page with the data
+        return $this->render('event/statistique.html.twig', [
+            'statsCategorie' => $statsCategorie,  // Pass the statistics to the view
         ]);
     }
 

@@ -16,4 +16,8 @@ return [
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
     FOS\ElasticaBundle\FOSElasticaBundle::class => ['all' => true],
 
+    CMEN\GoogleChartsBundle\CMENGoogleChartsBundle::class => ['all' => true],
+
+
+
 ];
