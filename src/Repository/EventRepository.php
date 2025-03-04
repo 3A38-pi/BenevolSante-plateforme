@@ -40,4 +40,14 @@ class EventRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function searchByKeyword(string $keyword): array
+{
+    return $this->createQueryBuilder('e')
+        ->andWhere('e.nom LIKE :keyword OR e.description LIKE :keyword')
+        ->setParameter('keyword', '%' . $keyword . '%')
+        ->orderBy('e.id', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
+
 }
