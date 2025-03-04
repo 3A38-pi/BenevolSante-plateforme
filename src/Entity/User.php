@@ -83,6 +83,9 @@ private ?string $password = null;
      */
     private $type;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $GoogleId = null;
+
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
@@ -220,6 +223,18 @@ private ?string $password = null;
     public function setResetToken(?string $resetToken): self
     {
         $this->resetToken = $resetToken;
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->GoogleId;
+    }
+
+    public function setGoogleId(?string $GoogleId): static
+    {
+        $this->GoogleId = $GoogleId;
+
         return $this;
     }
 }
