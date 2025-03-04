@@ -29,6 +29,7 @@
                 <a href="{{ path('app_register') }}" class="text-decoration-none">Créer un compte</a>
                 <br>
                 <a href="{{ path('app_forgot_password') }}" class="text-decoration-none">Mot de passe oublié ?</a>
+                <a href="{{ path('connect_google') }}" class="text-decoration-none">connect avec google ?</a>
             </p>
         </div>
     </div>
@@ -91,4 +92,32 @@
     </div>
 
     <!-- Footer End -->
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .btn-light:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .google-btn {
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+        }
+        
+        .google-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .google-btn img {
+            transition: all 0.3s ease;
+        }
+        
+        .google-btn:hover img {
+            transform: scale(1.1);
+        }
+    </style>
 {% endblock %}

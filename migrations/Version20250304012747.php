@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250225094008 extends AbstractMigration
+final class Version20250304012747 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,14 @@ final class Version20250225094008 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE evaluation DROP question, DROP options');
+        $this->addSql('ALTER TABLE condidat CHANGE cv cv VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE user ADD google_id VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE evaluation ADD question VARCHAR(255) NOT NULL, ADD options JSON NOT NULL COMMENT \'(DC2Type:json)\'');
+        $this->addSql('ALTER TABLE condidat CHANGE cv cv VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE user DROP google_id');
     }
 }

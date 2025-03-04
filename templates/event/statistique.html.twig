@@ -1,0 +1,45 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Statistiques des Événements{% endblock %}
+
+{% block body %}
+    <h1>Statistiques des Événements</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Répartition par Catégorie</h3>
+            <div id="piechart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+
+    <a href="{{ path('app_event_index') }}" class="btn btn-secondary mt-3">
+        Retour à la liste
+    </a>
+
+    <!-- Scripts pour les graphiques -->
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Données pour le graphique des catégories
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawCharts);
+
+            function drawCharts() {
+                // Graphique des catégories (camembert)
+                var pieData = google.visualization.arrayToDataTable([
+                    ['Catégorie', 'Nombre'],
+                    {% for stat in statsCategorie %}
+                        ['{{ stat.categorieType }}', {{ stat.count }}],
+                    {% endfor %}
+                ]);
+
+                var pieOptions = {
+                    title: 'Répartition par Catégorie',
+                    is3D: true,
+                };
+
+                var pieChart = new google.visualization.PieChart(document.getElementById('piechart'));
+                pieChart.draw(pieData, pieOptions);
+            }
+        });
+    </script>
+{% endblock %}
