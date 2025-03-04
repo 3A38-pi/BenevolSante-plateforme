@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
 {
+    const TYPE_COMMENTAIRE = 'commentaire';
+    const TYPE_DEMANDE_DONS = 'demande_dons';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -26,11 +29,16 @@ class Notification
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Commentaire $commentaire = null;
 
-    public function __construct()
-{
-    $this->createdAt = new \DateTimeImmutable();
-}
+    #[ORM\ManyToOne(targetEntity: DemandeDons::class, inversedBy: 'notifications')]
+    private ?DemandeDons $demandeDons = null;
 
+    #[ORM\Column(length: 50)]
+    private ?string $type = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -81,6 +89,30 @@ class Notification
     public function setCommentaire(?Commentaire $commentaire): static
     {
         $this->commentaire = $commentaire;
+
+        return $this;
+    }
+
+    public function getDemandeDons(): ?DemandeDons
+    {
+        return $this->demandeDons;
+    }
+
+    public function setDemandeDons(?DemandeDons $demandeDons): static
+    {
+        $this->demandeDons = $demandeDons;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
