@@ -75,7 +75,6 @@ class GoogleAuthenticator extends AbstractAuthenticator
                     //$hashedPassword = $this->passwordHasher->hashPassword($user, $randomPassword);
                     $user->setPassword($randomPassword);
     
-                    // Set a default phone number
     
                     // Set a default role
                     $user->setRoles(['ROLE_DONNEUR']);
