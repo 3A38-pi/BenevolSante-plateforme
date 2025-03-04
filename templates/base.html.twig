@@ -158,9 +158,15 @@
 
             {# Conditional display: if user is connected, show logout button; otherwise show Login/Register buttons #}
             {% if app.user %}
-                <form method="post" action="{{ path('app_logout') }}" class="d-inline me-2">
-                    <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Déconnexion</button>
-                </form>
+                <div class="d-flex align-items-center">
+                    <span class="me-2 text-dark fw-bold">{{ app.user.nom }} {{ app.user.prenom }}</span>
+                    <a href="{{ path('profile_edit') }}" class="text-decoration-none me-2">
+                        <i class="fas fa-user-edit text-primary fa-lg"></i>
+                    </a>
+                    <form method="post" action="{{ path('app_logout') }}" class="d-inline me-2">
+                        <button type="submit" class="btn btn-danger rounded-0 py-3 px-lg-4 d-none d-lg-inline">Déconnexion</button>
+                    </form>
+                </div>
             {% else %}
                 <div class="d-flex align-items-center">
                     <a href="{{ path('app_login') }}" class="btn btn-primary rounded-0 py-3 px-lg-4 me-2 d-none d-lg-inline">

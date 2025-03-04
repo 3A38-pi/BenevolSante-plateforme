@@ -1,38 +1,58 @@
 {% extends 'base2.html.twig' %}
 
-{% block title %}Participant{% endblock %}
+{% block title %}Détails du Participant{% endblock %}
 
 {% block body %}
-    <h1>Participant</h1>
+<div class="container mt-5">
+    <h1 class="text-center text-warning animate__animated animate__fadeIn">Détails du Participant</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ participant.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ participant.nom }}</td>
-            </tr>
-            <tr>
-                <th>Prenom</th>
-                <td>{{ participant.prenom }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ participant.email }}</td>
-            </tr>
-            <tr>
-                <th>Numtel</th>
-                <td>{{ participant.numtel }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="card shadow-lg rounded-lg mt-4 animate__animated animate__fadeInUp">
+        <div class="card-body">
+            <table class="table table-hover">
+                <tbody>
+                    <tr>
+                        <th><i class="fas fa-id-badge"></i> ID</th>
+                        <td>{{ participant.id }}</td>
+                    </tr>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Nom</th>
+                        <td>{{ participant.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Prénom</th>
+                        <td>{{ participant.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <th><i class="fas fa-envelope"></i> Email</th>
+                        <td>{{ participant.email }}</td>
+                    </tr>
+                    <tr>
+                        <th><i class="fas fa-phone"></i> Téléphone</th>
+                        <td>{{ participant.numtel }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-    <a href="{{ path('app_participantback_index') }}">back to list</a>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_participantback_index') }}" class="btn btn-outline-warning">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
 
-    <a href="{{ path('app_participantback_edit', {'id': participant.id}) }}">edit</a>
+                <a href="{{ path('app_participantback_edit', {'id': participant.id}) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
 
-    {{ include('participantback/_delete_form.html.twig') }}
+                {{ include('participantback/_delete_form.html.twig', {
+                    'button_label': '<i class="fas fa-trash-alt"></i> Supprimer',
+                    'attr': {'class': 'btn btn-danger'}
+                }) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 {% endblock %}

@@ -65,4 +65,4 @@ class ForgotPasswordController extends AbstractController
 
         return $this->render('authentification/forgot_password.html.twig');
     }
-} 
+}
