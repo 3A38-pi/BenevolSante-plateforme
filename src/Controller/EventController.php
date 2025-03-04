@@ -17,29 +17,33 @@ use Doctrine\Persistence\ManagerRegistry;
 #[Route('/event')]
 final class EventController extends AbstractController
 {
-        #[Route('/', name: 'app_event_index', methods: ['GET'])]
-        public function index(EventRepository $eventRepository, Request $request): Response
-        {
-            // Récupérer le terme de recherche
-            $searchTerm = $request->query->get('q');
-            $queryBuilder = $eventRepository->createQueryBuilder('e');
-
-            // Si un terme de recherche est fourni, filtrer les résultats
-            if ($searchTerm) {
-                $queryBuilder
-                    ->where('e.nom LIKE :searchTerm')
-                    ->setParameter('searchTerm', '%' . $searchTerm . '%');
-            }
-
-            // Exécuter la requête et récupérer les résultats
-            $events = $queryBuilder->getQuery()->getResult();
-
-            // Rendre la vue avec les événements et le terme de recherche
-            return $this->render('event/index.html.twig', [
-                'events' => $events,
-                'query' => $searchTerm // Passer le terme de recherche à la vue
-            ]);
+    #[Route('/', name: 'app_event_index', methods: ['GET'])]
+    public function index(EventRepository $eventRepository, Request $request): Response
+    {
+        // Récupérer le terme de recherche
+        $searchTerm = $request->query->get('q');
+        $queryBuilder = $eventRepository->createQueryBuilder('e');
+    
+        // Si un terme de recherche est fourni, filtrer les résultats
+        if ($searchTerm) {
+            $queryBuilder
+                ->where('LOWER(e.nom) LIKE LOWER(:searchTerm) OR LOWER(e.description) LIKE LOWER(:searchTerm)')
+                ->setParameter('searchTerm', '%' . $searchTerm . '%');
+        }
+    
+        // Trier les résultats par nom
+        $queryBuilder->orderBy('e.nom', 'ASC');
+    
+        // Exécuter la requête et récupérer les résultats
+        $events = $queryBuilder->getQuery()->getResult();
+    
+        // Rendre la vue avec les événements et le terme de recherche
+        return $this->render('event/index.html.twig', [
+            'events' => $events,
+            'query' => $searchTerm // Passer le terme de recherche à la vue
+        ]);
     }
+    
     #[Route('/statistiques', name: 'app_event_statistiques', methods: ['GET'])]
     public function statistiques(EntityManagerInterface $em): Response
     {
