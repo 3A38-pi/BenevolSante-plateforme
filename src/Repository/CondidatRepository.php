@@ -15,6 +15,7 @@ class CondidatRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Condidat::class);
     }
+    
 
 //    /**
 //     * @return Condidat[] Returns an array of Condidat objects
