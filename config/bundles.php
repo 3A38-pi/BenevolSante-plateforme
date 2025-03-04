@@ -19,6 +19,7 @@ return [
     KnpU\OAuth2ClientBundle\KnpUOAuth2ClientBundle::class => ['all' => true],
 
 
+
     CMEN\GoogleChartsBundle\CMENGoogleChartsBundle::class => ['all' => true],
 
 
