@@ -1,3 +1,6 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
 parameters:
     image_dir: "%kernel.project_dir%/public/uploads/images"
     Event_dir: "%kernel.project_dir%/public/uploads/events"
@@ -38,12 +41,3 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    mailer.default:
-        class: Symfony\Component\Mailer\Mailer
-        arguments:
-            - '@mailer.transport.default'
-
-    mailer.secondary:
-        class: Symfony\Component\Mailer\Mailer
-        arguments:
-            - '@mailer.transport.secondary'

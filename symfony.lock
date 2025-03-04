@@ -29,21 +29,33 @@
             "./migrations/.gitignore"
         ]
     },
-"knplabs/knp-paginator-bundle": {
-    "version": "v6.6.1"
-},
-"friendsofsymfony/elastica-bundle": {
-    "version": "6.5",
-    "recipe": {
-        "repo": "github.com/symfony/recipes-contrib",
-        "branch": "main",
-        "version": "5.0",
-        "ref": "46c9cd2c1e07f0fcfd97e96f12b03b2e0845c4cd"
+    "friendsofsymfony/elastica-bundle": {
+        "version": "6.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "5.0",
+            "ref": "46c9cd2c1e07f0fcfd97e96f12b03b2e0845c4cd"
+        },
+        "files": [
+            "./config/packages/fos_elastica.yaml"
+        ]
     },
-    "files": [
-        "./config/packages/fos_elastica.yaml"
-    ]
-},
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.6.1"
+    },
+    "knpuniversity/oauth2-client-bundle": {
+        "version": "2.18",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.20",
+            "ref": "1ff300d8c030f55c99219cc55050b97a695af3f6"
+        },
+        "files": [
+            "./config/packages/knpu_oauth2_client.yaml"
+        ]
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {

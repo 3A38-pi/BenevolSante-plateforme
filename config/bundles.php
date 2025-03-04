@@ -15,9 +15,13 @@ return [
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
     FOS\ElasticaBundle\FOSElasticaBundle::class => ['all' => true],
+<<<<<<< HEAD
+    KnpU\OAuth2ClientBundle\KnpUOAuth2ClientBundle::class => ['all' => true],
+=======
 
     CMEN\GoogleChartsBundle\CMENGoogleChartsBundle::class => ['all' => true],
 
 
 
+>>>>>>> d358dc8276f972a3130584cdc1de002d6d57c6c3
 ];
