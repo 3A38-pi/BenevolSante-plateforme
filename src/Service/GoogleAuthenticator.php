@@ -107,7 +107,6 @@ class GoogleAuthenticator extends AbstractAuthenticator
         // Get the authenticated user
         $user = $token->getUser();
 
-        // Manually set the session (if absolutely necessary)
         $request->getSession()->set('user_id', $user->getId());
 
         // Redirect to the user's role interface
