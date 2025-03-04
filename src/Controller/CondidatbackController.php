@@ -10,6 +10,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mime\Email;
+
+
+use Symfony\Component\Mailer\Mailer;
+
+
+
 
 #[Route('/condidatback')]
 final class CondidatbackController extends AbstractController{
@@ -77,4 +88,41 @@ final class CondidatbackController extends AbstractController{
 
         return $this->redirectToRoute('app_condidatback_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id}/accepter', name: 'app_condidatback_accepter', methods: ['POST'])]
+    public function accepter(Condidat $condidat, EntityManagerInterface $entityManager): Response
+
+{
+    // Sauvegarde en base de données
+    $entityManager->flush();
+
+    // Configuration du transport SMTP avec Gmail
+    $transport = Transport::fromDsn('smtp://amroush123@gmail.com:npcfowmbtolgyqfe@smtp.gmail.com:587');
+    $mailer = new Mailer($transport);
+
+    // Récupération de l'email du candidat
+    $recipientEmail = $condidat->getEmail();
+    
+    // Création et envoi de l'email
+    $email = (new Email())
+        ->from('amroush123@gmail.com')
+        ->to($recipientEmail) // Utilisation de l'email du candidat
+        ->subject('Notification : Candidature acceptée')
+        ->text(sprintf(
+            "Bonjour %s,\n\nVotre candidature a été acceptée ! 🎉\n\nCordialement,\nL’équipe.",
+            $condidat->getNom()
+        ));
+
+    $mailer->send($email);
+
+    // Retourner une réponse JSON
+    return $this->redirectToRoute('app_condidatback_felicitation');
+
+}
+#[Route('/condidatback/felicitation', name: 'app_condidatback_felicitation', methods: ['GET'])]
+public function felicitation(): Response
+{
+    return $this->render('condidatback/felicitaion.html.twig');
+}
+
 }
