@@ -4,6 +4,15 @@
 
 {% block body %}
     <div class="container mt-4">
+        
+        <!-- Affichage des messages flash -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
         <h1 class="text-center text-primary mb-4">👤 Liste des Candidats</h1>
         
         <div class="d-flex justify-content-end mb-3">
@@ -43,6 +52,11 @@
                             <a href="{{ path('app_condidatback_edit', {'id': condidat.id}) }}" class="btn btn-warning btn-sm shadow">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
+                            <form method="post" action="{{ path('app_condidatback_accepter', {'id': condidat.id}) }}" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm shadow">
+                                    ✅ Accepter
+                                </button>
+                            </form>
                             <form method="post" action="{{ path('app_condidatback_delete', {'id': condidat.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce candidat ?');" class="d-inline">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ condidat.id) }}">
                                 <button type="submit" class="btn btn-danger btn-sm shadow">
