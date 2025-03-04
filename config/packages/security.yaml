@@ -50,4 +50,5 @@ security:
         - { path: ^/pages/profile\.html$, roles: ROLE_ADMIN }
         - { path: ^/dashbord/home, roles: ROLE_ADMIN } 
         - { path: ^/connect, roles: PUBLIC_ACCESS }
+        - { path: ^/statistics, roles: ROLE_ADMIN }
    

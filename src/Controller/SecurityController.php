@@ -43,5 +43,11 @@ class SecurityController extends AbstractController
         throw new \LogicException('This route is handled by the GoogleAuthenticator.');
     }
 
+    #[Route('/access-denied', name: 'app_access_denied')]
+    public function accessDenied(): Response
+    {
+        return $this->render('security/access_denied.html.twig');
+    }
+
 }
 
