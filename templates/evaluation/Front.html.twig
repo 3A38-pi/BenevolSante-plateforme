@@ -1,38 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Toutes les évaluations{% endblock %}
+{% block title %}Liste des évaluations{% endblock %}
 
 {% block body %}
-    <h1 class="text-center text-primary mb-4">
-        <i class="fas fa-list-alt"></i> Toutes les évaluations
+<div class="container mt-5">
+    <h1 class="text-center text-dark mb-4">
+        <i class="fas fa-list-alt"></i> Liste des Évaluations
     </h1>
 
-    <div class="row">
+    <div class="mb-4 text-center">
+        <input type="text" id="searchBox" class="form-control w-50 mx-auto search-input" placeholder="🔍 Rechercher une évaluation...">
+    </div>
+
+    <div class="row" id="evaluationsContainer">
         {% for evaluation in evaluations %}
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 evaluation-item-wrapper">
                 <div class="evaluation-item card shadow-lg border-0">
                     <div class="card-body d-flex flex-column">
-                        <h3 class="card-title text-dark mb-3">
-                            <i class="fas fa-question-circle text-primary"></i> {{ evaluation.question }}
-                        </h3>
-
-                        {% if evaluation.options is not empty %}
-                            <div class="mb-3">
-                                <h5><i class="fas fa-list-ul text-secondary"></i> Options:</h5>
-                                <ul class="list-group">
-                                    {% for option in evaluation.options %}
-                                        <li class="list-group-item">
-                                            <i class="fas fa-check-circle text-success"></i> {{ option }}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        {% endif %}
+                        <h4 class="card-title text-dark mb-2">
+                            <i class="fas fa-file-signature text-primary"></i> {{ evaluation.name }}
+                        </h4>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-align-left text-secondary"></i> {{ evaluation.description|default("Aucune description disponible.") }}
+                        </p>
 
                         <div class="mt-auto text-center">
                             <a href="{{ path('show_evaluation', { 'id': evaluation.id }) }}" 
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-eye"></i> Voir plus
+                               class="btn btn-dark btn-sm view-btn">
+                                <i class="fas fa-eye"></i> Voir l'évaluation
                             </a>
                         </div>
                     </div>
@@ -44,25 +39,101 @@
             </p>
         {% endfor %}
     </div>
+</div>
 
-    <style>
-        .evaluation-item {
-            transition: transform 0.3s ease-in-out;
-            border-radius: 10px;
-            min-height: 300px;  /* Garantir une hauteur minimale uniforme */
-        }
-        .evaluation-item:hover {
-            transform: scale(1.05);
-        }
-        .btn-outline-primary {
-            border-radius: 20px;
-        }
-        .card-body {
-            display: flex;
-            flex-direction: column;
-        }
-        .card-title {
-            flex-grow: 1; /* Cela permet à la zone du titre d'être flexible */
-        }
-    </style>
+<style>
+    /* ✅ Conteneur de la liste des évaluations */
+    .evaluation-item {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border-radius: 12px;
+        min-height: 200px;
+        cursor: pointer;
+        overflow: hidden;
+        padding: 15px;
+        background: linear-gradient(to right, #ffffff, #f8f9fa);
+        border: 1px solid #ddd;
+    }
+
+    /* ✅ Effet au survol */
+    .evaluation-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ✅ Bouton personnalisé */
+    .view-btn {
+        border-radius: 25px;
+        font-size: 0.9rem;
+        padding: 8px 15px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .view-btn:hover {
+        background-color: #343a40;
+        color: #ffffff;
+        transform: scale(1.1);
+    }
+
+    /* ✅ Barre de recherche */
+    .search-input {
+        border-radius: 25px;
+        padding: 10px 15px;
+        font-size: 1rem;
+        border: 2px solid #ddd;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+    }
+
+    /* ✅ Animation d'apparition */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(15px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const evaluations = document.querySelectorAll(".evaluation-item-wrapper");
+        const searchBox = document.getElementById("searchBox");
+
+        // Animation d'apparition fluide des évaluations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+            });
+        }, { threshold: 0.2 });
+
+        evaluations.forEach(item => {
+            item.classList.add("fade-in");
+            observer.observe(item);
+        });
+
+        // Recherche en temps réel
+        searchBox.addEventListener("input", function () {
+            const searchTerm = this.value.toLowerCase();
+            evaluations.forEach(item => {
+                const evaluationTitle = item.querySelector(".card-title").textContent.toLowerCase();
+                const evaluationDesc = item.querySelector(".card-text").textContent.toLowerCase();
+                
+                if (evaluationTitle.includes(searchTerm) || evaluationDesc.includes(searchTerm)) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

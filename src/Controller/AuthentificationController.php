@@ -18,6 +18,8 @@ use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\UserRepository;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Form\ProfileEditFormType;
 
 final class AuthentificationController extends AbstractController
 {
@@ -75,46 +77,6 @@ final class AuthentificationController extends AbstractController
     
         return $this->render('authentification/register.html.twig', [
             'registrationForm' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/profile/edit', name: 'profile_edit')]
-    public function editProfile(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
-    ): Response {
-        // Ensure the user is logged in
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-        
-        // Create a form using a custom form type for profile editing.
-        $form = $this->createForm(ProfileEditFormType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Optionally, check if a new password has been entered.
-            // Assuming the form has a 'password' field that may be left empty.
-            $plainPassword = $form->get('password')->getData();
-            if (!empty($plainPassword)) {
-                $user->setPassword(
-                    $passwordHasher->hashPassword($user, $plainPassword)
-                );
-            }
-            
-            // Save changes to the database.
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
-
-            // Redirect to the same page or another page as needed.
-            return $this->redirectToRoute('profile_edit');
-        }
-
-        return $this->render('profile/edit.html.twig', [
-            'editForm' => $form->createView(),
         ]);
     }
 
@@ -200,6 +162,7 @@ final class AuthentificationController extends AbstractController
     }
 
     #[Route('/statistics', name: 'statistics')]
+    #[IsGranted('ROLE_ADMIN')]
     public function statistics(UserRepository $userRepository): Response
     {
         // Get statistics by user type
@@ -220,4 +183,40 @@ final class AuthentificationController extends AbstractController
         ]);
     }
 
+    #[Route('/profile/edit', name: 'profile_edit')]
+    public function editProfile(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = $this->getUser(); // Get the logged-in user
+        $form = $this->createForm(ProfileEditFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Check if the password fields are filled
+            $newPassword = $form->get('password')->getData();
+            $confirmPassword = $form->get('confirmPassword')->getData();
+
+            if (!empty($newPassword) && !empty($confirmPassword)) {
+                // Validate that the new password and confirm password match
+                if ($newPassword !== $confirmPassword) {
+                    $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+
+                // Hash the new password and update the user entity
+                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+            }
+
+            // Save the updated user entity to the database
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Profil mis à jour avec succès.');
+            return $this->redirectToRoute('profile_edit');
+        }
+
+        return $this->render('profile/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 }

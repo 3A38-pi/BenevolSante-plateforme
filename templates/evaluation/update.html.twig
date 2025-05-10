@@ -1,111 +1,125 @@
 {% extends 'base2.html.twig' %}
 
-{% block title %}Modifier une Évaluation{% endblock %}
+{% block title %}Modifier l'Évaluation{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <div class="card shadow-lg p-4 animated fadeIn">
-            <h1 class="text-center text-primary mb-4">
-                <i class="fas fa-edit"></i> Modifier l'Évaluation
-            </h1>
+<div class="container mt-5 text-dark">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-dark"><i class="fas fa-edit text-dark"></i> Modifier l'Évaluation</h1>
+        <a href="{{ path('list_evaluations') }}" class="btn btn-secondary text-dark">
+            <i class="fas fa-arrow-left text-dark"></i> Retour à la liste
+        </a>
+    </div>
 
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    {{ form_start(form, {'attr': {'id': 'evaluationForm', 'class': 'text-dark'}}) }}
+    
+    <div class="card shadow-lg p-4 text-dark">
+        <div class="mb-3">
+            {{ form_label(form.name, 'Nom de l\'évaluation', {'label_attr': {'class': 'form-label text-dark'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control text-dark'}}) }}
+            {{ form_errors(form.name) }}
+        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">
-                                <i class="fas fa-question-circle"></i> Question de l'évaluation
-                            </label>
-                            {{ form_widget(form.question, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la question...'}}) }}
-                        </div>
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description (optionnel)', {'label_attr': {'class': 'form-label text-dark'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control text-dark', 'rows': 3}}) }}
+            {{ form_errors(form.description) }}
+        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">
-                                <i class="fas fa-list-ul"></i> Options (séparées par des virgules)
-                            </label>
-                            {{ form_widget(form.options, {'attr': {'class': 'form-control', 'placeholder': 'Option 1, Option 2, Option 3...'}}) }}
-                        </div>
-
-                        <div class="mb-3 form-switch">
-                            {{ form_widget(form.openEnded, {'attr': {'class': 'form-check-input'}}) }}
-                            <label class="form-check-label">
-                                <i class="fas fa-comment-alt"></i> Autoriser les réponses ouvertes
-                            </label>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 animated pulse">
-                            <i class="fas fa-save"></i> Mettre à jour
-                        </button>
-
-                    {{ form_end(form) }}
-
-                    <a href="{{ path('evaluations_with_responses') }}" class="btn btn-secondary w-100 mt-3 animated bounceIn">
-                        <i class="fas fa-arrow-left"></i> Retour
-                    </a>
+        <h4 class="text-dark"><i class="fas fa-question-circle text-dark"></i> Questions</h4>
+        <div id="questionsContainer" data-prototype="{{ form_widget(form.questions.vars.prototype)|e('html_attr') }}">
+            {% for questionForm in form.questions %}
+                <div class="question-box p-3 mb-3 border rounded shadow-sm position-relative text-dark">
+                    {{ form_row(questionForm.content, {'attr': {'class': 'text-dark'}}) }}
+                    <div class="form-check">
+                        {{ form_widget(questionForm.openEnded, {'attr': {'class': 'form-check-input text-dark'}}) }}
+                        {{ form_label(questionForm.openEnded, 'Question ouverte', {'label_attr': {'class': 'form-check-label text-dark'}}) }}
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm remove-question position-absolute" style="top:10px; right:10px;">
+                        <i class="fas fa-trash-alt text-dark"></i>
+                    </button>
                 </div>
-            </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" class="btn btn-success btn-sm mt-2 text-dark" id="addQuestion">
+            <i class="fas fa-plus-circle text-dark"></i> Ajouter une question
+        </button>
+        
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary text-dark">
+                <i class="fas fa-save text-dark"></i> Enregistrer les modifications
+            </button>
+            <a href="{{ path('list_evaluations') }}" class="btn btn-danger text-dark" onclick="return confirm('Voulez-vous vraiment annuler les modifications ?');">
+                <i class="fas fa-times text-dark"></i> Annuler
+            </a>
         </div>
     </div>
 
-{% block stylesheets %}
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+    {{ form_end(form) }}
+</div>
+
+<style>
+    .question-box {
+        background: #f8f9fa;
+        border-left: 5px solid #007bff;
+        position: relative;
+        transition: all 0.3s ease-in-out;
+        color: black;
+    }
+    .question-box:hover {
+        background: #eef3f7;
+    }
+    .remove-question {
+        border-radius: 50%;
+        padding: 5px 8px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    .remove-question:hover {
+        background-color: #c82333;
+    }
+    .form-label {
+        font-weight: bold;
+        color: black;
+    }
+    .form-control.text-dark {
+        color: black !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let collectionHolder = document.querySelector("#questionsContainer");
+        let addQuestionButton = document.querySelector("#addQuestion");
+
+        addQuestionButton.addEventListener("click", function () {
+            let prototype = collectionHolder.dataset.prototype;
+            let index = collectionHolder.children.length;
+            let newForm = prototype.replace(/__name__/g, index);
+
+            let div = document.createElement("div");
+            div.classList.add("question-box", "p-3", "mb-3", "border", "rounded", "shadow-sm", "position-relative", "text-dark");
+            div.innerHTML = newForm + '<button type="button" class="btn btn-danger btn-sm remove-question position-absolute" style="top:10px; right:10px;"><i class="fas fa-trash-alt text-dark"></i></button>';
+            
+            collectionHolder.appendChild(div);
+            attachRemoveEvent(div);
+        });
+
+        function attachRemoveEvent(element) {
+            element.querySelector(".remove-question").addEventListener("click", function () {
+                element.remove();
+            });
         }
 
-        .container {
-            max-width: 600px; /* Réduit la largeur */
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin: 50px auto; /* Centre la boîte */
-        }
-
-        h1 {
-            color: #e91e63;
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-control, .form-select {
-            border-radius: 6px;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            font-size: 1rem;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            border: none;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-    </style>
-{% endblock %}
+        document.querySelectorAll(".remove-question").forEach(button => {
+            button.addEventListener("click", function () {
+                button.closest(".question-box").remove();
+            });
+        });
+    });
+</script>
 
 {% endblock %}

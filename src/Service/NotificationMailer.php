@@ -16,22 +16,15 @@ class NotificationMailer
     {
         $this->mailer = $mailer;
     }
-
-    /**
-     * Envoie un e-mail de notification à l'utilisateur donné.
-     *
-     * @param User $user L'utilisateur destinataire
-     * @param string $messageContent Le contenu du message
-     */
     public function sendNotificationEmail(User $user, string $messageContent): void
     {
         $recipientEmail = $user->getEmail();
 
         $email = (new Email())
-            ->from('amroush123@gmail.com')  // Votre adresse Gmail
+            ->from('amroush123@gmail.com') 
             ->to($recipientEmail)
             ->subject('Notification : Commentaire désactivé')
-            ->text($messageContent);
+            ->text(sprintf("Bonjour,\n\nVotre commentaire a été désactivé.\nContenu: %s\n\nCordialement,\nL’équipe.", $messageContent));
 
         $this->mailer->send($email);
     }

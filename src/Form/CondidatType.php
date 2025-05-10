@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CondidatType extends AbstractType
 {
@@ -18,11 +19,26 @@ class CondidatType extends AbstractType
             ->add('prenom')
             ->add('email')
             ->add('telephone')
-            ->add('cv')
+            ->add('cv', ChoiceType::class, [
+                'choices' => [
+                    'Docteur' => 'Docteur',
+                    'Infirmier' => 'Infirmier',
+                    'Aide-soignant' => 'Aide-soignant',
+                ],
+                'expanded' => false, // Liste déroulante
+                'multiple' => false, // Une seule sélection
+                'attr' => ['class' => 'form-select form-control-lg border-primary shadow-sm'],
+                'label' => 'Profession'
+            ])
+            
             ->add('offre', EntityType::class, [
                 'class' => Offre::class,
-'choice_label' => 'Titre_offre',
-            ])
+                'choice_label' => 'titreOffre', // Vérifie que c'est bien le bon champ dans l'entité Offre
+                'disabled' => true, // Empêcher l'utilisateur de modifier l'offre sélectionnée
+                'required' => false, // Permet de soumettre sans erreur
+            ]);
+            
+            
         ;
     }
 

@@ -23,21 +23,42 @@ final class EventController extends AbstractController
         // Récupérer le terme de recherche
         $searchTerm = $request->query->get('q');
         $queryBuilder = $eventRepository->createQueryBuilder('e');
-
+    
         // Si un terme de recherche est fourni, filtrer les résultats
         if ($searchTerm) {
             $queryBuilder
-                ->where('e.nom LIKE :searchTerm')
+                ->where('LOWER(e.nom) LIKE LOWER(:searchTerm) OR LOWER(e.description) LIKE LOWER(:searchTerm)')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-
+    
+        // Trier les résultats par nom
+        $queryBuilder->orderBy('e.nom', 'ASC');
+    
         // Exécuter la requête et récupérer les résultats
         $events = $queryBuilder->getQuery()->getResult();
-
+    
         // Rendre la vue avec les événements et le terme de recherche
         return $this->render('event/index.html.twig', [
             'events' => $events,
             'query' => $searchTerm // Passer le terme de recherche à la vue
+        ]);
+    }
+    
+    #[Route('/statistiques', name: 'app_event_statistiques', methods: ['GET'])]
+    public function statistiques(EntityManagerInterface $em): Response
+    {
+        // Correct the query to match the expected key names
+        $statsCategorie = $em->getRepository(Event::class)
+            ->createQueryBuilder('e')
+            ->select('c.type AS categorieType, COUNT(e.id) AS count')  // Using 'categorieType' and 'count' as keys
+            ->join('e.categorie', 'c')  // Join with Categorie
+            ->groupBy('c.id')  // Group by category ID
+            ->getQuery()
+            ->getResult();
+
+        // Render the statistics page with the data
+        return $this->render('event/statistique.html.twig', [
+            'statsCategorie' => $statsCategorie,  // Pass the statistics to the view
         ]);
     }
 

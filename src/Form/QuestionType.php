@@ -19,7 +19,7 @@ class QuestionType extends AbstractType
                 'label' => 'Question',
                 'attr' => [
                     'class' => 'custom-input',  // Custom class for styling
-                     'placeholder' => 'Entrez la question...',
+                    'placeholder' => 'Entrez la question...',
                 ],
             ])
             ->add('openEnded', CheckboxType::class, [

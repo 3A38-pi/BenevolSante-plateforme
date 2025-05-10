@@ -15,6 +15,7 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+            
 
     firewalls:
         dev:
@@ -36,6 +37,10 @@ security:
                 lifetime: 604800
                 path: /
             access_denied_url: /login
+            pattern: ^/
+            custom_authenticators:
+                - App\Service\GoogleAuthenticator
+
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
@@ -43,4 +48,7 @@ security:
         - { path: ^/beneficiaire, roles: ROLE_BENEFICIAIRE }
         - { path: ^/professionnel, roles: ROLE_PROFESSIONNEL }
         - { path: ^/pages/profile\.html$, roles: ROLE_ADMIN }
-        - { path: ^/dashbord/home, roles: ROLE_ADMIN }    
+        - { path: ^/dashbord/home, roles: ROLE_ADMIN } 
+        - { path: ^/connect, roles: PUBLIC_ACCESS }
+        - { path: ^/statistics, roles: ROLE_ADMIN }
+   

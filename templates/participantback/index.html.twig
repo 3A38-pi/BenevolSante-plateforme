@@ -1,41 +1,64 @@
-{% extends 'base.html.twig' %}
+{% extends 'base2.html.twig' %}
 
-{% block title %}Participant index{% endblock %}
+{% block title %}Liste des Participants{% endblock %}
 
 {% block body %}
-    <h1>Participant index</h1>
+<div class="container mt-5">
+    <!-- Titre animé -->
+    <h1 class="text-center text-primary animate__animated animate__fadeInDown">📝 Liste des Participants</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th> make it plus vife est animé 
-                <th>Prenom</th>
-                <th>Email</th>
-                <th>Numtel</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for participant in participants %}
-            <tr>
-                <td>{{ participant.id }}</td>
-                <td>{{ participant.nom }}</td>
-                <td>{{ participant.prenom }}</td>
-                <td>{{ participant.email }}</td>
-                <td>{{ participant.numtel }}</td>
-                <td>
-                    <a href="{{ path('app_participant_show', {'id': participant.id}) }}">show</a>
-                    <a href="{{ path('app_participant_edit', {'id': participant.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <!-- Table avec animations et style Bootstrap -->
+    <div class="table-responsive animate__animated animate__zoomIn animate__faster">
+        <table class="table table-hover table-bordered shadow mt-4">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Événement</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for participant in participants %}
+                <tr class="animate__animated animate__fadeInUp animate__delay-0.5s">
+                    <td class="text-center fw-bold">{{ participant.id }}</td>
+                    <td>{{ participant.nom }}</td>
+                    <td>{{ participant.prenom }}</td>
+                    <td>{{ participant.email }}</td>
+                    <td>{{ participant.numtel }}</td>
+                    <td class="text-center">
+                        {% if participant.event %}
+                            <span class="badge bg-success">{{ participant.event.nom }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">Aucun événement</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ path('app_participantback_show', {'id': participant.id}) }}" class="btn btn-info btn-sm hvr-grow">
+                            <i class="fas fa-eye"></i> Voir
+                        </a>
+                        <a href="{{ path('app_participantback_edit', {'id': participant.id}) }}" class="btn btn-warning btn-sm hvr-grow">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted animate__animated animate__fadeIn">Aucun participant trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <a href="{{ path('app_participant_new') }}">Create new</a>
+<!-- Ajout de Bootstrap, Animate.css, Hover.css et FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 {% endblock %}
