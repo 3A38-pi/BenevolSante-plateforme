@@ -20,7 +20,7 @@ $email->from('amroush123@gmail.com');
 
 // Set the "To" address
 $email->to(
-    'itstimetoduel01@gmail.com'
+    'wahadayasser25@gmail.com'
 );
 // Set a "subject"
 $email->subject('A Cool Subject!');

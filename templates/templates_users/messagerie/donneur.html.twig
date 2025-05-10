@@ -1,179 +1,175 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Discussion avec {{ demande.beneficiaire.nom }}{% endblock %}
+{% block title %}
+  Discussion avec {{ demande.beneficiaire.nom }}
+{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Discussion avec {{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</h1>
+  <div class="container">
+    <h1>Discussion avec {{ demande.beneficiaire.nom }} {{ demande.beneficiaire.prenom }}</h1>
 
-            
+    <div class="messages">
+      {% for message in messages %}
+        <div class="message {% if message.expediteur == app.user %}
 
-        <div class="messages">
-            {% for message in messages %}
-                <div class="message {% if message.expediteur == app.user %}sent{% else %}received{% endif %}">
-                    <strong>{{ message.expediteur.nom }}:</strong> {{ message.contenu }}
-                    <br>
-                    <small>{{ message.dateEnvoi|date('d/m/Y H:i') }}</small>
-                </div>
-            {% else %}
-                <p>Aucun message pour cette demande. Commencez une conversation ci-dessous.</p>
-            {% endfor %}
+          {% endif %}">
+          <strong>{{ message.expediteur.nom }}:</strong> {{ message.contenu }}
+          <br />
+          <small>{{ message.dateEnvoi|date('d/m/Y H:i') }}</small>
         </div>
-
-        <form id="messageForm" action="{{ path('app_message_send') }}" method="post">
-            <input type="hidden" name="demande_id" value="{{ demande.id }}">
-            <textarea name="contenu" id="messageInput" placeholder="Écrivez votre message..." required></textarea>
-            <button type="submit" class="btn btn-success">Envoyer</button>
-        </form>
+      {% else %}
+        <p>Aucun message pour cette demande. Commencez une conversation ci-dessous.</p>
+      {% endfor %}
     </div>
 
+    <form id="messageForm" action="{{ path('app_message_send') }}" method="post">
+      <input type="hidden" name="demande_id" value="{{ demande.id }}" />
+      <textarea name="contenu" id="messageInput" placeholder="Écrivez votre message..." required></textarea>
+      <button type="submit" class="btn btn-success">Envoyer</button>
+    </form>
+  </div>
 
+  <style>
+    .messages {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      margin-bottom: 20px;
+    }
+    
+    .message {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      max-width: 70%;
+      word-wrap: break-word;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    .message.sent {
+      background-color: #dcf8c6;
+      margin-left: auto;
+      text-align: right;
+    }
+    
+    .message.received {
+      background-color: #ececec;
+      margin-right: auto;
+      text-align: left;
+    }
+    
+    .message strong {
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .message small {
+      color: #777;
+      font-size: 0.8em;
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    form button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    
+    form button:hover {
+      background-color: #218838;
+    }
+    
+    .messages::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .messages::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    
+    .messages::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('messageForm')
+      const messageInput = document.getElementById('messageInput')
+      const messagesDiv = document.querySelector('.messages')
+    
+      // Faire défiler les messages vers le bas au chargement
+      messagesDiv.scrollTop = messagesDiv.scrollHeight
+    
+    //Gestion de l'envoi du formulaire
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+    
+        let formData = new FormData(form)
+    
+        fetch(form.action, {
+          method: 'POST',
+          body: formData
+        })
 
-
-
-
-    <style>
-        .messages {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            max-width: 70%;
-            word-wrap: break-word;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        .message.sent {
-            background-color: #dcf8c6;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .message.received {
-            background-color: #ececec;
-            margin-right: auto;
-            text-align: left;
-        }
-
-        .message strong {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .message small {
-            color: #777;
-            font-size: 0.8em;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        form textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        form button {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-
-        form button:hover {
-            background-color: #218838;
-        }
-
-        .messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .messages::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-
-        .messages::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+                
+              // Ajout du message à la conversation
+              const newMessage = document.createElement('div')
+              newMessage.classList.add('message', 'sent') // Message envoyé
+              newMessage.innerHTML = `
+                                <strong>${data.expediteur}:</strong> ${data.contenu}
+                                <br>
+                                <small>${data.date}</small>
+                            `
+    
+              messagesDiv.appendChild(newMessage)
+    
+              // Faire défiler vers le bas
+              messagesDiv.scrollTop = messagesDiv.scrollHeight
+    
+              // Réinitialiser le champ de texte
+              messageInput.value = ''
+            } else {
+              alert(data.error || "Erreur lors de l'envoi du message.")
             }
-        }
-    </style>
-
-    <script>
-
-        
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("messageForm");
-            const messageInput = document.getElementById("messageInput");
-            const messagesDiv = document.querySelector(".messages");
-
-            // Faire défiler les messages vers le bas au chargement
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            form.addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                let formData = new FormData(form);
-
-                fetch(form.action, {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Créer un nouvel élément de message
-                        const newMessage = document.createElement("div");
-                        newMessage.classList.add("message", "sent"); // Message envoyé
-                        newMessage.innerHTML = `
-                            <strong>${data.expediteur}:</strong> ${data.contenu}
-                            <br>
-                            <small>${data.date}</small>
-                        `;
-
-                        messagesDiv.appendChild(newMessage);
-
-                        // Faire défiler vers le bas
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-                        // Réinitialiser le champ de texte
-                        messageInput.value = "";
-                    } else {
-                        alert(data.error || "Erreur lors de l'envoi du message.");
-                    }
-                })
-                .catch(error => console.error("Erreur:", error));
-            });
-        });
-        
-    </script>
+          })
+          .catch((error) => console.error('Erreur:', error))
+      })
+    })
+  </script>
 {% endblock %}
