@@ -107,30 +107,81 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/createArticle', name: 'createArticle')]
-    public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
-    {
-        $article = new Article();
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
+    // #[Route('/createArticle', name: 'createArticle')]
+    // public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir)
+    // {
+    //     $article = new Article();
+    //     $form = $this->createForm(ArticleType::class, $article);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($image = $form['image']->getData()) {
-                $filename = uniqid() . '.' . $image->guessExtension();
-                $image->move($imageDir, $filename);
-                $article->setImage($filename);
-            }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         if ($image = $form['image']->getData()) {
+    //             $filename = uniqid() . '.' . $image->guessExtension();
+    //             $image->move($imageDir, $filename);
+    //             $article->setImage($filename);
+    //         }
 
-            $this->em->persist($article);
-            $this->em->flush();
+    //         $this->em->persist($article);
+    //         $this->em->flush();
 
-            return $this->redirectToRoute('adminArticleList');
-        }
+    //         return $this->redirectToRoute('adminArticleList');
+    //     }
        
-        return $this->render('templates_admin/articleForm/articleForm.html.twig', [
-            'form' => $form->createView(),
-        ]);
+    //     return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
+
+    #[Route('/createArticle', name: 'createArticle')]
+public function createArticle(Request $request, #[Autowire('%image_dir%')] string $imageDir): Response
+{
+    $article = new Article();
+    $form = $this->createForm(ArticleType::class, $article);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        if ($image = $form['image']->getData()) {
+            $filename = uniqid() . '.' . $image->guessExtension();
+            $image->move($imageDir, $filename);
+            $article->setImage($filename); // => base contient juste le nom
+        }
+
+        $this->em->persist($article);
+        $this->em->flush();
+
+        return $this->redirectToRoute('adminArticleList');
     }
+
+    return $this->render('templates_admin/articleForm/articleForm.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+#[Route('/api/articles', name: 'api_articles', methods: ['GET'])]
+public function apiArticles(Request $request): JsonResponse
+{
+    $articles = $this->em->getRepository(Article::class)->findAll();
+    $host = $request->getSchemeAndHttpHost();
+
+    $data = [];
+    foreach ($articles as $article) {
+        $data[] = [
+            'id' => $article->getId(),
+            'titre' => $article->getTitre(),
+            'description' => $article->getDescription(),
+            'categorie' => $article->getCategorie(),
+            'image' => $article->getImage(),
+            'image_url' => $host . '/uploads/images/' . $article->getImage(), // 🔥 pour JavaFX
+            'likes' => $article->getLikes(),
+            'dislikes' => $article->getDislikes(),
+            'created_at' => $article->getCreatedAt()?->format('Y-m-d H:i:s'),
+        ];
+    }
+
+    return new JsonResponse($data);
+}
+
+
 
     #[Route('/adminArticleList', name: 'adminArticleList')]
     public function goToAdminArticleList(): Response

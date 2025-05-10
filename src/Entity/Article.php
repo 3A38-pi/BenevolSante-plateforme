@@ -12,6 +12,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
+    #[ORM\Column(nullable: true)]
+    private ?int $likes = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $dislikes = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,7 +49,7 @@ class Article
     )]
     private ?string $categorie = null;
 
-    #[ORM\Column]
+    #[ORM\Column]   
     private ?int $nombreCommentaire = 0;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -55,16 +61,25 @@ class Article
     )]
     private ?string $description = null;
 
+    
+
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'article', cascade: ['persist', 'remove'])]
     private Collection $commentaires;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
+
+    /**
+     * @var Collection<int, Reaction>
+     */
+    #[ORM\OneToMany(targetEntity: Reaction::class, mappedBy: 'article')]
+    private Collection $reactions;
     
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
         $this->createdAt = new \DateTime();
+        $this->reactions = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -165,4 +180,56 @@ class Article
 
         return $this;
     }
+
+    public function getLikes(): ?int
+{
+    return $this->likes;
+}
+
+public function setLikes(?int $likes): static
+{
+    $this->likes = $likes;
+    return $this;
+}
+
+public function getDislikes(): ?int
+{
+    return $this->dislikes;
+}
+
+public function setDislikes(?int $dislikes): static
+{
+    $this->dislikes = $dislikes;
+    return $this;
+}
+
+/**
+ * @return Collection<int, Reaction>
+ */
+public function getReactions(): Collection
+{
+    return $this->reactions;
+}
+
+public function addReaction(Reaction $reaction): static
+{
+    if (!$this->reactions->contains($reaction)) {
+        $this->reactions->add($reaction);
+        $reaction->setArticle($this);
+    }
+
+    return $this;
+}
+
+public function removeReaction(Reaction $reaction): static
+{
+    if ($this->reactions->removeElement($reaction)) {
+        // set the owning side to null (unless already changed)
+        if ($reaction->getArticle() === $this) {
+            $reaction->setArticle(null);
+        }
+    }
+
+    return $this;
+}
 }

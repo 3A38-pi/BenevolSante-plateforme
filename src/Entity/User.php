@@ -57,6 +57,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $prenom = null;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $blockExpiration = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $lastLoginDate = null;
+
     #[ORM\Column(length: 20, options: ["default" => "verrouillé"])]
     private string $etatCompte;
 
@@ -85,10 +91,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $GoogleId = null;
 
+    /**
+     * @var Collection<int, CommentReaction>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReaction::class, mappedBy: 'User')]
+    private Collection $commentaire;
+
+    /**
+     * @var Collection<int, CommentReaction>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReaction::class, mappedBy: 'user')]
+    private Collection $commentReactions;
+
+    /**
+     * @var Collection<int, CommentReply>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReply::class, mappedBy: 'user')]
+    private Collection $commentReplies;
+
+    /**
+     * @var Collection<int, CommentReport>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReport::class, mappedBy: 'user')]
+    private Collection $commentReports;
+
+    /**
+     * @var Collection<int, Reaction>
+     */
+    #[ORM\OneToMany(targetEntity: Reaction::class, mappedBy: 'user')]
+    private Collection $reactions;
+
+    /**
+     * @var Collection<int, ConnectionHistory>
+     */
+    #[ORM\OneToMany(targetEntity: ConnectionHistory::class, mappedBy: 'user')]
+    private Collection $connectionHistories;
+
     public function __construct()
     {
         $this->etatCompte = "verrouillé"; // Par défaut, tous les comptes sont verrouillés
         $this->notifications = new ArrayCollection();
+        $this->commentaire = new ArrayCollection();
+        $this->commentReactions = new ArrayCollection();
+        $this->commentReplies = new ArrayCollection();
+        $this->commentReports = new ArrayCollection();
+        $this->reactions = new ArrayCollection();
+        $this->connectionHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -213,6 +261,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getBlockExpiration(): ?\DateTimeInterface
+{
+    return $this->blockExpiration;
+}
+
+public function setBlockExpiration(?\DateTimeInterface $blockExpiration): static
+{
+    $this->blockExpiration = $blockExpiration;
+    return $this;
+}
+
+public function getLastLoginDate(): ?\DateTimeInterface
+{
+    return $this->lastLoginDate;
+}
+
+public function setLastLoginDate(?\DateTimeInterface $lastLoginDate): static
+{
+    $this->lastLoginDate = $lastLoginDate;
+    return $this;
+}
+
+
     public function getResetToken(): ?string
     {
         return $this->resetToken;
@@ -232,6 +303,186 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGoogleId(?string $GoogleId): static
     {
         $this->GoogleId = $GoogleId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReaction>
+     */
+    public function getCommentaire(): Collection
+    {
+        return $this->commentaire;
+    }
+
+    public function addCommentaire(CommentReaction $commentaire): static
+    {
+        if (!$this->commentaire->contains($commentaire)) {
+            $this->commentaire->add($commentaire);
+            $commentaire->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(CommentReaction $commentaire): static
+    {
+        if ($this->commentaire->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getUser() === $this) {
+                $commentaire->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReaction>
+     */
+    public function getCommentReactions(): Collection
+    {
+        return $this->commentReactions;
+    }
+
+    public function addCommentReaction(CommentReaction $commentReaction): static
+    {
+        if (!$this->commentReactions->contains($commentReaction)) {
+            $this->commentReactions->add($commentReaction);
+            $commentReaction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReaction(CommentReaction $commentReaction): static
+    {
+        if ($this->commentReactions->removeElement($commentReaction)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReaction->getUser() === $this) {
+                $commentReaction->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReply>
+     */
+    public function getCommentReplies(): Collection
+    {
+        return $this->commentReplies;
+    }
+
+    public function addCommentReply(CommentReply $commentReply): static
+    {
+        if (!$this->commentReplies->contains($commentReply)) {
+            $this->commentReplies->add($commentReply);
+            $commentReply->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReply(CommentReply $commentReply): static
+    {
+        if ($this->commentReplies->removeElement($commentReply)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReply->getUser() === $this) {
+                $commentReply->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReport>
+     */
+    public function getCommentReports(): Collection
+    {
+        return $this->commentReports;
+    }
+
+    public function addCommentReport(CommentReport $commentReport): static
+    {
+        if (!$this->commentReports->contains($commentReport)) {
+            $this->commentReports->add($commentReport);
+            $commentReport->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReport(CommentReport $commentReport): static
+    {
+        if ($this->commentReports->removeElement($commentReport)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReport->getUser() === $this) {
+                $commentReport->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reaction>
+     */
+    public function getReactions(): Collection
+    {
+        return $this->reactions;
+    }
+
+    public function addReaction(Reaction $reaction): static
+    {
+        if (!$this->reactions->contains($reaction)) {
+            $this->reactions->add($reaction);
+            $reaction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReaction(Reaction $reaction): static
+    {
+        if ($this->reactions->removeElement($reaction)) {
+            // set the owning side to null (unless already changed)
+            if ($reaction->getUser() === $this) {
+                $reaction->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConnectionHistory>
+     */
+    public function getConnectionHistories(): Collection
+    {
+        return $this->connectionHistories;
+    }
+
+    public function addConnectionHistory(ConnectionHistory $connectionHistory): static
+    {
+        if (!$this->connectionHistories->contains($connectionHistory)) {
+            $this->connectionHistories->add($connectionHistory);
+            $connectionHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConnectionHistory(ConnectionHistory $connectionHistory): static
+    {
+        if ($this->connectionHistories->removeElement($connectionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($connectionHistory->getUser() === $this) {
+                $connectionHistory->setUser(null);
+            }
+        }
 
         return $this;
     }
