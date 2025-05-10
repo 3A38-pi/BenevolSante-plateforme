@@ -110,6 +110,9 @@
 
   <!-- Ajout du JavaScript pour la recherche en temps réel -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
   <script>
     $(document).ready(function () {
       // Filtrage en temps réel
@@ -135,6 +138,10 @@
       searchInput.addEventListener("input", filterDons);
       categoryFilter.addEventListener("change", filterDons);
 
+
+
+
+      
       // Gestion des boutons de demande
       $('.request-donation').on('click', function () {
         const donId = $(this).data('don-id');

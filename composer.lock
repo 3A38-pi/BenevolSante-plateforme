@@ -4,9 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3182ef994dbdc2ac0153cc28c8dacc04",
+    "content-hash": "574330f0203d09319d404c7f5400dab1",
 
-    "content-hash": "c68ae65911b1bba2776ca5e28d34108f",
+
     "packages": [
         {
             "name": "cmen/google-charts-bundle",
@@ -11750,7 +11750,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -11758,6 +11758,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*"
     },
+    "platform-dev": {},
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PdfGeneratorService
 {
-    public function generatePdf(string $html): Response
+
+    public function generatePdf(string $html): string
     {
-        // Configure Dompdf
         $options = new Options();
         $options->set('defaultFont', 'Arial');
         $dompdf = new Dompdf($options);
@@ -21,13 +21,15 @@ class PdfGeneratorService
         // Render the PDF
         $dompdf->render();
 
-        // Stream the PDF to the browser
+        // Save the PDF to a temporary file
         $output = $dompdf->output();
-        $response = new Response($output);
-        $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="receipt.pdf"');
+        $pdfPath = sys_get_temp_dir() . '/recu_don.pdf'; // Chemin temporaire pour le fichier PDF
+        file_put_contents($pdfPath, $output);
 
-        return $response;
+        return $pdfPath; // Retourne le chemin du fichier PDF généré
     }
+
+
+    
 }
 
