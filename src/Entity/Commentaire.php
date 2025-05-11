@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommentaireRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -36,10 +38,24 @@ class Commentaire
     #[ORM\Column(length: 255)]
     private ?string $etat = null;
 
+    /**
+     * @var Collection<int, CommentReaction>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReaction::class, mappedBy: 'commentaire')]
+    private Collection $commentReactions;
+
+    /**
+     * @var Collection<int, CommentReply>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReply::class, mappedBy: 'commentaire')]
+    private Collection $commentReplies;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->etat = 'valide';
+        $this->commentReactions = new ArrayCollection();
+        $this->commentReplies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -100,6 +116,66 @@ class Commentaire
     public function setEtat(string $etat): static
     {
         $this->etat = $etat;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReaction>
+     */
+    public function getCommentReactions(): Collection
+    {
+        return $this->commentReactions;
+    }
+
+    public function addCommentReaction(CommentReaction $commentReaction): static
+    {
+        if (!$this->commentReactions->contains($commentReaction)) {
+            $this->commentReactions->add($commentReaction);
+            $commentReaction->setCommentaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReaction(CommentReaction $commentReaction): static
+    {
+        if ($this->commentReactions->removeElement($commentReaction)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReaction->getCommentaire() === $this) {
+                $commentReaction->setCommentaire(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReply>
+     */
+    public function getCommentReplies(): Collection
+    {
+        return $this->commentReplies;
+    }
+
+    public function addCommentReply(CommentReply $commentReply): static
+    {
+        if (!$this->commentReplies->contains($commentReply)) {
+            $this->commentReplies->add($commentReply);
+            $commentReply->setCommentaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReply(CommentReply $commentReply): static
+    {
+        if ($this->commentReplies->removeElement($commentReply)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReply->getCommentaire() === $this) {
+                $commentReply->setCommentaire(null);
+            }
+        }
+
         return $this;
     }
 }
